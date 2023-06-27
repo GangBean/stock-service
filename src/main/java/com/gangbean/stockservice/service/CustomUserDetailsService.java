@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.service;
 
-import com.gangbean.stockservice.entity.User;
+import com.gangbean.stockservice.entity.Member;
 import com.gangbean.stockservice.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,17 +29,17 @@ public class CustomUserDetailsService implements UserDetailsService {
             .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
     }
 
-    private org.springframework.security.core.userdetails.User createUser(String username, User user) {
-        if (!user.isActivated()) {
+    private org.springframework.security.core.userdetails.User createUser(String username, Member member) {
+        if (!member.isActivated()) {
             throw new RuntimeException(username + " -> 활성화되어 있지 않습니다.");
         }
 
-        List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
-            .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
+        List<GrantedAuthority> grantedAuthorities = member.getAuthorities().stream()
+            .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName().name()))
             .collect(Collectors.toList());
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
-            user.getPassword(),
+        return new org.springframework.security.core.userdetails.User(member.getUsername(),
+            member.getPassword(),
             grantedAuthorities);
     }
 }

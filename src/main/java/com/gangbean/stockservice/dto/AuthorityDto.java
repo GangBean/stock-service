@@ -1,6 +1,11 @@
 package com.gangbean.stockservice.dto;
 
-import lombok.*;
+import com.gangbean.stockservice.entity.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -8,5 +13,5 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthorityDto {
-    private String authorityName;
+    private Role authorityName;
 }

@@ -1,7 +1,7 @@
 package com.gangbean.stockservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gangbean.stockservice.entity.User;
+import com.gangbean.stockservice.entity.Member;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -31,13 +31,13 @@ public class UserDto {
 
     private Set<AuthorityDto> authorityDtoSet;
 
-    public static UserDto from(User user) {
-        if(user == null) return null;
+    public static UserDto from(Member member) {
+        if(member == null) return null;
 
         return UserDto.builder()
-            .username(user.getUsername())
-            .nickname(user.getNickname())
-            .authorityDtoSet(user.getAuthorities().stream()
+            .username(member.getUsername())
+            .nickname(member.getNickname())
+            .authorityDtoSet(member.getAuthorities().stream()
                 .map(authority -> AuthorityDto.builder().authorityName(authority.getAuthorityName()).build())
                 .collect(Collectors.toSet()))
             .build();

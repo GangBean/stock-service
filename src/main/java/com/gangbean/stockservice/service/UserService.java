@@ -2,13 +2,13 @@ package com.gangbean.stockservice.service;
 
 import com.gangbean.stockservice.dto.UserDto;
 import com.gangbean.stockservice.entity.Authority;
-import com.gangbean.stockservice.entity.User;
+import com.gangbean.stockservice.entity.Member;
+import com.gangbean.stockservice.entity.Role;
 import com.gangbean.stockservice.exception.DuplicateMemberException;
 import com.gangbean.stockservice.exception.NotFoundMemberException;
 import com.gangbean.stockservice.repository.UserRepository;
 import com.gangbean.stockservice.util.SecurityUtil;
 import java.util.Collections;
-import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,10 +31,10 @@ public class UserService {
         }
 
         Authority authority = Authority.builder()
-            .authorityName("ROLE_USER")
+            .authorityName(Role.ROLE_USER)
             .build();
 
-        User user = User.builder()
+        Member member = Member.builder()
             .username(userDto.getUsername())
             .password(passwordEncoder.encode(userDto.getPassword()))
             .nickname(userDto.getNickname())
@@ -42,7 +42,7 @@ public class UserService {
             .activated(true)
             .build();
 
-        return UserDto.from(userRepository.save(user));
+        return UserDto.from(userRepository.save(member));
     }
 
     @Transactional(readOnly = true)
