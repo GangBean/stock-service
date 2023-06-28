@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
@@ -9,5 +10,8 @@ import lombok.*;
 @NoArgsConstructor
 public class TokenDto {
 
-    private String token;
+    private String accessToken;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String refreshToken;
 }

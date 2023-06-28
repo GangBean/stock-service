@@ -23,51 +23,60 @@ import java.util.stream.Collectors;
 @Component
 public class TokenProvider implements InitializingBean {
 
-    private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private static final String AUTHORITIES_KEY = "auth";
+    public static final int MILLI_SECONDS = 1000;
+    public static final String DELIMITER = ",";
+    public static final String MEMBER_ID = "memberId";
+
+    private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
+
     private final String secret;
-    private final long tokenValidityInMilliseconds;
+    private final long accessTokenValidityInMilliseconds;
+    private final long refreshTokenValidityInMilliseconds;
     private Key key;
 
     public TokenProvider(
         @Value("${jwt.secret}") String secret,
-        @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
+        @Value("${jwt.access-token-validity-in-seconds}") long tokenValidityInSeconds,
+        @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInMilliseconds) {
         this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+        this.accessTokenValidityInMilliseconds = tokenValidityInSeconds * MILLI_SECONDS;
+        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds * MILLI_SECONDS;
     }
 
     @Override
     public void afterPropertiesSet() {
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
+        createKey();
     }
 
-    public String createToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(Collectors.joining(","));
-
-        long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds);
-
-        return Jwts.builder()
-            .setSubject(authentication.getName())
-            .claim(AUTHORITIES_KEY, authorities)
-            .signWith(key, SignatureAlgorithm.HS512)
-            .setExpiration(validity)
-            .compact();
+    public String createRefreshToken(Authentication authentication, Date expiration, Long memberId) {
+        return createToken(authentication, expiration, memberId);
     }
 
-    public Authentication getAuthentication(String token) {
-        Claims claims = Jwts
-            .parserBuilder()
+    public String createAccessToken(Authentication authentication, Date expiration, Long memberId) {
+        return createToken(authentication, expiration, memberId);
+    }
+
+    public Date accessTokenExpiration(Date now) {
+        return new Date(now.getTime() + this.accessTokenValidityInMilliseconds);
+    }
+
+    public Date refreshTokenExpiration(Date now) {
+        return new Date(now.getTime() + this.refreshTokenValidityInMilliseconds);
+    }
+
+    public Claims claimsOf(String token) {
+        return Jwts.parserBuilder()
             .setSigningKey(key)
             .build()
             .parseClaimsJws(token)
             .getBody();
+    }
 
-        Collection<? extends GrantedAuthority> authorities =
-            Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+    public Authentication getAuthentication(String token) {
+        Claims claims = this.claimsOf(token);
+
+        Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(DELIMITER))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
@@ -78,7 +87,10 @@ public class TokenProvider implements InitializingBean {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             logger.info("잘못된 JWT 서명입니다.");
@@ -90,5 +102,24 @@ public class TokenProvider implements InitializingBean {
             logger.info("JWT 토큰이 잘못되었습니다.");
         }
         return false;
+    }
+
+    private void createKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private String createToken(Authentication authentication, Date expiration, Long memberId) {
+        String authorities = authentication.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.joining(DELIMITER));
+
+        return Jwts.builder()
+            .setSubject(authentication.getName())
+            .claim(AUTHORITIES_KEY, authorities)
+            .claim(MEMBER_ID, memberId)
+            .signWith(key, SignatureAlgorithm.HS512)
+            .setExpiration(expiration)
+            .compact();
     }
 }

@@ -22,9 +22,8 @@ import lombok.NoArgsConstructor;
 public class Member {
 
     @Id
-    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @Column(name = "username", length = 50, unique = true)
     private String username;
@@ -35,13 +34,13 @@ public class Member {
     @Column(name = "nickname", length = 50)
     private String nickname;
 
-    @Column(name = "activated")
-    private boolean activated;
+    @Column(nullable = false, length = 8)
+    private String birthDay;
 
     @ManyToMany
     @JoinTable(
-        name = "user_authority",
-        joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id")},
+        name = "member_authority",
+        joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "id")},
         inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")})
     private Set<Authority> authorities;
 }
