@@ -60,11 +60,11 @@ public class MemberService {
         return UserDto.from(
             SecurityUtil.getCurrentUsername()
                 .flatMap(memberRepository::findOneWithAuthoritiesByUsername)
-                .orElseThrow(() -> new NotFoundMemberException("현재 Context에 "))
+                .orElseThrow(() -> new NotFoundMemberException("일치하는 회원 정보가 존재하지 않습니다: " + SecurityUtil.getCurrentUsername()))
         );
     }
 
-    public Member getMemberByUsername(String userName) {
+    public Member memberWithANameOf(String userName) {
         return memberRepository.findByUsername(userName)
             .orElseThrow(() -> new NotFoundMemberException("이름에 해당하는 회원이 존재하지 않습니다: " + userName));
     }

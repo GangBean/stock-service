@@ -49,19 +49,19 @@ public class TokenProvider implements InitializingBean {
         createKey();
     }
 
-    public String createRefreshToken(Authentication authentication, Date expiration, Long memberId) {
+    public String newRefreshTokenOf(Authentication authentication, Date expiration, Long memberId) {
         return createToken(authentication, expiration, memberId);
     }
 
-    public String createAccessToken(Authentication authentication, Date expiration, Long memberId) {
+    public String newAccessTokenOf(Authentication authentication, Date expiration, Long memberId) {
         return createToken(authentication, expiration, memberId);
     }
 
-    public Date accessTokenExpiration(Date now) {
+    public Date accessTokenExpirationDateFrom(Date now) {
         return new Date(now.getTime() + this.accessTokenValidityInMilliseconds);
     }
 
-    public Date refreshTokenExpiration(Date now) {
+    public Date refreshTokenExpirationDateFrom(Date now) {
         return new Date(now.getTime() + this.refreshTokenValidityInMilliseconds);
     }
 
