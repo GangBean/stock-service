@@ -2,10 +2,16 @@ package com.gangbean.stockservice.entity;
 
 import lombok.Builder;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Objects;
 
+@Entity
 public class Bank {
 
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private Long number;
@@ -24,6 +30,8 @@ public class Bank {
         this.name = name;
         this.number = number;
     }
+
+    public Bank() {}
 
     public Long id() {
         return id;
