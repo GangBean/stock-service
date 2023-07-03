@@ -1,11 +1,20 @@
 package com.gangbean.stockservice.entity;
 
+import javax.persistence.*;
+
+@Entity
 public class Account {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String number;
+
+    @OneToOne
     private Bank bank;
     private Long balance;
+
+    public Account() {}
 
     public Account(String number, Bank bank, Long balance) {
         this.number = number;
@@ -19,6 +28,7 @@ public class Account {
         this.bank = bank;
         this.balance = balance;
     }
+
 
     public Long id() {
         return id;
