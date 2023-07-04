@@ -29,6 +29,39 @@ class AccountRepositoryTest extends Specification {
         bankRepository.deleteAll()
     }
 
+    def "게좌 리포지토리는 입력된 id에 해당하는 계좌정보를 반환합니다"() {
+        given:
+        String number = "000000000";
+        Long balance = 1000L
+        Account account = new Account(number, bank, balance)
+        def saved = accountRepository.save(account)
+
+        when:
+        def find = accountRepository.findById(saved.id())
+
+        then:
+        verifyAll {
+            find.isPresent()
+            find.get() == saved
+            find.get().number() == saved.number()
+            find.get().balance() == saved.balance()
+        }
+    }
+
+    def "계좌 리포지토리는 입력한 계좌정보를 삭제합니다"() {
+        given:
+        String number = "000000000";
+        Long balance = 1000L
+        Account account = new Account(number, bank, balance)
+        def saved = accountRepository.save(account)
+
+        when:
+        accountRepository.delete(saved)
+
+        then:
+        noExceptionThrown()
+    }
+
     def "계좌 리포지토리는 계좌정보를 저장합니다"() {
         given:
         String number = "000000000";
