@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.service
 
+import com.gangbean.stockservice.dto.AccountInfoListResponse
 import com.gangbean.stockservice.dto.AccountInfoResponse
 import com.gangbean.stockservice.entity.Account
 import com.gangbean.stockservice.entity.Bank
@@ -16,6 +17,29 @@ class AccountServiceTest extends Specification {
     def setup() {
         accountRepository = Mock()
         accountService = new AccountService(accountRepository)
+    }
+
+    def "계좌 서비스는 요청시 계좌목록조회응답을 반환합니다"() {
+        given:
+        Long id = 1L
+        String number = "000000000"
+        String bankName = "은행"
+        Long bankNumber = 1L
+        Long balance = 1_000L
+        Account account = new Account(id, number, new Bank(bankName, bankNumber), balance)
+        Account account2 = new Account(2L, number, new Bank(bankName, bankNumber), balance)
+
+        when:
+        AccountInfoListResponse response = accountService.allAccounts()
+
+        then:
+        1 * accountRepository.findAll() >> List.of(account, account2)
+
+        verifyAll {
+            response.accountInfoList().size() == 2
+            response.accountInfoList().containsAll(AccountInfoResponse.responseOf(account)
+                    , AccountInfoResponse.responseOf(account2))
+        }
     }
 
     def "계좌 서비스는 입력된 id에 해당하는 계좌가 없을때 잘못되었다고 알려줍니다"() {

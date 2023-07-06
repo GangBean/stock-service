@@ -29,6 +29,23 @@ class AccountRepositoryTest extends Specification {
         bankRepository.deleteAll()
     }
 
+    def "계좌 리포지토리는 전체 게좌의 목록을 반환합니다"() {
+        given:
+        String number = "000000000";
+        Long balance = 1000L
+        def saved = accountRepository.save(new Account(number, bank, balance))
+        def saved2 = accountRepository.save(new Account(number, bank, balance))
+
+        when:
+        def list = accountRepository.findAll()
+
+        then:
+        verifyAll {
+            list.size() == 2
+            list.containsAll(saved, saved2)
+        }
+    }
+
     def "게좌 리포지토리는 입력된 id에 해당하는 계좌정보를 반환합니다"() {
         given:
         String number = "000000000";

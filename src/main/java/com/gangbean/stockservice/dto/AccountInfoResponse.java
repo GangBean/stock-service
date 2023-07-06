@@ -2,6 +2,8 @@ package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.entity.Account;
 
+import java.util.Objects;
+
 public class AccountInfoResponse {
 
     private Long id;
@@ -44,5 +46,29 @@ public class AccountInfoResponse {
                 , account.bank().name()
                 , account.bank().number()
                 , account.balance());
+    }
+
+    @Override
+    public String toString() {
+        return "AccountInfoResponse{" +
+                "id=" + id +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", bankName='" + bankName + '\'' +
+                ", bankNumber=" + bankNumber +
+                ", balance=" + balance +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountInfoResponse that = (AccountInfoResponse) o;
+        return Objects.equals(id, that.id) && Objects.equals(accountNumber, that.accountNumber) && Objects.equals(bankName, that.bankName) && Objects.equals(bankNumber, that.bankNumber) && Objects.equals(balance, that.balance);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, accountNumber, bankName, bankNumber, balance);
     }
 }
