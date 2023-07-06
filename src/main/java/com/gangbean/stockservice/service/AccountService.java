@@ -23,8 +23,8 @@ public class AccountService {
         this.tradeRepository = tradeRepository;
     }
 
-    public AccountInfoResponse responseOfAccountCreate(Account account) {
-        return AccountInfoResponse.responseOf(accountRepository.save(account));
+    public AccountInfoResponse responseOfAccountCreate(AccountSaveRequest account) {
+        return AccountInfoResponse.responseOf(accountRepository.save(account.asAccount()));
     }
 
     public AccountInfoResponse accountFindById(Long id) {

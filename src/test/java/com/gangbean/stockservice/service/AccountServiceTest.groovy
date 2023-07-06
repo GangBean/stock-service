@@ -1,13 +1,17 @@
 package com.gangbean.stockservice.service
 
-import com.gangbean.stockservice.domain.*
+
+import com.gangbean.stockservice.domain.Account
+import com.gangbean.stockservice.domain.Bank
+import com.gangbean.stockservice.domain.Trade
+import com.gangbean.stockservice.domain.TradeType
 import com.gangbean.stockservice.dto.AccountInfoListResponse
 import com.gangbean.stockservice.dto.AccountInfoResponse
+import com.gangbean.stockservice.dto.AccountSaveRequest
 import com.gangbean.stockservice.dto.TradeInfoResponse
 import com.gangbean.stockservice.exception.AccountNotExistsException
 import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.TradeRepository
-import com.gangbean.stockservice.repository.TradeReservationRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -20,38 +24,10 @@ class AccountServiceTest extends Specification {
 
     private TradeRepository tradeRepository
 
-    private TradeReservationRepository tradeReservationRepository
-
     def setup() {
         accountRepository = Mock()
         tradeRepository = Mock()
-        tradeReservationRepository = Mock()
-        accountService = new AccountService(accountRepository, tradeRepository, tradeReservationRepository)
-    }
-
-    def "계좌 서비스는 계좌ID와 예약시간, 금액을 입력하면 결제예약 정보를 만들고 결과를 돌려줍니다"() {
-        given:
-        Long id = 1L
-        String number = "000000000"
-        String bankName = "은행"
-        Long bankNumber = 1L
-        Long balance = 1_000L
-        Account account = new Account(id, number, new Bank(bankName, bankNumber), balance)
-
-        and:
-        def amount = 100L
-        def tradeAt = LocalDateTime.of(2023, 7, 2, 15)
-
-        when:
-        def response = accountService.responseOfPaymentReservation(id, tradeAt, amount)
-
-        then:
-        1 * accountRepository.findById(id) >> Optional.of(account)
-        1 * tradeReservationRepository.save(new TradeReservation(account, tradeAt, amount))
-
-        verifyAll {
-            response.balance() == 900L
-        }
+        accountService = new AccountService(accountRepository, tradeRepository)
     }
 
     def "계좌 서비스는 결제계좌 ID와 금액을 입력하면 결제를 진행하고, 거래정보를 만들고, 계좌잔액을 돌려줍니다"() {
@@ -212,10 +188,10 @@ class AccountServiceTest extends Specification {
         Account account = new Account(1L, number, new Bank(bankName, bankNumber), balance)
 
         when:
-        def response = accountService.responseOfAccountCreate(account)
+        def response = accountService.responseOfAccountCreate(AccountSaveRequest.requestOf(account))
 
         then:
-        1 * accountRepository.save(account) >> account
+        1 * accountRepository.save(_) >> account
 
         verifyAll {
             response.id() != null
