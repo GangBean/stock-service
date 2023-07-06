@@ -67,4 +67,8 @@ public class AccountStock {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public Long totalAmount() {
+        return balance * price;
+    }
 }

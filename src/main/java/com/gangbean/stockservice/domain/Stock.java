@@ -1,5 +1,7 @@
 package com.gangbean.stockservice.domain;
 
+import com.gangbean.stockservice.exception.StockNotEnoughBalanceException;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -60,5 +62,12 @@ public class Stock {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void sell(Long amount) {
+        if (balance < amount) {
+            throw new StockNotEnoughBalanceException("주식의 잔량이 부족합니다: " + balance);
+        }
+        balance -= amount;
     }
 }
