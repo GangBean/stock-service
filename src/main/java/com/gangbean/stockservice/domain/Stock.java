@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.domain;
 
+import com.gangbean.stockservice.exception.StockAmountNotValidException;
 import com.gangbean.stockservice.exception.StockNotEnoughBalanceException;
 
 import javax.persistence.Entity;
@@ -69,5 +70,12 @@ public class Stock {
             throw new StockNotEnoughBalanceException("주식의 잔량이 부족합니다: " + balance);
         }
         balance -= amount;
+    }
+
+    public void buy(Long amount) {
+        if (amount <= 0) {
+            throw new StockAmountNotValidException("1개 이상만 구매가능합니다: " + amount);
+        }
+        balance += amount;
     }
 }

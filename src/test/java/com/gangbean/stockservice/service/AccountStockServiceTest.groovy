@@ -1,11 +1,8 @@
 package com.gangbean.stockservice.service
 
-import com.gangbean.stockservice.domain.Account
-import com.gangbean.stockservice.domain.AccountStock
-import com.gangbean.stockservice.domain.Bank
-import com.gangbean.stockservice.domain.Stock
-import com.gangbean.stockservice.domain.StockTradeType
+import com.gangbean.stockservice.domain.*
 import com.gangbean.stockservice.dto.StockBuyRequest
+import com.gangbean.stockservice.dto.StockSellRequest
 import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.AccountStockRepository
 import com.gangbean.stockservice.repository.StockRepository
@@ -37,6 +34,10 @@ class AccountStockServiceTest extends Specification {
                 , tradeRepository)
     }
 
+    def "계좌주식 서비스는 기존에 구매한 양보다 많은 양의 주식판매 요청을 거절합니다"() {
+
+    }
+
     def "계좌주식 서비스는 주식판매요청을 받아 주식판매를 진행하고, 기존 구매를 반영한 주식판매결과를 반환해줍니다"() {
         given:
         Long accountId = 1L
@@ -46,16 +47,16 @@ class AccountStockServiceTest extends Specification {
         Long price = 10_000L
         Long balance = 100L
         Stock stock = new Stock(stockId, stockName, price, balance)
-        Long newBuyAmount = 10L
-        Long newBuyPrice = 10_050L
         Long sellAmount = 5L
-        Long sellPrice = 9_000L
-        def request = new StockBuyRequest(stockId, accountId, newBuyAmount, newBuyPrice)
-        def newBuy = new AccountStock(1L, account, stock, StockTradeType.BUYING, newBuyAmount, newBuyPrice)
-        def bought = new AccountStock(2L, account, stock, StockTradeType.SELLING, sellAmount, sellPrice)
+        Long sellPrice = 10_050L
+        Long boughtAmount = 15L
+        Long boughtPrice = 9_000L
+        def request = new StockSellRequest(stockId, accountId, sellAmount, sellPrice)
+        def newBuy = new AccountStock(1L, account, stock, StockTradeType.BUYING, sellAmount, sellPrice)
+        def bought = new AccountStock(2L, account, stock, StockTradeType.SELLING, boughtAmount, boughtPrice)
 
         when:
-        def response = accountStockService.responseOfBuy(request, LocalDateTime.now())
+        def response = accountStockService.responseOfSell(request, LocalDateTime.now())
 
         then:
         1 * stockRepository.findById(stockId) >> Optional.of(stock)
@@ -66,8 +67,10 @@ class AccountStockServiceTest extends Specification {
 
         verifyAll {
             response.getStockId() == stockId
-            response.getAmount() == newBuyAmount
-            response.getAveragePrice() == 11_100L
+            response.getAmount() == sellAmount
+            account.balance() == 1_050_250L
+            stock.howMany() == 105L
+            response.getAveragePrice() == 8475L
         }
     }
 
