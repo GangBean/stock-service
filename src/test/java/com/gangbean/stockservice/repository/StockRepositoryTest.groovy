@@ -11,6 +11,27 @@ class StockRepositoryTest extends Specification {
     @Autowired
     StockRepository stockRepository
 
+    def "주식 저장소는 입력된 id에 해당하는 주식을 돌려줍니다"() {
+        given:
+        String stockName = "카카오"
+        Long price = 10_000L
+        Long balance = 100L
+        Stock stock = new Stock(stockName, price, balance)
+        def saved = stockRepository.save(stock)
+
+        when:
+        def found = stockRepository.findById(saved.id())
+
+        then:
+        verifyAll {
+            found.isPresent()
+            found.get().id() != null
+            found.get().name() == stockName
+            found.get().howMuch() == price
+            found.get().howMany() == balance
+        }
+    }
+
     def "주식 저장소는 저장된 주식전체를 돌려줍니다"() {
         given:
         String stockName = "카카오"
