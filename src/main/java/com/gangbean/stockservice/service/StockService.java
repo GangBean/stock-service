@@ -1,6 +1,8 @@
 package com.gangbean.stockservice.service;
 
 import com.gangbean.stockservice.domain.Stock;
+import com.gangbean.stockservice.dto.StockBuyRequest;
+import com.gangbean.stockservice.dto.StockBuyResponse;
 import com.gangbean.stockservice.dto.StockDetailInfoResponse;
 import com.gangbean.stockservice.dto.StockInfoResponse;
 import com.gangbean.stockservice.exception.StockNotFoundException;
@@ -30,5 +32,9 @@ public class StockService {
         Stock stock = stockRepository.findById(stockId)
                 .orElseThrow(() -> new StockNotFoundException("입력된 ID에 해당하는 주식이 존재하지 않습니다: " + stockId));
         return StockDetailInfoResponse.responseOf(stock, stockHistoryRepository.findAllByStockId(stock.id()));
+    }
+
+    public StockBuyResponse responseOfBuy(StockBuyRequest stockBuyRequest) {
+        return StockBuyResponse.responseOf();
     }
 }

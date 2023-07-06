@@ -1,9 +1,13 @@
 package com.gangbean.stockservice.service
 
+import com.gangbean.stockservice.domain.Account
+import com.gangbean.stockservice.domain.Bank
 import com.gangbean.stockservice.domain.Stock
 import com.gangbean.stockservice.domain.StockHistory
+import com.gangbean.stockservice.dto.StockBuyRequest
 import com.gangbean.stockservice.dto.StockHistoryInfoResponse
 import com.gangbean.stockservice.dto.StockInfoResponse
+import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.StockHistoryRepository
 import com.gangbean.stockservice.repository.StockRepository
 import spock.lang.Specification
@@ -19,10 +23,39 @@ class StockServiceTest extends Specification {
 
     StockHistoryRepository stockHistoryRepository
 
+    AccountRepository accountRepository
+
     def setup() {
         stockRepository = Mock()
         stockHistoryRepository = Mock()
-        stockService = new StockService(stockRepository, stockHistoryRepository)
+        accountRepository = Mock()
+        stockService = new StockService(stockRepository, stockHistoryRepository, accountRepository)
+    }
+
+    def "주식 서비스는 주식구매요청을 받아 구매결과를 반환해줍니다"() {
+        given:
+        String accountId = 1L
+        Account account = new Account(accountId, "0", new Bank(1L, "은행", 1L), 1_000_000L  )
+        Long stockId = 1L
+        String stockName = "카카오"
+        Long price = 10_000L
+        Long balance = 100L
+        Stock stock = new Stock(stockId, stockName, price, balance)
+        Long buyAmount = 10L
+        Long buyPrice = 10_050L
+        def request = new StockBuyRequest(stockId, accountId, buyAmount, buyPrice)
+
+        when:
+        def response = stockService.responseOfBuy(request)
+
+        then:
+        1 * stockRepository.findById(stockId) >> Optional.of(stock)
+        1 * accountRepository.findById(accountId) >> Optional.of(account)
+
+        verifyAll {
+            response.getStockId() == stockId
+            response.getAmount() == stockName
+        }
     }
 
     def "주식 서비스는 입력된 id에 해당하는 주식과 해당주식의 이력을 응답형태로 반환해줍니다"() {
