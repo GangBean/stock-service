@@ -1,7 +1,7 @@
 package com.gangbean.stockservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.gangbean.stockservice.entity.Member;
+import com.gangbean.stockservice.domain.Member;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;

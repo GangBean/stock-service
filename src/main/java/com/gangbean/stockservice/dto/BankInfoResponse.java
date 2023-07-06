@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.dto;
 
-import com.gangbean.stockservice.entity.Bank;
+import com.gangbean.stockservice.domain.Bank;
 
 public class BankInfoResponse {
 

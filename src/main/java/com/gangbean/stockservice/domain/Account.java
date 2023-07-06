@@ -1,4 +1,7 @@
-package com.gangbean.stockservice.entity;
+package com.gangbean.stockservice.domain;
+
+import com.gangbean.stockservice.dto.AccountNotEnoughBalanceException;
+import com.gangbean.stockservice.exception.AccoutCannotDepositBelowZeroAmountException;
 
 import javax.persistence.*;
 
@@ -44,5 +47,19 @@ public class Account {
 
     public Long balance() {
         return balance;
+    }
+
+    public void deposit(Long amount) {
+        if (amount <= 0L) {
+            throw new AccoutCannotDepositBelowZeroAmountException("계좌는 0원 이하 금액을 입금할 수 없습니다: " + amount);
+        }
+        balance += amount;
+    }
+
+    public void withDraw(Long amount) {
+        if (amount > balance) {
+            throw new AccountNotEnoughBalanceException("계좌 잔액이 부족합니다: " + balance);
+        }
+        balance -= amount;
     }
 }

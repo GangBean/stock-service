@@ -1,4 +1,4 @@
-package com.gangbean.stockservice.entity;
+package com.gangbean.stockservice.domain;
 
 import java.util.Set;
 import javax.persistence.Column;

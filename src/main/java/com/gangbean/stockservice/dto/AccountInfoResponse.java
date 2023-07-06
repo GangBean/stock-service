@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.dto;
 
-import com.gangbean.stockservice.entity.Account;
+import com.gangbean.stockservice.domain.Account;
 
 import java.util.Objects;
 
