@@ -1,9 +1,9 @@
 package com.gangbean.stockservice.service;
 
 import com.gangbean.stockservice.dto.UserDto;
-import com.gangbean.stockservice.entity.Authority;
-import com.gangbean.stockservice.entity.Member;
-import com.gangbean.stockservice.entity.Role;
+import com.gangbean.stockservice.domain.Authority;
+import com.gangbean.stockservice.domain.Member;
+import com.gangbean.stockservice.domain.Role;
 import com.gangbean.stockservice.exception.DuplicateMemberException;
 import com.gangbean.stockservice.exception.NotFoundMemberException;
 import com.gangbean.stockservice.repository.UserRepository;

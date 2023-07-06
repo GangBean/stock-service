@@ -1,4 +1,4 @@
-package com.gangbean.stockservice.entity;
+package com.gangbean.stockservice.domain;
 
 public enum Role {
     ROLE_ADMIN,

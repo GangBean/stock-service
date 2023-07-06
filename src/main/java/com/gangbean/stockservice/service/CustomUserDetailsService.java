@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.service;
 
-import com.gangbean.stockservice.entity.Member;
+import com.gangbean.stockservice.domain.Member;
 import com.gangbean.stockservice.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

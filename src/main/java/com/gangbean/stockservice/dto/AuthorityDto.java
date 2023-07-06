@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.dto;
 
-import com.gangbean.stockservice.entity.Role;
+import com.gangbean.stockservice.domain.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
