@@ -1,13 +1,33 @@
 package com.gangbean.stockservice.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.util.Objects;
+
+@Entity
 public class Stock {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private Long price;
+
     private Long balance;
 
+    public Stock() {
+    }
+
     public Stock(Long id, String name, Long price, Long balance) {
+        this(name, price, balance);
         this.id = id;
+    }
+
+    public Stock(String name, Long price, Long balance) {
         this.name = name;
         this.price = price;
         this.balance = balance;
@@ -27,5 +47,18 @@ public class Stock {
 
     public Long howMany() {
         return balance;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Stock stock = (Stock) o;
+        return Objects.equals(id, stock.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -4,6 +4,24 @@ import spock.lang.Specification
 
 class StockTest extends Specification {
 
+    def "주식은 동일한 ID를 가지면 동등합니다"() {
+        given:
+        Long stockId = 1L
+        String name = "카카오"
+        Long price = 1000L
+        Long balance = 100L
+        def stock = new Stock(stockId, name, price, balance)
+
+        when:
+        String anotherName = "다음"
+        Long anotherPrice = 500L
+        Long anotherBalance = 200L
+        def anotherStock = new Stock(stockId, anotherName, anotherPrice, anotherBalance)
+
+        then:
+        stock == anotherStock
+    }
+
     def "주식은 잔량을 요구하고 본인의 잔량을 알려줍니다"() {
         given:
         Long stockId = 1L
