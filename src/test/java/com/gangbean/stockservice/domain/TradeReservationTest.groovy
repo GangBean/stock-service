@@ -95,6 +95,21 @@ class TradeReservationTest extends Specification {
         10   |   59
     }
 
+    def "결제예약은 예약시간을 요구하고, 반환합니다"() {
+        given:
+        Long id = 1L
+        LocalDateTime tradeAt = LocalDateTime.of(2023, 12, 30, 14, 00)
+        Account account = new Account(1L, "1", new Bank("은행", 1L), 1000L)
+
+        when:
+        def reservation = new TradeReservation(id, account, tradeAt, 100L)
+
+        then:
+        verifyAll {
+            reservation.when() == tradeAt
+        }
+    }
+
     def "결제에약은 id를 반환합니다"() {
         given:
         Long id = 1L;
@@ -113,20 +128,5 @@ class TradeReservationTest extends Specification {
 
         then:
         noExceptionThrown()
-    }
-
-    def "결제예약은 예약시간을 요구하고, 반환합니다"() {
-        given:
-        Long id = 1L
-        LocalDateTime tradeAt = LocalDateTime.of(2023, 12, 30, 14, 00)
-        Account account = new Account(1L, "1", new Bank("은행", 1L), 1000L)
-
-        when:
-        def reservation = new TradeReservation(id, account, tradeAt, 100L)
-
-        then:
-        verifyAll {
-            reservation.when() == tradeAt
-        }
     }
 }
