@@ -22,7 +22,7 @@ public class StockBuyResponse {
                 .mapToLong(AccountStock::totalAmount)
                 .sum();
         Long totalCount = buyList.stream()
-                .mapToLong(AccountStock::balance)
+                .mapToLong(AccountStock::totalCount)
                 .sum();
         return new StockBuyResponse(accountStock.stock().id()
                 , accountStock.balance()

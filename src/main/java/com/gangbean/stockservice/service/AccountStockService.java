@@ -40,7 +40,7 @@ public class AccountStockService {
         stock.sell(stockBuyRequest.getAmount());
 
         tradeRepository.save(new Trade(account, TradeType.PAYMENT, buyAt, stockBuyRequest.getAmount()));
-        AccountStock accountStock = accountStockRepository.save(new AccountStock(account, stock, stockBuyRequest.getAmount(), stockBuyRequest.getPrice()));
+        AccountStock accountStock = accountStockRepository.save(new AccountStock(account, stock, StockTradeType.BUYING, stockBuyRequest.getAmount(), stockBuyRequest.getPrice()));
 
         List<AccountStock> buyList = accountStockRepository.findAllByAccountIdAndStockId(accountStock.stock().id(), accountStock.stock().id());
         return StockBuyResponse.responseOf(accountStock, buyList);

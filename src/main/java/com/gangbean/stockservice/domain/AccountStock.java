@@ -16,6 +16,9 @@ public class AccountStock {
     @ManyToOne
     private Stock stock;
 
+    @Enumerated(EnumType.STRING)
+    private StockTradeType tradeType;
+
     private Long balance;
 
     private Long price;
@@ -23,16 +26,21 @@ public class AccountStock {
     public AccountStock() {
     }
 
-    public AccountStock(Account account, Stock stock, Long balance, Long price) {
+    public AccountStock(Account account, Stock stock, StockTradeType tradeType, Long balance, Long price) {
         this.account = account;
         this.stock = stock;
+        this.tradeType = tradeType;
         this.balance = balance;
         this.price = price;
     }
 
-    public AccountStock(Long id, Account account, Stock stock, Long balance, Long price) {
-        this(account, stock, balance, price);
+    public AccountStock(Long id, Account account, Stock stock, StockTradeType tradeType, Long balance, Long price) {
+        this(account, stock, tradeType, balance, price);
         this.id = id;
+    }
+
+    public Long id() {
+        return id;
     }
 
     public Account account() {
@@ -51,8 +59,8 @@ public class AccountStock {
         return price;
     }
 
-    public Long id() {
-        return id;
+    public StockTradeType tradeType() {
+        return tradeType;
     }
 
     @Override
@@ -69,6 +77,11 @@ public class AccountStock {
     }
 
     public Long totalAmount() {
-        return balance * price;
+        return balance * price *
+                ((tradeType == StockTradeType.SELLING) ? -1 : 1);
+    }
+
+    public Long totalCount() {
+        return balance * ((tradeType == StockTradeType.SELLING) ? -1 : 1);
     }
 }

@@ -31,9 +31,9 @@ class AccountStockRepositoryTest extends Specification {
         def stock2 = stockRepository.save(new Stock("현대차", 18_000L, 100L))
         Long balance = 10L
         Long price = 5_000L
-        def accountStock = new AccountStock(account, stock, balance, price)
-        def accountStock2 = new AccountStock(account, stock, balance, price)
-        def accountStock3 = new AccountStock(account, stock2, balance, price)
+        def accountStock = new AccountStock(account, stock, tradeType, balance, price)
+        def accountStock2 = new AccountStock(account, stock, tradeType, balance, price)
+        def accountStock3 = new AccountStock(account, stock2, tradeType, balance, price)
         def saved = accountStockRepository.save(accountStock)
         def saved2 = accountStockRepository.save(accountStock2)
         def saved3 = accountStockRepository.save(accountStock3)
@@ -56,7 +56,7 @@ class AccountStockRepositoryTest extends Specification {
         def stock = stockRepository.save(new Stock("카카오", 10_000L, 100L))
         Long balance = 10L
         Long price = 5_000L
-        def accountStock = new AccountStock(account, stock, balance, price)
+        def accountStock = new AccountStock(account, stock, tradeType, balance, price)
 
         when:
         def saved = accountStockRepository.save(accountStock)
