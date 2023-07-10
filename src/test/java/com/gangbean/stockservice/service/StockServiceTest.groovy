@@ -1,11 +1,9 @@
 package com.gangbean.stockservice.service
 
-
 import com.gangbean.stockservice.domain.Stock
 import com.gangbean.stockservice.domain.StockHistory
 import com.gangbean.stockservice.dto.StockHistoryInfoResponse
 import com.gangbean.stockservice.dto.StockInfoResponse
-import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.StockHistoryRepository
 import com.gangbean.stockservice.repository.StockRepository
 import spock.lang.Specification
@@ -21,13 +19,10 @@ class StockServiceTest extends Specification {
 
     StockHistoryRepository stockHistoryRepository
 
-    AccountRepository accountRepository
-
     def setup() {
         stockRepository = Mock()
         stockHistoryRepository = Mock()
-        accountRepository = Mock()
-        stockService = new StockService(stockRepository, stockHistoryRepository, accountRepository)
+        stockService = new StockService(stockRepository, stockHistoryRepository)
     }
 
     def "주식 서비스는 입력된 id에 해당하는 주식과 해당주식의 이력을 응답형태로 반환해줍니다"() {

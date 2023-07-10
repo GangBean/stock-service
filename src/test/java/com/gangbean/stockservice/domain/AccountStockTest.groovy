@@ -12,10 +12,10 @@ class AccountStockTest extends Specification {
         Long id = 1L
 
         when:
-        def accountStock = new AccountStock(id, account, stock, balance, averagePrice, tradeType)
+        def accountStock = new AccountStock(id, account, stock, StockTradeType.BUYING, balance, averagePrice)
 
         then:
-        accountStock == new AccountStock(id, account, stock, 100L, 1_000L, tradeType)
+        accountStock == new AccountStock(id, account, stock, StockTradeType.BUYING, 100L, 1_000L)
     }
 
     def "계좌주식은 ID를 요청하고, 자신의 ID를 반환합니다"() {
@@ -27,7 +27,7 @@ class AccountStockTest extends Specification {
         Long id = 1L
 
         when:
-        def accountStock = new AccountStock(id, account, stock, balance, averagePrice, tradeType)
+        def accountStock = new AccountStock(id, account, stock, StockTradeType.BUYING, balance, averagePrice)
 
         then:
         accountStock.id() == id
@@ -41,7 +41,7 @@ class AccountStockTest extends Specification {
         Long price = 5_000L
 
         when:
-        def accountStock = new AccountStock(account, stock, tradeType, balance, price)
+        def accountStock = new AccountStock(account, stock, StockTradeType.BUYING, balance, price)
 
         then:
         accountStock.price() == price
@@ -55,7 +55,7 @@ class AccountStockTest extends Specification {
         Long averagePrice = 5_000L
 
         when:
-        def accountStock = new AccountStock(account, stock, tradeType, balance, averagePrice)
+        def accountStock = new AccountStock(account, stock, StockTradeType.BUYING, balance, averagePrice)
 
         then:
         accountStock.balance() == balance
@@ -69,7 +69,7 @@ class AccountStockTest extends Specification {
         Long averagePrice = 5_000L
 
         when:
-        def accountStock = new AccountStock(account, stock, tradeType, balance, averagePrice)
+        def accountStock = new AccountStock(account, stock, StockTradeType.BUYING, balance, averagePrice)
 
         then:
         accountStock.stock() == stock
@@ -83,7 +83,7 @@ class AccountStockTest extends Specification {
         Long averagePrice = 5_000L
 
         when:
-        def accountStock = new AccountStock(account, stock, tradeType, balance, averagePrice)
+        def accountStock = new AccountStock(account, stock, StockTradeType.BUYING, balance, averagePrice)
 
         then:
         accountStock.account() == account
