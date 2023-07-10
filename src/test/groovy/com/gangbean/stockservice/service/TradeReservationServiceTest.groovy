@@ -5,10 +5,11 @@ import com.gangbean.stockservice.domain.Bank
 import com.gangbean.stockservice.domain.TradeReservation
 import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.TradeReservationRepository
-import com.gangbean.stockservice.service.TradeReservationService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+
+import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
 class TradeReservationServiceTest extends Specification {
 
@@ -31,7 +32,7 @@ class TradeReservationServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000_000L
-        Account account = new Account(accountId, number, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(accountId, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
 
         and:
         def amount = 100_000L

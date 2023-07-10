@@ -16,6 +16,8 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
+import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
+
 class AccountServiceTest extends Specification {
 
     private AccountService accountService
@@ -37,7 +39,7 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
 
         and:
         def amount = 100L
@@ -62,12 +64,12 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
 
         and:
         Long toAccountId = 2L
         String toAccountNumber = "1111"
-        Account toAccount = new Account(toAccountId, toAccountNumber, new Bank(bankName, bankNumber), balance)
+        Account toAccount = new Account(toAccountId, toAccountNumber, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
 
         and:
         def amount = 100L
@@ -94,7 +96,7 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
 
         def tradeId = 1L
         def tradeType = TradeType.DEPOSIT
@@ -126,8 +128,8 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, new Bank(bankName, bankNumber), balance)
-        Account account2 = new Account(2L, number, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
+        Account account2 = new Account(2L, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
 
         when:
         AccountInfoListResponse response = accountService.allAccounts()
@@ -162,7 +164,7 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
 
         when:
         AccountInfoResponse response = accountService.accountFindById(id)
@@ -186,10 +188,10 @@ class AccountServiceTest extends Specification {
         Long bankNumber = 1L
         Long balance = 1_000L
         def bank = new Bank(bankName, bankNumber)
-        Account account = new Account(1L, number, bank, balance)
+        Account account = new Account(1L, number, TEST_MEMBER, bank, balance)
 
         when:
-        def response = accountService.responseOfAccountCreate(AccountOpenRequest.requestOf(account), bank)
+        def response = accountService.responseOfAccountCreate(AccountOpenRequest.requestOf(account), TEST_MEMBER, bank)
 
         then:
         1 * accountRepository.save(_) >> account

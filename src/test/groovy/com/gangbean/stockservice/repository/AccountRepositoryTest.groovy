@@ -2,11 +2,11 @@ package com.gangbean.stockservice.repository
 
 import com.gangbean.stockservice.domain.Account
 import com.gangbean.stockservice.domain.Bank
-import com.gangbean.stockservice.repository.AccountRepository
-import com.gangbean.stockservice.repository.BankRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import spock.lang.Specification
+
+import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
 @DataJpaTest
 class AccountRepositoryTest extends Specification {
@@ -35,8 +35,8 @@ class AccountRepositoryTest extends Specification {
         given:
         String number = "000000000";
         Long balance = 1000L
-        def saved = accountRepository.save(new Account(number, bank, balance))
-        def saved2 = accountRepository.save(new Account(number, bank, balance))
+        def saved = accountRepository.save(new Account(number, TEST_MEMBER, bank, balance))
+        def saved2 = accountRepository.save(new Account(number, TEST_MEMBER, bank, balance))
 
         when:
         def list = accountRepository.findAll()
@@ -52,7 +52,7 @@ class AccountRepositoryTest extends Specification {
         given:
         String number = "000000000";
         Long balance = 1000L
-        Account account = new Account(number, bank, balance)
+        Account account = new Account(number, TEST_MEMBER, bank, balance)
         def saved = accountRepository.save(account)
 
         when:
@@ -71,7 +71,7 @@ class AccountRepositoryTest extends Specification {
         given:
         String number = "000000000";
         Long balance = 1000L
-        Account account = new Account(number, bank, balance)
+        Account account = new Account(number, TEST_MEMBER, bank, balance)
         def saved = accountRepository.save(account)
 
         when:
@@ -85,7 +85,7 @@ class AccountRepositoryTest extends Specification {
         given:
         String number = "000000000";
         Long balance = 1000L
-        Account account = new Account(number, bank, balance)
+        Account account = new Account(number, TEST_MEMBER, bank, balance)
 
         when:
         def saved = accountRepository.save(account)

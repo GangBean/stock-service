@@ -2,8 +2,9 @@ package com.gangbean.stockservice.dto
 
 import com.gangbean.stockservice.domain.Account
 import com.gangbean.stockservice.domain.Bank
-import com.gangbean.stockservice.dto.AccountOpenRequest
 import spock.lang.Specification
+
+import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
 class AccountOpenRequestTest extends Specification {
     def "계좌저장요청은 계좌를 전달받아 계좌요청저장으로 반환해줍니다" () {
@@ -12,7 +13,7 @@ class AccountOpenRequestTest extends Specification {
         String bankName = "은행"
         String accountNumber = "1"
         Long balance = 100L
-        Account account = new Account(accountNumber, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(accountNumber, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
 
         when:
         def request = AccountOpenRequest.requestOf(account)
@@ -31,7 +32,7 @@ class AccountOpenRequestTest extends Specification {
         Long balance = 100L
 
         when:
-        def request = new AccountOpenRequest("은행", bankNumber, balance)
+        def request = new AccountOpenRequest("은행", bankNumber, balance, 1L)
 
         then:
         request.balance() == balance
@@ -42,7 +43,7 @@ class AccountOpenRequestTest extends Specification {
         Long bankNumber = 1L
 
         when:
-        def request = new AccountOpenRequest("은행", bankNumber, 100L)
+        def request = new AccountOpenRequest("은행", bankNumber, 100L, 1L)
 
         then:
         request.bankNumber() == bankNumber
@@ -53,7 +54,7 @@ class AccountOpenRequestTest extends Specification {
         String bankName = "은행"
 
         when:
-        def request = new AccountOpenRequest(bankName, 1L, 100L)
+        def request = new AccountOpenRequest(bankName, 1L, 100L,1L)
 
         then:
         request.bankName() == bankName

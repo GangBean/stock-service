@@ -3,14 +3,13 @@ package com.gangbean.stockservice.repository
 import com.gangbean.stockservice.domain.Account
 import com.gangbean.stockservice.domain.Bank
 import com.gangbean.stockservice.domain.TradeReservation
-import com.gangbean.stockservice.repository.AccountRepository
-import com.gangbean.stockservice.repository.BankRepository
-import com.gangbean.stockservice.repository.TradeReservationRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+
+import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
 @DataJpaTest
 class TradeReservationRepositoryTest extends Specification {
@@ -27,7 +26,7 @@ class TradeReservationRepositoryTest extends Specification {
     def "결제예약 리포지토리는 결제예약을 저장합니다"() {
         given:
         def bank = bankRepository.save(new Bank("은행", 1L))
-        def account = accountRepository.save(new Account("0", bank, 10_000L))
+        def account = accountRepository.save(new Account("0", TEST_MEMBER, bank, 10_000L))
         def tradeAt = LocalDateTime.of(2023, 11, 23, 15, 0)
         Long amount = 1_000L
 

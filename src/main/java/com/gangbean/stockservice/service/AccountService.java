@@ -1,9 +1,6 @@
 package com.gangbean.stockservice.service;
 
-import com.gangbean.stockservice.domain.Account;
-import com.gangbean.stockservice.domain.Bank;
-import com.gangbean.stockservice.domain.Trade;
-import com.gangbean.stockservice.domain.TradeType;
+import com.gangbean.stockservice.domain.*;
 import com.gangbean.stockservice.dto.*;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.repository.AccountRepository;
@@ -26,9 +23,9 @@ public class AccountService {
         this.tradeRepository = tradeRepository;
     }
 
-    public AccountInfoResponse responseOfAccountCreate(AccountOpenRequest account, Bank bank) {
+    public AccountInfoResponse responseOfAccountCreate(AccountOpenRequest account, Member member, Bank bank) {
         String accountNumber = "1";
-        return AccountInfoResponse.responseOf(accountRepository.save(account.asAccount(bank, accountNumber)));
+        return AccountInfoResponse.responseOf(accountRepository.save(account.asAccount(accountNumber, member, bank)));
     }
 
     public AccountInfoResponse accountFindById(Long id) {

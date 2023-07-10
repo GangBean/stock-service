@@ -10,6 +10,9 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
+import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
+import static com.gangbean.stockservice.domain.TradeTest.*
+
 @DataJpaTest
 class TradeRepositoryTest extends Specification {
 
@@ -29,9 +32,9 @@ class TradeRepositoryTest extends Specification {
 
     def "거래 리포지토리는 계좌에 해당하는 거래를 반환합니다"() {
         given:
-        def bank = bankRepository.save(com.gangbean.stockservice.domain.TradeTest.TEST_ACCOUNT.bank())
-        def account = new Account("0", bank, 1000L)
-        def account2 = new Account("1", bank, 1500L)
+        def bank = bankRepository.save(TEST_ACCOUNT.bank())
+        def account = new Account("0", TEST_MEMBER, bank, 1000L)
+        def account2 = new Account("1", TEST_MEMBER, bank, 1500L)
         accountRepository.save(account)
         accountRepository.save(account2)
         def trade = new Trade(1L, account, TradeType.WITHDRAW, LocalDateTime.now(), 100L)

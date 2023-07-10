@@ -12,21 +12,23 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String number;
-
+    @ManyToOne
+    private Member member;
     @OneToOne
     private Bank bank;
     private Long balance;
 
     public Account() {}
 
-    public Account(String number, Bank bank, Long balance) {
+    public Account(String number, Member member, Bank bank, Long balance) {
         this.number = number;
+        this.member = member;
         this.bank = bank;
         this.balance = moreThanZero(balance);
     }
 
-    public Account(Long id, String number, Bank bank, Long balance) {
-        this(number, bank, balance);
+    public Account(Long id, String number, Member member, Bank bank, Long balance) {
+        this(number, member, bank, balance);
         this.id = id;
     }
 
@@ -65,5 +67,9 @@ public class Account {
             throw new AccountNotEnoughBalanceException("0원 미만의 금액은 입금할 수 없습니다: " + balance);
         }
         return balance;
+    }
+
+    public Member whose() {
+        return member;
     }
 }

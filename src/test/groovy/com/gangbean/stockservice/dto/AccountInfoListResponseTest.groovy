@@ -2,9 +2,9 @@ package com.gangbean.stockservice.dto
 
 import com.gangbean.stockservice.domain.Account
 import com.gangbean.stockservice.domain.Bank
-import com.gangbean.stockservice.dto.AccountInfoListResponse
-import com.gangbean.stockservice.dto.AccountInfoResponse
 import spock.lang.Specification
+
+import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
 class AccountInfoListResponseTest extends Specification {
     def "계좌 목록 조회 응답은 계좌정보의 목록을 알려줍니다"() {
@@ -15,7 +15,7 @@ class AccountInfoListResponseTest extends Specification {
         def bankName = "은행"
         def bankNumber = 1L
         List<AccountInfoResponse> list = new ArrayList<>()
-        list.add(AccountInfoResponse.responseOf(new Account(id, number, new Bank(bankName, bankNumber), balance)))
+        list.add(AccountInfoResponse.responseOf(new Account(id, number,TEST_MEMBER,  new Bank(bankName, bankNumber), balance)))
         def response = new AccountInfoListResponse(list)
 
         when:
@@ -39,7 +39,7 @@ class AccountInfoListResponseTest extends Specification {
         def bankName = "은행"
         def bankNumber = 1L
         List<AccountInfoResponse> list = new ArrayList<>()
-        list.add(AccountInfoResponse.responseOf(new Account(id, number, new Bank(bankName, bankNumber), balance)))
+        list.add(AccountInfoResponse.responseOf(new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)))
 
         when:
         new AccountInfoListResponse(list)

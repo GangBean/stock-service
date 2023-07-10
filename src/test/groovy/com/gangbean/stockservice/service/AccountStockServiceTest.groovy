@@ -7,10 +7,11 @@ import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.AccountStockRepository
 import com.gangbean.stockservice.repository.StockRepository
 import com.gangbean.stockservice.repository.TradeRepository
-import com.gangbean.stockservice.service.AccountStockService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+
+import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
 class AccountStockServiceTest extends Specification {
 
@@ -42,7 +43,7 @@ class AccountStockServiceTest extends Specification {
     def "계좌주식 서비스는 주식판매요청을 받아 주식판매를 진행하고, 기존 구매를 반영한 주식판매결과를 반환해줍니다"() {
         given:
         Long accountId = 1L
-        Account account = new Account(accountId, "0", new Bank(1L, "은행", 1L), 1_000_000L)
+        Account account = new Account(accountId, "0", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000_000L)
         Long stockId = 1L
         String stockName = "카카오"
         Long price = 10_000L
@@ -78,7 +79,7 @@ class AccountStockServiceTest extends Specification {
     def "계좌주식 서비스는 주식구매요청을 받아 주식구매를 진행하고, 기존 구매를 반영한 주식구매결과를 반환해줍니다"() {
         given:
         Long accountId = 1L
-        Account account = new Account(accountId, "0", new Bank(1L, "은행", 1L), 1_000_000L)
+        Account account = new Account(accountId, "0", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000_000L)
         Long stockId = 1L
         String stockName = "카카오"
         Long price = 10_000L
