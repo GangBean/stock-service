@@ -5,7 +5,7 @@ import com.gangbean.stockservice.dto.StockBuyRequest;
 import com.gangbean.stockservice.dto.StockBuyResponse;
 import com.gangbean.stockservice.dto.StockSellRequest;
 import com.gangbean.stockservice.dto.StockSellResponse;
-import com.gangbean.stockservice.exception.AccountNotExistsException;
+import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.StockNotFoundException;
 import com.gangbean.stockservice.repository.AccountRepository;
 import com.gangbean.stockservice.repository.AccountStockRepository;

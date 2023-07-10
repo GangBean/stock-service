@@ -1,7 +1,7 @@
 package com.gangbean.stockservice.service;
 
 import com.gangbean.stockservice.dto.BankInfoResponse;
-import com.gangbean.stockservice.exception.BankNotFoundException;
+import com.gangbean.stockservice.exception.account.BankNotFoundException;
 import com.gangbean.stockservice.repository.BankRepository;
 import org.springframework.stereotype.Service;
 

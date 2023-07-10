@@ -31,4 +31,8 @@ public class BankInfoResponse {
     public static BankInfoResponse responseOf(Bank bank) {
         return new BankInfoResponse(bank.id(), bank.name(), bank.number());
     }
+
+    public Bank asBank() {
+        return new Bank(id, name, number);
+    }
 }

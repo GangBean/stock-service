@@ -22,7 +22,7 @@ spring:
 
 logging:
   level:
-    me.silvernine: DEBUG
+    sql: debug
 
 jwt:
   header: Authorization

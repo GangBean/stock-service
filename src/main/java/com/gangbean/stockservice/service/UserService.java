@@ -4,7 +4,7 @@ import com.gangbean.stockservice.dto.UserDto;
 import com.gangbean.stockservice.domain.Authority;
 import com.gangbean.stockservice.domain.Member;
 import com.gangbean.stockservice.domain.Role;
-import com.gangbean.stockservice.exception.DuplicateMemberException;
+import com.gangbean.stockservice.exception.member.DuplicateMemberException;
 import com.gangbean.stockservice.exception.NotFoundMemberException;
 import com.gangbean.stockservice.repository.UserRepository;
 import com.gangbean.stockservice.util.SecurityUtil;
