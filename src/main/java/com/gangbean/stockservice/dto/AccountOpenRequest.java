@@ -1,8 +1,6 @@
 package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.Account;
-import com.gangbean.stockservice.domain.Bank;
-import com.gangbean.stockservice.domain.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,10 +21,6 @@ public class AccountOpenRequest {
 
     public static AccountOpenRequest requestOf(Account account) {
         return new AccountOpenRequest(account.bank().name(), account.bank().number(), account.balance(), account.whose().getUserId());
-    }
-
-    public Account asAccount(String accountNumber, Member member, Bank bank) {
-        return new Account(accountNumber, member, bank, balance);
     }
 
     public String bankName() {

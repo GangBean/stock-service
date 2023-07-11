@@ -32,7 +32,7 @@ class TradeReservationServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000_000L
-        Account account = new Account(accountId, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(accountId, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
 
         and:
         def amount = 100_000L

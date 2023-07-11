@@ -6,10 +6,14 @@ import com.gangbean.stockservice.dto.StockInfoResponse;
 import com.gangbean.stockservice.exception.StockNotFoundException;
 import com.gangbean.stockservice.repository.StockHistoryRepository;
 import com.gangbean.stockservice.repository.StockRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional(readOnly = true)
+@Service
 public class StockService {
     private final StockRepository stockRepository;
 

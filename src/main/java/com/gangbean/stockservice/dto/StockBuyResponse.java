@@ -2,14 +2,16 @@ package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.AccountStock;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 public class StockBuyResponse {
-    private final Long stockId;
-    private final Long amount;
-    private final Long averagePrice;
+    private Long stockId;
+    private Long amount;
+    private Long averagePrice;
 
     public StockBuyResponse(Long stockId, Long amount, Long averagePrice) {
         this.stockId = stockId;

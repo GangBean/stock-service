@@ -10,10 +10,10 @@ public class AccountStock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Account account;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Stock stock;
 
     @Enumerated(EnumType.STRING)

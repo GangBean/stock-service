@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.acceptance
 
+import com.gangbean.stockservice.SpringBootAcceptanceTest
 import com.gangbean.stockservice.jwt.TokenProvider
 import com.gangbean.stockservice.repository.AccountRepository
 import io.restassured.RestAssured
@@ -8,10 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.test.context.jdbc.Sql
 import spock.lang.Specification
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootAcceptanceTest
 class AccountDetailAcceptanceTest extends Specification {
     @LocalServerPort
     int port
@@ -28,7 +28,6 @@ class AccountDetailAcceptanceTest extends Specification {
 
     String password
 
-    @Sql("/test.sql")
     def setup() {
         RestAssured.port = port
         username = "admin"

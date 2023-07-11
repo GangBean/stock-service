@@ -35,7 +35,7 @@ public class AccountController {
     @GetMapping("/accounts/{id}")
     public ResponseEntity<AccountDetailInfoResponse> accountDetail(@PathVariable Long id, @AuthenticationPrincipal User loginUser) {
         Member member = memberService.memberOf(loginUser.getUsername()).asMember();
-        return ResponseEntity.ok(accountService.accountFindByIdWithTrades(id, member));
+        return ResponseEntity.ok(accountService.responseOfAccountDetail(id, member));
     }
 
     @GetMapping("/accounts")
@@ -56,7 +56,7 @@ public class AccountController {
             , @AuthenticationPrincipal User loginUser) {
         BankInfoResponse bankInfoResponse = bankService.validateBank(request.bankName(), request.bankNumber());
         Member member = memberService.memberOf(loginUser.getUsername()).asMember();
-        AccountInfoResponse response = accountService.responseOfAccountCreate(request, member, bankInfoResponse.asBank());
+        AccountInfoResponse response = accountService.responseOfAccountCreate(member, bankInfoResponse.asBank(), request.getBalance());
         return ResponseEntity.created(URI.create("/api/accounts/" + response.getId())).body(response);
     }
 
