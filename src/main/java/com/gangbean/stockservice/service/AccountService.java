@@ -35,8 +35,8 @@ public class AccountService {
                         .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id)));
     }
 
-    public AccountInfoListResponse allAccounts() {
-        return AccountInfoListResponse.responseOf(accountRepository.findAll());
+    public AccountInfoListResponse allAccounts(Long memberId) {
+        return AccountInfoListResponse.responseOf(accountRepository.findAllByMemberUserId(memberId));
     }
 
     public AccountDetailInfoResponse accountFindByIdWithTrades(Long id) {

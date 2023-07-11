@@ -1,10 +1,7 @@
 package com.gangbean.stockservice.controller;
 
 import com.gangbean.stockservice.domain.Member;
-import com.gangbean.stockservice.dto.AccountInfoResponse;
-import com.gangbean.stockservice.dto.AccountOpenRequest;
-import com.gangbean.stockservice.dto.BankInfoResponse;
-import com.gangbean.stockservice.dto.ExceptionResponse;
+import com.gangbean.stockservice.dto.*;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
 import com.gangbean.stockservice.exception.account.AccountServiceException;
@@ -33,6 +30,12 @@ public class AccountController {
         this.accountService = accountService;
         this.bankService = bankService;
         this.memberService = memberService;
+    }
+
+    @GetMapping("/accounts")
+    public ResponseEntity<AccountInfoListResponse> accountList(@AuthenticationPrincipal User loginUser) {
+        Member member = memberService.memberOf(loginUser.getUsername()).asMember();
+        return ResponseEntity.ok(accountService.allAccounts(member.getUserId()));
     }
 
     @DeleteMapping("/accounts/{id}")
