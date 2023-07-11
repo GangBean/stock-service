@@ -2,19 +2,23 @@ package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.Account;
 import com.gangbean.stockservice.domain.Trade;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Getter
+@NoArgsConstructor
 public class AccountDetailInfoResponse {
 
-    private final Long id;
-    private final String accountNumber;
-    private final String bankName;
-    private final Long bankNumber;
-    private final Long balance;
-    private final List<TradeInfoResponse> trades;
+    private Long id;
+    private String accountNumber;
+    private String bankName;
+    private Long bankNumber;
+    private Long balance;
+    private List<TradeInfoResponse> trades;
 
     public AccountDetailInfoResponse(Long id, String accountNumber, String bankName, Long bankNumber, Long balance, List<TradeInfoResponse> trades) {
         this.id = id;

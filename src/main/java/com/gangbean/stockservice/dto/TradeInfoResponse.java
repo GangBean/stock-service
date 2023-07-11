@@ -2,21 +2,25 @@ package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.Trade;
 import com.gangbean.stockservice.domain.TradeType;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Getter
+@NoArgsConstructor
 public class TradeInfoResponse {
 
-    private final Long id;
+    private Long id;
 
-    private final AccountInfoResponse account;
+    private AccountInfoResponse account;
 
-    private final TradeType tradeType;
+    private TradeType tradeType;
 
-    private final LocalDateTime tradeAt;
+    private LocalDateTime tradeAt;
 
-    private final Long amount;
+    private Long amount;
 
     public TradeInfoResponse(Long id, AccountInfoResponse account, TradeType tradeType, LocalDateTime tradeAt, Long amount) {
         this.id = id;

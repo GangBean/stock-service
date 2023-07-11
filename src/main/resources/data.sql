@@ -10,3 +10,6 @@ insert into user_authority (user_id, authority_name) values (2, 'ROLE_USER');
 insert into bank(name, number) values ('은행', 1);
 insert into account(number, bank_id, member_user_id, balance) values('1234', 1, 1, 1000);
 insert into account(number, bank_id, member_user_id, balance) values('1235', 1, 2, 1000);
+insert into trade(type, date_time, account_id, amount) values('DEPOSIT', '2023-07-01T11:25:00', 1, 1000);
+insert into trade(type, date_time, account_id, amount) values('WITHDRAW', '2023-07-02T01:25:30', 1, 1000);
+insert into trade(type, date_time, account_id, amount) values('PAYMENT', '2023-07-03T17:55:00', 1, 1000);

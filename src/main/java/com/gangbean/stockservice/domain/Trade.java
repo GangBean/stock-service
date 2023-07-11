@@ -12,6 +12,7 @@ public class Trade {
     private Long id;
     private LocalDateTime dateTime;
     private Long amount;
+    @Enumerated(EnumType.STRING)
     private TradeType type;
     @ManyToOne
     private Account account;

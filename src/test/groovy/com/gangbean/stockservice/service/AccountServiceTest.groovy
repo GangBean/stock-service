@@ -105,7 +105,7 @@ class AccountServiceTest extends Specification {
         def trade = new Trade(tradeId, account, tradeType, tradeAt, amount)
 
         when:
-        def response = accountService.accountFindByIdWithTrades(id)
+        def response = accountService.accountFindByIdWithTrades(id, member)
 
         then:
         1 * accountRepository.findById(id) >> Optional.of(account)

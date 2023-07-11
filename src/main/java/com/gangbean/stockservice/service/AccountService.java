@@ -39,9 +39,14 @@ public class AccountService {
         return AccountInfoListResponse.responseOf(accountRepository.findAllByMemberUserId(memberId));
     }
 
-    public AccountDetailInfoResponse accountFindByIdWithTrades(Long id) {
+    public AccountDetailInfoResponse accountFindByIdWithTrades(Long id, Member member) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id));
+
+        if (!account.isOwner(member)) {
+            throw new AccountNotOwnedByLoginUser("해당 계좌의 소유자가 아닙니다: " + id);
+        }
+
         List<Trade> trades = tradeRepository.findAllByAccountId(id);
         return AccountDetailInfoResponse.responseOf(account, trades);
     }
