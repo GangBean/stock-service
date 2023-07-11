@@ -4,6 +4,7 @@ import com.gangbean.stockservice.dto.LoginDto;
 import com.gangbean.stockservice.dto.TokenDto;
 import com.gangbean.stockservice.jwt.JwtFilter;
 import com.gangbean.stockservice.jwt.TokenProvider;
+import com.gangbean.stockservice.service.MemberService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +23,18 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 public class AuthController {
 
+    private final MemberService memberService;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public AuthController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
+    public AuthController(MemberService memberService , TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
+        this.memberService = memberService;
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
-
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
 
@@ -42,7 +44,7 @@ public class AuthController {
         String jwt = tokenProvider.createToken(authentication);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER_KEY, JwtFilter.AUTHORIZATION_HEADER_VALUE_PREFIX + jwt);
 
         return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
     }

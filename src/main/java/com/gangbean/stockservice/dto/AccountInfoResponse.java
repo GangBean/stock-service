@@ -1,9 +1,14 @@
 package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.Account;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
+
+@Getter
+@NoArgsConstructor
 public class AccountInfoResponse {
 
     private Long id;

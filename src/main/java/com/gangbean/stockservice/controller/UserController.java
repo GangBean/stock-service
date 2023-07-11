@@ -1,7 +1,7 @@
 package com.gangbean.stockservice.controller;
 
-import com.gangbean.stockservice.dto.UserDto;
-import com.gangbean.stockservice.service.UserService;
+import com.gangbean.stockservice.dto.MemberDto;
+import com.gangbean.stockservice.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +13,10 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api")
 public class UserController {
-    private final UserService userService;
+    private final MemberService memberService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     @GetMapping("/hello")
@@ -30,21 +30,21 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> signup(
-        @Valid @RequestBody UserDto userDto
+    public ResponseEntity<MemberDto> signup(
+        @Valid @RequestBody MemberDto memberDto
     ) {
-        return ResponseEntity.ok(userService.signup(userDto));
+        return ResponseEntity.ok(memberService.signup(memberDto));
     }
 
     @GetMapping("/user")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<UserDto> getMyUserInfo() {
-        return ResponseEntity.ok(userService.getMyUserWithAuthorities());
+    public ResponseEntity<MemberDto> getMyUserInfo() {
+        return ResponseEntity.ok(memberService.getMyUserWithAuthorities());
     }
 
     @GetMapping("/user/{username}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<UserDto> getUserInfo(@PathVariable String username) {
-        return ResponseEntity.ok(userService.getUserWithAuthorities(username));
+    public ResponseEntity<MemberDto> getUserInfo(@PathVariable String username) {
+        return ResponseEntity.ok(memberService.getUserWithAuthorities(username));
     }
 }

@@ -1,17 +1,19 @@
 package com.gangbean.stockservice.service;
 
+import com.gangbean.stockservice.domain.*;
 import com.gangbean.stockservice.dto.*;
-import com.gangbean.stockservice.domain.Account;
-import com.gangbean.stockservice.domain.Trade;
-import com.gangbean.stockservice.domain.TradeType;
-import com.gangbean.stockservice.exception.AccountNotExistsException;
+import com.gangbean.stockservice.exception.account.AccountNotExistsException;
+import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
 import com.gangbean.stockservice.repository.AccountRepository;
 import com.gangbean.stockservice.repository.TradeRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Transactional(readOnly = true)
+@Service
 public class AccountService {
 
     private final AccountRepository accountRepository;
@@ -23,8 +25,9 @@ public class AccountService {
         this.tradeRepository = tradeRepository;
     }
 
-    public AccountInfoResponse responseOfAccountCreate(AccountSaveRequest account) {
-        return AccountInfoResponse.responseOf(accountRepository.save(account.asAccount()));
+    public AccountInfoResponse responseOfAccountCreate(AccountOpenRequest account, Member member, Bank bank) {
+        String accountNumber = "1";
+        return AccountInfoResponse.responseOf(accountRepository.save(account.asAccount(accountNumber, member, bank)));
     }
 
     public AccountInfoResponse accountFindById(Long id) {
@@ -32,13 +35,18 @@ public class AccountService {
                         .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id)));
     }
 
-    public AccountInfoListResponse allAccounts() {
-        return AccountInfoListResponse.responseOf(accountRepository.findAll());
+    public AccountInfoListResponse allAccounts(Long memberId) {
+        return AccountInfoListResponse.responseOf(accountRepository.findAllByMemberUserId(memberId));
     }
 
-    public AccountDetailInfoResponse accountFindByIdWithTrades(Long id) {
+    public AccountDetailInfoResponse accountFindByIdWithTrades(Long id, Member member) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id));
+
+        if (!account.isOwner(member)) {
+            throw new AccountNotOwnedByLoginUser("해당 계좌의 소유자가 아닙니다: " + id);
+        }
+
         List<Trade> trades = tradeRepository.findAllByAccountId(id);
         return AccountDetailInfoResponse.responseOf(account, trades);
     }
@@ -63,5 +71,17 @@ public class AccountService {
         account.withDraw(amount);
         tradeRepository.save(new Trade(account, TradeType.PAYMENT, tradeAt, amount));
         return AccountPaymentResponse.responseOf(account.balance());
+    }
+
+    @Transactional
+    public void close(Long id, Member loginUser) {
+        Account account = accountRepository.findById(id).orElseThrow(
+                () -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id));
+
+        if (!account.isOwner(loginUser)) {
+            throw new AccountNotOwnedByLoginUser("해당 계좌의 소유자가 아닙니다: " + id);
+        }
+
+        accountRepository.delete(account);
     }
 }

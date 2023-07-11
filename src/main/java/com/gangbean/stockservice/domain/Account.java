@@ -1,7 +1,7 @@
 package com.gangbean.stockservice.domain;
 
-import com.gangbean.stockservice.dto.AccountNotEnoughBalanceException;
-import com.gangbean.stockservice.exception.AccoutCannotDepositBelowZeroAmountException;
+import com.gangbean.stockservice.exception.account.AccountNotEnoughBalanceException;
+import com.gangbean.stockservice.exception.account.AccountCannotDepositBelowZeroAmountException;
 
 import javax.persistence.*;
 
@@ -12,26 +12,25 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String number;
-
+    @ManyToOne
+    private Member member;
     @OneToOne
     private Bank bank;
     private Long balance;
 
     public Account() {}
 
-    public Account(String number, Bank bank, Long balance) {
+    public Account(String number, Member member, Bank bank, Long balance) {
         this.number = number;
+        this.member = member;
         this.bank = bank;
-        this.balance = balance;
+        this.balance = moreThanZero(balance);
     }
 
-    public Account(Long id, String number, Bank bank, Long balance) {
+    public Account(Long id, String number, Member member, Bank bank, Long balance) {
+        this(number, member, bank, balance);
         this.id = id;
-        this.number = number;
-        this.bank = bank;
-        this.balance = balance;
     }
-
 
     public Long id() {
         return id;
@@ -49,9 +48,17 @@ public class Account {
         return balance;
     }
 
+    public boolean isOwner(Member member) {
+        return this.member.equals(member);
+    }
+
+    public Member whose() {
+        return member;
+    }
+
     public void deposit(Long amount) {
         if (amount <= 0L) {
-            throw new AccoutCannotDepositBelowZeroAmountException("계좌는 0원 이하 금액을 입금할 수 없습니다: " + amount);
+            throw new AccountCannotDepositBelowZeroAmountException("계좌는 0원 이하 금액을 입금할 수 없습니다: " + amount);
         }
         balance += amount;
     }
@@ -61,5 +68,23 @@ public class Account {
             throw new AccountNotEnoughBalanceException("계좌 잔액이 부족합니다: " + balance);
         }
         balance -= amount;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                ", member=" + member +
+                ", bank=" + bank +
+                ", balance=" + balance +
+                '}';
+    }
+
+    private Long moreThanZero(Long balance) {
+        if (balance < 0) {
+            throw new AccountNotEnoughBalanceException("0원 미만의 금액은 입금할 수 없습니다: " + balance);
+        }
+        return balance;
     }
 }

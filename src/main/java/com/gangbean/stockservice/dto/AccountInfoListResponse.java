@@ -1,17 +1,21 @@
 package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.Account;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Getter
+@NoArgsConstructor
 public class AccountInfoListResponse {
 
-    private final List<AccountInfoResponse> list;
+    private List<AccountInfoResponse> accounts;
 
-    public AccountInfoListResponse(List<AccountInfoResponse> list) {
-        this.list = list;
+    public AccountInfoListResponse(List<AccountInfoResponse> accounts) {
+        this.accounts = accounts;
     }
 
     public static AccountInfoListResponse responseOf(List<Account> list) {
@@ -21,13 +25,13 @@ public class AccountInfoListResponse {
     }
 
     public List<AccountInfoResponse> accountInfoList() {
-        return list;
+        return accounts;
     }
 
     @Override
     public String toString() {
         return "AccountInfoListResponse{" +
-                "list=" + list +
+                "list=" + accounts +
                 '}';
     }
 
@@ -36,11 +40,11 @@ public class AccountInfoListResponse {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AccountInfoListResponse that = (AccountInfoListResponse) o;
-        return Objects.equals(list, that.list);
+        return Objects.equals(accounts, that.accounts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(list);
+        return Objects.hash(accounts);
     }
 }

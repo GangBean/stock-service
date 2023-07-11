@@ -1,7 +1,7 @@
 package com.gangbean.stockservice.service;
 
 import com.gangbean.stockservice.domain.Member;
-import com.gangbean.stockservice.repository.UserRepository;
+import com.gangbean.stockservice.repository.MemberRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,16 +15,16 @@ import java.util.stream.Collectors;
 
 @Component("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public CustomUserDetailsService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(final String username) {
-        return userRepository.findOneWithAuthoritiesByUsername(username)
+        return memberRepository.findOneWithAuthoritiesByUsername(username)
             .map(user -> createUser(username, user))
             .orElseThrow(() -> new UsernameNotFoundException(username + " -> 데이터베이스에서 찾을 수 없습니다."));
     }

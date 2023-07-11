@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.domain;
 
-import com.gangbean.stockservice.dto.AccountNotEnoughBalanceException;
+import com.gangbean.stockservice.exception.account.AccountNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.TradeReservationCannotAllowBelowZeroAmountException;
 import com.gangbean.stockservice.exception.TradeReservationOnlyAcceptHourlyBasisTimeException;
 

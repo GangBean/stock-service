@@ -3,7 +3,7 @@ package com.gangbean.stockservice.service;
 import com.gangbean.stockservice.domain.Account;
 import com.gangbean.stockservice.domain.TradeReservation;
 import com.gangbean.stockservice.dto.PaymentReservationResponse;
-import com.gangbean.stockservice.exception.AccountNotExistsException;
+import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.repository.AccountRepository;
 import com.gangbean.stockservice.repository.TradeReservationRepository;
 
