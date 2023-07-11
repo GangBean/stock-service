@@ -1,6 +1,7 @@
 package com.gangbean.stockservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gangbean.stockservice.domain.Authority;
 import com.gangbean.stockservice.domain.Member;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+public class MemberDto {
 
     private Long id;
 
@@ -33,10 +34,10 @@ public class UserDto {
 
     private Set<AuthorityDto> authorityDtoSet;
 
-    public static UserDto from(Member member) {
+    public static MemberDto from(Member member) {
         if(member == null) return null;
 
-        return UserDto.builder()
+        return MemberDto.builder()
                 .id(member.getUserId())
                 .username(member.getUsername())
                 .nickname(member.getNickname())
@@ -44,5 +45,14 @@ public class UserDto {
                 .map(authority -> AuthorityDto.builder().authorityName(authority.getAuthorityName()).build())
                 .collect(Collectors.toSet()))
             .build();
+    }
+
+    public Member asMember() {
+        return new Member(id, username, password
+                , nickname, true
+                , authorityDtoSet.stream()
+                    .map(AuthorityDto::getAuthorityName)
+                    .map(Authority::new)
+                    .collect(Collectors.toSet()));
     }
 }

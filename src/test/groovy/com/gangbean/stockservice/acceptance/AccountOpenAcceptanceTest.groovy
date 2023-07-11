@@ -10,7 +10,7 @@ import org.springframework.http.MediaType
 import spock.lang.Specification
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AccountAcceptanceTest extends Specification {
+class AccountOpenAcceptanceTest extends Specification {
 
     @LocalServerPort
     int port
@@ -18,8 +18,24 @@ class AccountAcceptanceTest extends Specification {
     @Autowired
     BankRepository bankRepository
 
+    String token
+
+    String username
+
+    String password
+
     def setup() {
         RestAssured.port = port
+        username = "admin"
+        password = "admin"
+        def loginResponse = RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(Map.of("username", username, "password", password))
+                .when()
+                .post("/api/login")
+                .then().log().all()
+                .extract()
+        token = loginResponse.header("Authorization")
     }
 
     /***
@@ -49,6 +65,7 @@ class AccountAcceptanceTest extends Specification {
         def response = RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(param)
+                .header("Authorization", token)
                 .when()
                 .post("/api/accounts")
 
@@ -81,6 +98,7 @@ class AccountAcceptanceTest extends Specification {
         when:
         def response = RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
                 .body(param)
                 .when()
                 .post("/api/accounts").then().log().all()
@@ -120,6 +138,7 @@ class AccountAcceptanceTest extends Specification {
         when:
         def response = RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
                 .body(param)
                 .when()
                 .post("/api/accounts")

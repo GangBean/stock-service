@@ -3,14 +3,16 @@ package com.gangbean.stockservice.service;
 import com.gangbean.stockservice.domain.*;
 import com.gangbean.stockservice.dto.*;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
+import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
 import com.gangbean.stockservice.repository.AccountRepository;
 import com.gangbean.stockservice.repository.TradeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Transactional(readOnly = true)
 @Service
 public class AccountService {
 
@@ -64,5 +66,17 @@ public class AccountService {
         account.withDraw(amount);
         tradeRepository.save(new Trade(account, TradeType.PAYMENT, tradeAt, amount));
         return AccountPaymentResponse.responseOf(account.balance());
+    }
+
+    @Transactional
+    public void close(Long id, Member loginUser) {
+        Account account = accountRepository.findById(id).orElseThrow(
+                () -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id));
+
+        if (!account.isOwner(loginUser)) {
+            throw new AccountNotOwnedByLoginUser("해당 계좌의 소유자가 아닙니다: " + id);
+        }
+
+        accountRepository.delete(account);
     }
 }

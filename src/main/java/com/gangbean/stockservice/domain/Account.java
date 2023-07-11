@@ -48,6 +48,14 @@ public class Account {
         return balance;
     }
 
+    public boolean isOwner(Member member) {
+        return this.member.equals(member);
+    }
+
+    public Member whose() {
+        return member;
+    }
+
     public void deposit(Long amount) {
         if (amount <= 0L) {
             throw new AccountCannotDepositBelowZeroAmountException("계좌는 0원 이하 금액을 입금할 수 없습니다: " + amount);
@@ -62,14 +70,21 @@ public class Account {
         balance -= amount;
     }
 
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                ", member=" + member +
+                ", bank=" + bank +
+                ", balance=" + balance +
+                '}';
+    }
+
     private Long moreThanZero(Long balance) {
         if (balance < 0) {
             throw new AccountNotEnoughBalanceException("0원 미만의 금액은 입금할 수 없습니다: " + balance);
         }
         return balance;
-    }
-
-    public Member whose() {
-        return member;
     }
 }

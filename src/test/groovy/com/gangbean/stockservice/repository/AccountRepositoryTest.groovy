@@ -33,6 +33,8 @@ class AccountRepositoryTest extends Specification {
 
     def "계좌 리포지토리는 전체 게좌의 목록을 반환합니다"() {
         given:
+        accountRepository.deleteAll()
+
         String number = "000000000";
         Long balance = 1000L
         def saved = accountRepository.save(new Account(number, TEST_MEMBER, bank, balance))
