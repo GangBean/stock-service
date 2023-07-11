@@ -1,12 +1,10 @@
 package com.gangbean.stockservice.service
 
 import com.gangbean.stockservice.domain.*
-import com.gangbean.stockservice.dto.StockBuyRequest
 import com.gangbean.stockservice.dto.StockSellRequest
 import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.AccountStockRepository
 import com.gangbean.stockservice.repository.StockRepository
-import com.gangbean.stockservice.repository.TradeRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -23,17 +21,13 @@ class AccountStockServiceTest extends Specification {
 
     AccountStockRepository accountStockRepository
 
-    TradeRepository tradeRepository
-
     def setup() {
         accountStockRepository = Mock()
         stockRepository = Mock()
         accountRepository = Mock()
-        tradeRepository = Mock()
         accountStockService = new AccountStockService(accountRepository
                 , stockRepository
-                , accountStockRepository
-                , tradeRepository)
+                , accountStockRepository)
     }
 
     def "계좌주식 서비스는 기존에 구매한 양보다 많은 양의 주식판매 요청을 거절합니다"() {
@@ -43,7 +37,7 @@ class AccountStockServiceTest extends Specification {
     def "계좌주식 서비스는 주식판매요청을 받아 주식판매를 진행하고, 기존 구매를 반영한 주식판매결과를 반환해줍니다"() {
         given:
         Long accountId = 1L
-        Account account = new Account(accountId, "0", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000_000L)
+        Account account = new Account(accountId, "0", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000_000L, new HashSet<>())
         Long stockId = 1L
         String stockName = "카카오"
         Long price = 10_000L
@@ -63,7 +57,6 @@ class AccountStockServiceTest extends Specification {
         then:
         1 * stockRepository.findById(stockId) >> Optional.of(stock)
         1 * accountRepository.findById(accountId) >> Optional.of(account)
-        1 * tradeRepository.save(_)
         1 * accountStockRepository.save(_) >> newBuy
         1 * accountStockRepository.findAllByAccountIdAndStockId(accountId, stockId) >> List.of(newBuy, bought)
 
@@ -79,7 +72,7 @@ class AccountStockServiceTest extends Specification {
     def "계좌주식 서비스는 주식구매요청을 받아 주식구매를 진행하고, 기존 구매를 반영한 주식구매결과를 반환해줍니다"() {
         given:
         Long accountId = 1L
-        Account account = new Account(accountId, "0", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000_000L)
+        Account account = new Account(accountId, "0", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000_000L, new HashSet<>())
         Long stockId = 1L
         String stockName = "카카오"
         Long price = 10_000L
@@ -89,7 +82,6 @@ class AccountStockServiceTest extends Specification {
         Long newBuyPrice = 10_050L
         Long boughtAmount = 5L
         Long boughtPrice = 9_000L
-        def request = new StockBuyRequest(newBuyAmount, newBuyPrice)
         def newBuy = new AccountStock(1L, account, stock, StockTradeType.BUYING, newBuyAmount, newBuyPrice)
         def bought = new AccountStock(2L, account, stock, StockTradeType.BUYING, boughtAmount, boughtPrice)
 
@@ -99,7 +91,6 @@ class AccountStockServiceTest extends Specification {
         then:
         1 * stockRepository.findById(stockId) >> Optional.of(stock)
         1 * accountRepository.findById(accountId) >> Optional.of(account)
-        1 * tradeRepository.save(_)
         1 * accountStockRepository.save(_) >> newBuy
         1 * accountStockRepository.findAllByAccountIdAndStockId(accountId, stockId) >> List.of(newBuy, bought)
 

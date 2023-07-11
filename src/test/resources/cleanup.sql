@@ -10,6 +10,7 @@ TRUNCATE TABLE stock_history;
 TRUNCATE TABLE trade;
 TRUNCATE TABLE trade_reservation;
 truncate table user_authority;
+truncate table account_trades;
 
 alter table account alter column id restart with 1;
 alter table account_stock alter column id restart with 1;

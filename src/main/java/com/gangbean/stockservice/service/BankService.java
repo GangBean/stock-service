@@ -4,7 +4,9 @@ import com.gangbean.stockservice.dto.BankInfoResponse;
 import com.gangbean.stockservice.exception.account.BankNotFoundException;
 import com.gangbean.stockservice.repository.BankRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @Service
 public class BankService {
 

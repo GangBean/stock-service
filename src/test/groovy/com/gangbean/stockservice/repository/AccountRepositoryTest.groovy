@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.repository
 
-import com.gangbean.stockservice.SetTestData
+import com.gangbean.stockservice.DataIsolationTest
 import com.gangbean.stockservice.domain.Account
 import com.gangbean.stockservice.domain.Bank
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
-@SetTestData
+@DataIsolationTest
 @DataJpaTest
 class AccountRepositoryTest extends Specification {
 
@@ -38,8 +38,8 @@ class AccountRepositoryTest extends Specification {
         String number = "000000004"
         String number2 = "000000005"
         Long balance = 1000L
-        def saved = accountRepository.save(new Account(number, TEST_MEMBER, bank, balance))
-        def saved2 = accountRepository.save(new Account(number2, TEST_MEMBER, bank, balance))
+        def saved = accountRepository.save(new Account(number, TEST_MEMBER, bank, balance, new HashSet<>()))
+        def saved2 = accountRepository.save(new Account(number2, TEST_MEMBER, bank, balance, new HashSet<>()))
 
         when:
         def list = accountRepository.findAll()
@@ -55,7 +55,7 @@ class AccountRepositoryTest extends Specification {
         given:
         String number = "000000003";
         Long balance = 1000L
-        Account account = new Account(number, TEST_MEMBER, bank, balance)
+        Account account = new Account(number, TEST_MEMBER, bank, balance, new HashSet<>())
         def saved = accountRepository.save(account)
 
         when:
@@ -74,7 +74,7 @@ class AccountRepositoryTest extends Specification {
         given:
         String number = "000000002";
         Long balance = 1000L
-        Account account = new Account(number, TEST_MEMBER, bank, balance)
+        Account account = new Account(number, TEST_MEMBER, bank, balance, new HashSet<>())
         def saved = accountRepository.save(account)
 
         when:
@@ -88,7 +88,7 @@ class AccountRepositoryTest extends Specification {
         given:
         String number = "000000001";
         Long balance = 1000L
-        Account account = new Account(number, TEST_MEMBER, bank, balance)
+        Account account = new Account(number, TEST_MEMBER, bank, balance, new HashSet<>())
 
         when:
         def saved = accountRepository.save(account)

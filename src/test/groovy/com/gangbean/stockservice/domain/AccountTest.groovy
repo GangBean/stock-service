@@ -6,6 +6,8 @@ import com.gangbean.stockservice.exception.account.AccountCannotDepositBelowZero
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.time.LocalDateTime
+
 class AccountTest extends Specification {
 
     def "게좌는 사용자 정보를 요구하고, 본인의 사용자를 알려줍니다"() {
@@ -24,7 +26,7 @@ class AccountTest extends Specification {
         Long balance = 1000L
 
         when:
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance)
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
 
         then:
         noExceptionThrown()
@@ -45,10 +47,10 @@ class AccountTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1000L
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance)
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
 
         when:
-        account.withDraw(amount)
+        account.withDraw(LocalDateTime.now(), amount)
 
         then:
         def error = thrown(AccountNotEnoughBalanceException.class)
@@ -74,12 +76,12 @@ class AccountTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1000L
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance)
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
 
         Long amount = 1000L
 
         when:
-        account.withDraw(amount)
+        account.withDraw(LocalDateTime.now(), amount)
 
         then:
         account.balance() == 0
@@ -100,10 +102,10 @@ class AccountTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance)
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
 
         when:
-        account.deposit(amount)
+        account.deposit(LocalDateTime.now(), amount)
 
         then:
         def error = thrown(AccountCannotDepositBelowZeroAmountException.class)
@@ -129,12 +131,12 @@ class AccountTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance)
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
 
         Long amount = 1_000L
 
         when:
-        account.deposit(amount)
+        account.deposit(LocalDateTime.now(), amount)
 
         then:
         account.balance() == 2_000L
@@ -157,7 +159,7 @@ class AccountTest extends Specification {
         Long balance = 1000L
 
         when:
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance)
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
 
         then:
         verifyAll {
@@ -184,7 +186,7 @@ class AccountTest extends Specification {
         Long balance = 1000L
 
         when:
-        new Account(number, member, new Bank(bankId, bankName, bankNumber), balance)
+        new Account(number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
 
         then:
         noExceptionThrown()

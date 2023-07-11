@@ -14,22 +14,18 @@ public class Trade {
     private Long amount;
     @Enumerated(EnumType.STRING)
     private TradeType type;
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    private Account account;
 
     public Trade() {
     }
 
-    public Trade(Account account, TradeType type, LocalDateTime dateTime, Long amount) {
-        this.account = account;
+    public Trade(TradeType type, LocalDateTime dateTime, Long amount) {
         this.type = type;
         this.dateTime = dateTime;
         this.amount = amount;
     }
 
-    public Trade(Long id, Account account, TradeType type, LocalDateTime dateTime, Long amount) {
+    public Trade(Long id, TradeType type, LocalDateTime dateTime, Long amount) {
         this.id = id;
-        this.account = account;
         this.type = type;
         this.dateTime = dateTime;
         this.amount = amount;
@@ -47,12 +43,18 @@ public class Trade {
         return type;
     }
 
-    public Account fromWhat() {
-        return account;
-    }
-
     public Long id() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Trade{" +
+                "id=" + id +
+                ", dateTime=" + dateTime +
+                ", amount=" + amount +
+                ", type=" + type +
+                '}';
     }
 
     @Override

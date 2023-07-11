@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.acceptance
 
-import com.gangbean.stockservice.SetTestData
+import com.gangbean.stockservice.SpringBootAcceptanceTest
 import com.gangbean.stockservice.jwt.TokenProvider
 import com.gangbean.stockservice.repository.AccountRepository
 import io.restassured.RestAssured
@@ -11,8 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import spock.lang.Specification
 
-@SetTestData
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootAcceptanceTest
 class AccountDetailAcceptanceTest extends Specification {
     @LocalServerPort
     int port

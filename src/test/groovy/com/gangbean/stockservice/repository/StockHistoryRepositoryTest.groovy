@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.repository
 
-import com.gangbean.stockservice.SetTestData
+import com.gangbean.stockservice.DataIsolationTest
 import com.gangbean.stockservice.domain.Stock
 import com.gangbean.stockservice.domain.StockHistory
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-@SetTestData
+@DataIsolationTest
 @DataJpaTest
 class StockHistoryRepositoryTest extends Specification {
 

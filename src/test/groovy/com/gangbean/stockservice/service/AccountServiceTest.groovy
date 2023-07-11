@@ -1,17 +1,14 @@
 package com.gangbean.stockservice.service
 
-
 import com.gangbean.stockservice.domain.Account
 import com.gangbean.stockservice.domain.Bank
 import com.gangbean.stockservice.domain.Trade
 import com.gangbean.stockservice.domain.TradeType
 import com.gangbean.stockservice.dto.AccountInfoListResponse
 import com.gangbean.stockservice.dto.AccountInfoResponse
-import com.gangbean.stockservice.dto.AccountOpenRequest
 import com.gangbean.stockservice.dto.TradeInfoResponse
 import com.gangbean.stockservice.exception.account.AccountNotExistsException
 import com.gangbean.stockservice.repository.AccountRepository
-import com.gangbean.stockservice.repository.TradeRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -24,12 +21,9 @@ class AccountServiceTest extends Specification {
 
     private AccountRepository accountRepository
 
-    private TradeRepository tradeRepository
-
     def setup() {
         accountRepository = Mock()
-        tradeRepository = Mock()
-        accountService = new AccountService(accountRepository, tradeRepository)
+        accountService = new AccountService(accountRepository)
     }
 
     def "계좌 서비스는 결제계좌 ID와 금액을 입력하면 결제를 진행하고, 거래정보를 만들고, 계좌잔액을 돌려줍니다"() {
@@ -39,7 +33,7 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
 
         and:
         def amount = 100L
@@ -50,8 +44,6 @@ class AccountServiceTest extends Specification {
 
         then:
         1 * accountRepository.findById(id) >> Optional.of(account)
-        1 * tradeRepository.save(new Trade(account, TradeType.PAYMENT, tradeAt, amount))
-
         verifyAll {
             response.balance() == 900L
         }
@@ -64,12 +56,12 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
 
         and:
         Long toAccountId = 2L
         String toAccountNumber = "1111"
-        Account toAccount = new Account(toAccountId, toAccountNumber, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
+        Account toAccount = new Account(toAccountId, toAccountNumber, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
 
         and:
         def amount = 100L
@@ -81,8 +73,6 @@ class AccountServiceTest extends Specification {
         then:
         1 * accountRepository.findById(id) >> Optional.of(account)
         1 * accountRepository.findByNumber(toAccountNumber) >> Optional.of(toAccount)
-        1 * tradeRepository.save(new Trade(account, TradeType.WITHDRAW, tradeAt, amount))
-        1 * tradeRepository.save(new Trade(toAccount, TradeType.DEPOSIT, tradeAt, amount))
 
         verifyAll {
             response.balance() == 900L
@@ -96,20 +86,20 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
 
         def tradeId = 1L
         def tradeType = TradeType.DEPOSIT
         def amount = 1_000L
         def tradeAt = LocalDateTime.of(2023,07,05,14,20)
-        def trade = new Trade(tradeId, account, tradeType, tradeAt, amount)
+        def trade = new Trade(tradeId, tradeType, tradeAt, amount)
+
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(Set.of(trade)))
 
         when:
-        def response = accountService.accountFindByIdWithTrades(id, TEST_MEMBER)
+        def response = accountService.responseOfAccountDetail(id, TEST_MEMBER)
 
         then:
         1 * accountRepository.findById(id) >> Optional.of(account)
-        1 * tradeRepository.findAllByAccountId(id) >> List.of(trade)
 
         verifyAll {
             response.id() == id
@@ -128,8 +118,8 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
-        Account account2 = new Account(2L, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
+        Account account2 = new Account(2L, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
 
         when:
         AccountInfoListResponse response = accountService.allAccounts(TEST_MEMBER.getUserId())
@@ -164,7 +154,7 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
 
         when:
         AccountInfoResponse response = accountService.accountFindById(id)
@@ -188,10 +178,10 @@ class AccountServiceTest extends Specification {
         Long bankNumber = 1L
         Long balance = 1_000L
         def bank = new Bank(bankName, bankNumber)
-        Account account = new Account(1L, number, TEST_MEMBER, bank, balance)
+        Account account = new Account(1L, number, TEST_MEMBER, bank, balance, new HashSet<>())
 
         when:
-        def response = accountService.responseOfAccountCreate(AccountOpenRequest.requestOf(account), TEST_MEMBER, bank)
+        def response = accountService.responseOfAccountCreate(TEST_MEMBER, bank, balance)
 
         then:
         1 * accountRepository.save(_) >> account

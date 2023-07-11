@@ -1,7 +1,6 @@
 package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.Account;
-import com.gangbean.stockservice.domain.Trade;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,13 +28,13 @@ public class AccountDetailInfoResponse {
         this.trades = trades;
     }
 
-    public static AccountDetailInfoResponse responseOf(Account account, List<Trade> trades) {
+    public static AccountDetailInfoResponse responseOf(Account account) {
         return new AccountDetailInfoResponse(account.id(),
                 account.number(),
                 account.bank().name(),
                 account.bank().number(),
                 account.balance(),
-                trades.stream().map(TradeInfoResponse::responseOf).collect(Collectors.toList()));
+                account.trades().stream().map(TradeInfoResponse::responseOf).collect(Collectors.toList()));
     }
 
     public Long id() {

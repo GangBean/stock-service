@@ -1,12 +1,12 @@
 package com.gangbean.stockservice.repository
 
-import com.gangbean.stockservice.SetTestData
+import com.gangbean.stockservice.DataIsolationTest
 import com.gangbean.stockservice.domain.Bank
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import spock.lang.Specification
 
-@SetTestData
+@DataIsolationTest
 @DataJpaTest
 class BankRepositoryTest extends Specification {
 

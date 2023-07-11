@@ -1,18 +1,16 @@
 package com.gangbean.stockservice.acceptance
 
-import com.gangbean.stockservice.SetTestData
+import com.gangbean.stockservice.SpringBootAcceptanceTest
 import com.gangbean.stockservice.jwt.TokenProvider
 import com.gangbean.stockservice.repository.AccountRepository
 import io.restassured.RestAssured
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import spock.lang.Specification
 
-@SetTestData
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootAcceptanceTest
 class AccountCloseAcceptanceTest extends Specification {
 
     @LocalServerPort
@@ -22,7 +20,7 @@ class AccountCloseAcceptanceTest extends Specification {
     AccountRepository accountRepository
 
     @Autowired
-    TokenProvider tokenProvider
+    TokenProvider tokenProvider0
 
     String token
 
@@ -55,7 +53,7 @@ class AccountCloseAcceptanceTest extends Specification {
         def accountId = 3L
 
         and:
-        accountRepository.findById(accountId).isEmpty()
+        assert accountRepository.findById(accountId).isEmpty()
 
         when:
         def response = RestAssured.given().log().all()
