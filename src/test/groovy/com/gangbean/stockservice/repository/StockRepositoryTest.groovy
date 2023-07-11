@@ -1,11 +1,12 @@
 package com.gangbean.stockservice.repository
 
+import com.gangbean.stockservice.SetTestData
 import com.gangbean.stockservice.domain.Stock
-import com.gangbean.stockservice.repository.StockRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import spock.lang.Specification
 
+@SetTestData
 @DataJpaTest
 class StockRepositoryTest extends Specification {
 
@@ -35,6 +36,8 @@ class StockRepositoryTest extends Specification {
 
     def "주식 저장소는 저장된 주식전체를 돌려줍니다"() {
         given:
+        stockRepository.deleteAll()
+
         String stockName = "카카오"
         Long price = 10_000L
         Long balance = 100L

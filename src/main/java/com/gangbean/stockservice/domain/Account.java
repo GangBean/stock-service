@@ -13,13 +13,13 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String number;
     @ManyToOne
     private Member member;
     @OneToOne
     private Bank bank;
     private Long balance;
-
     public Account() {}
 
     public Account(String number, Member member, Bank bank, Long balance) {

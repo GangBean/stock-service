@@ -50,7 +50,7 @@ class AccountStockServiceTest extends Specification {
         Long balance = 100L
         Stock stock = new Stock(stockId, stockName, price, balance)
         Long sellAmount = 5L
-        Long sellPrice = 10_050L
+        Long sellPrice = 9_950L
         Long boughtAmount = 15L
         Long boughtPrice = 9_000L
         def request = new StockSellRequest(stockId, accountId, sellAmount, sellPrice)
@@ -70,9 +70,9 @@ class AccountStockServiceTest extends Specification {
         verifyAll {
             response.getStockId() == stockId
             response.getAmount() == sellAmount
-            account.balance() == 1_050_250L
+            account.balance() == 1_049_750L
             stock.howMany() == 105L
-            response.getAveragePrice() == 8475L
+            response.getAveragePrice() == 8_525L
         }
     }
 
@@ -89,12 +89,12 @@ class AccountStockServiceTest extends Specification {
         Long newBuyPrice = 10_050L
         Long boughtAmount = 5L
         Long boughtPrice = 9_000L
-        def request = new StockBuyRequest(stockId, accountId, newBuyAmount, newBuyPrice)
+        def request = new StockBuyRequest(newBuyAmount, newBuyPrice)
         def newBuy = new AccountStock(1L, account, stock, StockTradeType.BUYING, newBuyAmount, newBuyPrice)
         def bought = new AccountStock(2L, account, stock, StockTradeType.BUYING, boughtAmount, boughtPrice)
 
         when:
-        def response = accountStockService.responseOfBuy(request, LocalDateTime.now())
+        def response = accountStockService.responseOfBuy(TEST_MEMBER, accountId, stockId, newBuyAmount, newBuyPrice, LocalDateTime.now())
 
         then:
         1 * stockRepository.findById(stockId) >> Optional.of(stock)

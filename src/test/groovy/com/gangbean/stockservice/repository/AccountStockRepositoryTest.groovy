@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.repository
 
+import com.gangbean.stockservice.SetTestData
 import com.gangbean.stockservice.domain.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -7,6 +8,7 @@ import spock.lang.Specification
 
 import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
+@SetTestData
 @DataJpaTest
 class AccountStockRepositoryTest extends Specification {
 

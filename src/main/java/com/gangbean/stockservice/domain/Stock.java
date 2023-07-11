@@ -2,6 +2,8 @@ package com.gangbean.stockservice.domain;
 
 import com.gangbean.stockservice.exception.StockAmountNotValidException;
 import com.gangbean.stockservice.exception.StockNotEnoughBalanceException;
+import com.gangbean.stockservice.exception.stock.StockBuyForOverCurrentPriceException;
+import com.gangbean.stockservice.exception.stock.StockSellForBelowCurrentPriceException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -65,14 +67,20 @@ public class Stock {
         return Objects.hash(id);
     }
 
-    public void sell(Long amount) {
+    public void sell(Long price, Long amount) {
+        if (this.price > price) {
+            throw new StockSellForBelowCurrentPriceException("주식의 현재가격보다 낮은 가격으로 구매할 수 없습니다: " + this.price);
+        }
         if (balance < amount) {
             throw new StockNotEnoughBalanceException("주식의 잔량이 부족합니다: " + balance);
         }
         balance -= amount;
     }
 
-    public void buy(Long amount) {
+    public void buy(Long price, Long amount) {
+        if (this.price < price) {
+            throw new StockBuyForOverCurrentPriceException("주식의 현재가격보다 높은 가격으로 판매할 수 없습니다: " + this.price);
+        }
         if (amount <= 0) {
             throw new StockAmountNotValidException("1개 이상만 구매가능합니다: " + amount);
         }

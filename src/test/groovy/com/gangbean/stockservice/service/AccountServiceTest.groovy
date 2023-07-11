@@ -76,7 +76,7 @@ class AccountServiceTest extends Specification {
         def tradeAt = LocalDateTime.now()
 
         when:
-        def response = accountService.responseOfTransfer(id, toAccountNumber, tradeAt, amount)
+        def response = accountService.responseOfTransfer(TEST_MEMBER, id, toAccountNumber, tradeAt, amount)
 
         then:
         1 * accountRepository.findById(id) >> Optional.of(account)
@@ -105,7 +105,7 @@ class AccountServiceTest extends Specification {
         def trade = new Trade(tradeId, account, tradeType, tradeAt, amount)
 
         when:
-        def response = accountService.accountFindByIdWithTrades(id, member)
+        def response = accountService.accountFindByIdWithTrades(id, TEST_MEMBER)
 
         then:
         1 * accountRepository.findById(id) >> Optional.of(account)
@@ -132,10 +132,10 @@ class AccountServiceTest extends Specification {
         Account account2 = new Account(2L, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance)
 
         when:
-        AccountInfoListResponse response = accountService.allAccounts()
+        AccountInfoListResponse response = accountService.allAccounts(TEST_MEMBER.getUserId())
 
         then:
-        1 * accountRepository.findAll() >> List.of(account, account2)
+        1 * accountRepository.findAllByMemberUserId(TEST_MEMBER.getUserId()) >> List.of(account, account2)
 
         verifyAll {
             response.accountInfoList().size() == 2

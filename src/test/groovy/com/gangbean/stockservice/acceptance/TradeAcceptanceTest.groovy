@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.acceptance
 
-
+import com.gangbean.stockservice.SetTestData
 import com.gangbean.stockservice.repository.AccountRepository
 import io.restassured.RestAssured
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import spock.lang.Specification
 
+@SetTestData
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TradeAcceptanceTest extends Specification {
 
@@ -82,10 +83,12 @@ class TradeAcceptanceTest extends Specification {
                 .then().log().all()
                 .extract()
 
+        System.out.println(accountRepository.findAll())
+
         then:
         verifyAll {
             response.statusCode() == HttpStatus.CREATED.value()
-            accountRepository.findById(account.get().id()).get().balance() == 900L
+            accountRepository.findById(account.get().id()).get().balance() == 400
             accountRepository.findById(receiveAccount.get().id()).get().balance() == 1_100L
         }
     }

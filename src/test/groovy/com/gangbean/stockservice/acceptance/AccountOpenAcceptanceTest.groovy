@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.acceptance
 
+import com.gangbean.stockservice.SetTestData
 import com.gangbean.stockservice.repository.BankRepository
 import io.restassured.RestAssured
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import spock.lang.Specification
 
+@SetTestData
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AccountOpenAcceptanceTest extends Specification {
 

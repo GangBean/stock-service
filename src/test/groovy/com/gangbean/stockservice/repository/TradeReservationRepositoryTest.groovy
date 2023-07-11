@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.repository
 
+import com.gangbean.stockservice.SetTestData
 import com.gangbean.stockservice.domain.Account
 import com.gangbean.stockservice.domain.Bank
 import com.gangbean.stockservice.domain.TradeReservation
@@ -11,6 +12,7 @@ import java.time.LocalDateTime
 
 import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
+@SetTestData
 @DataJpaTest
 class TradeReservationRepositoryTest extends Specification {
 

@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.repository
 
+import com.gangbean.stockservice.SetTestData
 import com.gangbean.stockservice.domain.Account
 import com.gangbean.stockservice.domain.Trade
 import com.gangbean.stockservice.domain.TradeType
@@ -11,8 +12,9 @@ import spock.lang.Specification
 import java.time.LocalDateTime
 
 import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
-import static com.gangbean.stockservice.domain.TradeTest.*
+import static com.gangbean.stockservice.domain.TradeTest.TEST_ACCOUNT
 
+@SetTestData
 @DataJpaTest
 class TradeRepositoryTest extends Specification {
 

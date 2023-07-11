@@ -14,7 +14,7 @@ public class Trade {
     private Long amount;
     @Enumerated(EnumType.STRING)
     private TradeType type;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Account account;
 
     public Trade() {
