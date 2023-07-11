@@ -4,6 +4,7 @@ import com.gangbean.stockservice.domain.*;
 import com.gangbean.stockservice.dto.*;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
+import com.gangbean.stockservice.exception.account.TradeBetweenSameAccountsException;
 import com.gangbean.stockservice.repository.AccountRepository;
 import com.gangbean.stockservice.repository.TradeRepository;
 import org.springframework.stereotype.Service;
@@ -52,15 +53,24 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountTransferResponse responseOfTransfer(Long id, String toAccountNumber, LocalDateTime tradeAt, Long amount) {
-        Account fromAccount = accountRepository.findById(id)
-                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id));
+    public AccountTransferResponse responseOfTransfer(Member member, Long accountId, String toAccountNumber, LocalDateTime tradeAt, Long amount) {
+        Account fromAccount = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + accountId));
+        if (!fromAccount.isOwner(member)) {
+            throw new AccountNotOwnedByLoginUser("본인의 계좌가 아닙니다: " + accountId);
+        }
+
         Account toAccount = accountRepository.findByNumber(toAccountNumber)
                 .orElseThrow(() -> new AccountNotExistsException("입력된 계좌번호에 해당하는 계좌가 존재하지 않습니다: " + toAccountNumber));
+        if (fromAccount.equals(toAccount)) {
+            throw new TradeBetweenSameAccountsException("송금계좌와 수신계좌가 동일할 수 없습니다.");
+        }
+
         fromAccount.withDraw(amount);
         toAccount.deposit(amount);
         tradeRepository.save(new Trade(fromAccount, TradeType.WITHDRAW, tradeAt, amount));
         tradeRepository.save(new Trade(toAccount, TradeType.DEPOSIT, tradeAt, amount));
+
         return AccountTransferResponse.responseOf(fromAccount.balance());
     }
 

@@ -1,9 +1,11 @@
 package com.gangbean.stockservice.domain;
 
-import com.gangbean.stockservice.exception.account.AccountNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.account.AccountCannotDepositBelowZeroAmountException;
+import com.gangbean.stockservice.exception.account.AccountNotEnoughBalanceException;
+import com.gangbean.stockservice.exception.account.AccountTransferBelowZeroAmountException;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Account {
@@ -64,6 +66,9 @@ public class Account {
     }
 
     public void withDraw(Long amount) {
+        if (amount <= 0L) {
+            throw new AccountTransferBelowZeroAmountException("계좌는 0원 이하의 금액은 송금할 수 없습니다: " + amount);
+        }
         if (amount > balance) {
             throw new AccountNotEnoughBalanceException("계좌 잔액이 부족합니다: " + balance);
         }
@@ -79,6 +84,19 @@ public class Account {
                 ", bank=" + bank +
                 ", balance=" + balance +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return Objects.equals(id, account.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     private Long moreThanZero(Long balance) {

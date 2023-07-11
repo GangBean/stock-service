@@ -1,8 +1,15 @@
 package com.gangbean.stockservice.dto;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
 public class AccountTransferResponse {
 
-    private final Long balance;
+    private Long id;
+
+    private Long balance;
 
     public AccountTransferResponse(Long balance) {
         this.balance = balance;
