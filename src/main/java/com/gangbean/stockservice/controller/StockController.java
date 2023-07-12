@@ -11,7 +11,7 @@ import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
 import com.gangbean.stockservice.exception.account.AccountServiceException;
 import com.gangbean.stockservice.exception.stock.StockSellForBelowCurrentPriceException;
-import com.gangbean.stockservice.service.AccountStockTradeService;
+import com.gangbean.stockservice.service.AccountStockService;
 import com.gangbean.stockservice.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +28,18 @@ import java.time.LocalDateTime;
 public class StockController {
 
     private final MemberService memberService;
-    private final AccountStockTradeService accountStockTradeService;
+    private final AccountStockService accountStockService;
 
-    public StockController(MemberService memberService, AccountStockTradeService accountStockTradeService) {
+    public StockController(MemberService memberService, AccountStockService accountStockService) {
         this.memberService = memberService;
-        this.accountStockTradeService = accountStockTradeService;
+        this.accountStockService = accountStockService;
     }
 
     @PostMapping("/accounts/{accountId}/stocks/{stockId}")
     public ResponseEntity<StockBuyResponse> buyStock(@PathVariable Long accountId, @PathVariable Long stockId
             , @AuthenticationPrincipal User loginUser, @RequestBody StockBuyRequest request) {
         Member member = memberService.memberOf(loginUser.getUsername()).asMember();
-        StockBuyResponse response = accountStockTradeService.responseOfBuy(member, accountId
+        StockBuyResponse response = accountStockService.responseOfBuy(member, accountId
                 , stockId, request.getAmount(), request.getPrice(), LocalDateTime.now());
         return ResponseEntity.created(URI.create(String.format("/api/accounts/%d/stocks/%d", accountId, stockId))).body(response);
     }

@@ -9,6 +9,7 @@ import com.gangbean.stockservice.repository.TradeReservationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Transactional(readOnly = true)
@@ -25,7 +26,7 @@ public class TradeReservationService {
     }
 
     @Transactional
-    public PaymentReservationResponse responseOfPaymentReservation(Long accountId, LocalDateTime tradeAt, Long amount) {
+    public PaymentReservationResponse responseOfPaymentReservation(Long accountId, LocalDateTime tradeAt, BigDecimal amount) {
         Account fromAccount = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + accountId));
 

@@ -4,6 +4,7 @@ import com.gangbean.stockservice.domain.Account;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -16,10 +17,10 @@ public class AccountDetailInfoResponse {
     private String accountNumber;
     private String bankName;
     private Long bankNumber;
-    private Long balance;
+    private BigDecimal balance;
     private List<TradeInfoResponse> trades;
 
-    public AccountDetailInfoResponse(Long id, String accountNumber, String bankName, Long bankNumber, Long balance, List<TradeInfoResponse> trades) {
+    public AccountDetailInfoResponse(Long id, String accountNumber, String bankName, Long bankNumber, BigDecimal balance, List<TradeInfoResponse> trades) {
         this.id = id;
         this.accountNumber = accountNumber;
         this.bankName = bankName;
@@ -53,7 +54,7 @@ public class AccountDetailInfoResponse {
         return bankNumber;
     }
 
-    public Long balance() {
+    public BigDecimal balance() {
         return balance;
     }
 

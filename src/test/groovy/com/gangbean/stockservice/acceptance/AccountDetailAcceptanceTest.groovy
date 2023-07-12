@@ -48,7 +48,7 @@ class AccountDetailAcceptanceTest extends Specification {
      * when 계좌 상세 조회 요청을 하면
      * then 404 Not found 응답이 반환됩니다.
      */
-    def detailOfNotExists() {
+    def "계좌상세조회_미존재계좌"() {
         given:
         def accountId = 3L
 
@@ -78,7 +78,7 @@ class AccountDetailAcceptanceTest extends Specification {
      * when 계좌 상세 조회 요청을 하면
      * then 403 Forbidden 응답이 반환됩나다.
      */
-    def detailOfOthers() {
+    def "계좌상세조회_타인계좌"() {
         given:
         def accountId = 2L
 
@@ -100,7 +100,7 @@ class AccountDetailAcceptanceTest extends Specification {
         then:
         verifyAll {
             response.statusCode() == HttpStatus.FORBIDDEN.value()
-            response.jsonPath().getString("message") == "해당 계좌의 소유자가 아닙니다: " + accountId
+            response.jsonPath().getString("message") == "본인의 계좌가 아닙니다: " + accountId
         }
     }
 
@@ -110,7 +110,7 @@ class AccountDetailAcceptanceTest extends Specification {
      * when 계좌 상세 조회 요청을 하면
      * then 200 Ok 응답과 계좌 거래내역을 포함한 상세내역이 반환됩니다.
      */
-    def detailOfMine() {
+    def "계좌상세조회_정상"() {
         given:
         def accountId = 1L
 
@@ -135,7 +135,7 @@ class AccountDetailAcceptanceTest extends Specification {
             response.statusCode() == HttpStatus.OK.value()
             response.jsonPath().getString("accountNumber") == "1234"
             response.jsonPath().getString("bankName") == "은행"
-            response.jsonPath().getLong("balance") == 1_000L
+            new BigDecimal(response.jsonPath().getString("balance")) == 1_000
             response.jsonPath().getList("trades.id", Long.class).containsAll(1L, 2L, 3L)
         }
     }

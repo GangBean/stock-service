@@ -2,9 +2,11 @@ package com.gangbean.stockservice.domain;
 
 import com.gangbean.stockservice.exception.account.AccountCannotDepositBelowZeroAmountException;
 import com.gangbean.stockservice.exception.account.AccountNotEnoughBalanceException;
+import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
 import com.gangbean.stockservice.exception.account.AccountTransferBelowZeroAmountException;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -21,13 +23,13 @@ public class Account {
     private Member member;
     @OneToOne
     private Bank bank;
-    private Long balance;
+    private BigDecimal balance;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Trade> trades;
 
     public Account() {}
 
-    public Account(String number, Member member, Bank bank, Long balance, Set<Trade> trades) {
+    public Account(String number, Member member, Bank bank, BigDecimal balance, Set<Trade> trades) {
         this.number = number;
         this.member = member;
         this.bank = bank;
@@ -35,7 +37,7 @@ public class Account {
         this.trades = trades;
     }
 
-    public Account(Long id, String number, Member member, Bank bank, Long balance, Set<Trade> trades) {
+    public Account(Long id, String number, Member member, Bank bank, BigDecimal balance, Set<Trade> trades) {
         this(number, member, bank, balance, trades);
         this.id = id;
     }
@@ -52,12 +54,15 @@ public class Account {
         return bank;
     }
 
-    public Long balance() {
+    public BigDecimal balance() {
         return balance;
     }
 
-    public boolean isOwner(Member member) {
-        return this.member.equals(member);
+    public Account ownedBy(Member member) {
+        if (!isOwner(member)) {
+            throw new AccountNotOwnedByLoginUser("본인의 계좌가 아닙니다: " + id);
+        }
+        return this;
     }
 
     public Member whose() {
@@ -68,33 +73,33 @@ public class Account {
         return trades;
     }
 
-    public void deposit(LocalDateTime tradeAt, Long amount) {
-        if (amount <= 0L) {
+    public void deposit(LocalDateTime tradeAt, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new AccountCannotDepositBelowZeroAmountException("계좌는 0원 이하 금액을 입금할 수 없습니다: " + amount);
         }
-        balance += amount;
+        balance = balance.add(amount);
         trades.add(new Trade(TradeType.DEPOSIT, tradeAt, amount));
     }
 
-    public void withDraw(LocalDateTime tradeAt, Long amount) {
-        if (amount <= 0L) {
+    public void withDraw(LocalDateTime tradeAt, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new AccountTransferBelowZeroAmountException("계좌는 0원 이하의 금액은 송금할 수 없습니다: " + amount);
         }
-        if (amount > balance) {
+        if (amount.compareTo(balance) > 0) {
             throw new AccountNotEnoughBalanceException("계좌 잔액이 부족합니다: " + balance);
         }
-        balance -= amount;
+        balance = balance.subtract(amount);
         trades.add(new Trade(TradeType.WITHDRAW, tradeAt, amount));
     }
 
-    public void pay(LocalDateTime tradeAt, Long amount) {
-        if (amount <= 0L) {
+    public void pay(LocalDateTime tradeAt, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new AccountTransferBelowZeroAmountException("계좌는 0원 이하의 금액은 결제할 수 없습니다: " + amount);
         }
-        if (amount > balance) {
+        if (amount.compareTo(balance) > 0) {
             throw new AccountNotEnoughBalanceException("계좌 잔액이 부족합니다: " + balance);
         }
-        balance -= amount;
+        balance = balance.subtract(amount);
         trades.add(new Trade(TradeType.PAYMENT, tradeAt, amount));
     }
 
@@ -123,8 +128,12 @@ public class Account {
         return Objects.hash(id);
     }
 
-    private Long moreThanZero(Long balance) {
-        if (balance < 0) {
+    private boolean isOwner(Member member) {
+        return this.member.equals(member);
+    }
+
+    private BigDecimal moreThanZero(BigDecimal balance) {
+        if (balance.compareTo(BigDecimal.ZERO) < 0) {
             throw new AccountNotEnoughBalanceException("0원 미만의 금액은 입금할 수 없습니다: " + balance);
         }
         return balance;

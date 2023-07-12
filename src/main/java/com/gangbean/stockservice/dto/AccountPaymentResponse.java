@@ -1,19 +1,21 @@
 package com.gangbean.stockservice.dto;
 
+import java.math.BigDecimal;
+
 public class AccountPaymentResponse {
 
 
-    private final Long balance;
+    private final BigDecimal balance;
 
-    public AccountPaymentResponse(Long balance) {
+    public AccountPaymentResponse(BigDecimal balance) {
         this.balance = balance;
     }
 
-    public static AccountPaymentResponse responseOf(Long balance) {
+    public static AccountPaymentResponse responseOf(BigDecimal balance) {
         return new AccountPaymentResponse(balance);
     }
 
-    public Long balance() {
+    public BigDecimal balance() {
         return balance;
     }
 }

@@ -5,6 +5,7 @@ import com.gangbean.stockservice.exception.TradeReservationCannotAllowBelowZeroA
 import com.gangbean.stockservice.exception.TradeReservationOnlyAcceptHourlyBasisTimeException;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
@@ -20,17 +21,17 @@ public class TradeReservation {
 
     private LocalDateTime tradeAt;
 
-    private Long amount;
+    private BigDecimal amount;
 
     public TradeReservation() {}
 
-    public TradeReservation(Account account, LocalDateTime tradeAt, Long amount) {
+    public TradeReservation(Account account, LocalDateTime tradeAt, BigDecimal amount) {
         this.account = enoughBalanced(account, amount);
         this.tradeAt = hourlyBasis(tradeAt);
         this.amount = aboveZero(amount);
     }
 
-    public TradeReservation(Long id, Account account, LocalDateTime tradeAt, Long amount) {
+    public TradeReservation(Long id, Account account, LocalDateTime tradeAt, BigDecimal amount) {
         this(account, tradeAt, amount);
         this.id = id;
     }
@@ -39,7 +40,7 @@ public class TradeReservation {
         return account;
     }
 
-    public Long howMuch() {
+    public BigDecimal howMuch() {
         return amount;
     }
 
@@ -51,15 +52,15 @@ public class TradeReservation {
         return id;
     }
 
-    private Long aboveZero(Long amount) {
+    private BigDecimal aboveZero(BigDecimal amount) {
         if (belowBasis(amount)) {
             throw new TradeReservationCannotAllowBelowZeroAmountException("0이하의 금액은 예약불가합니다: " + amount);
         }
         return amount;
     }
 
-    private boolean belowBasis(Long amount) {
-        return amount <= 0L;
+    private boolean belowBasis(BigDecimal amount) {
+        return amount.compareTo(BigDecimal.ZERO) <= 0;
     }
 
     private LocalDateTime hourlyBasis(LocalDateTime tradeAt) {
@@ -73,8 +74,8 @@ public class TradeReservation {
         return tradeAt.truncatedTo(ChronoUnit.HOURS) != tradeAt;
     }
 
-    private Account enoughBalanced(Account account, Long amount) {
-        if (account.balance() < amount) {
+    private Account enoughBalanced(Account account, BigDecimal amount) {
+        if (account.balance().compareTo(amount) < 0) {
             throw new AccountNotEnoughBalanceException("계좌잔액을 초과하는 금액은 예약불가합니다: " + account.balance());
         }
         return account;

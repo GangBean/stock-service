@@ -3,6 +3,7 @@ package com.gangbean.stockservice.acceptance
 import com.gangbean.stockservice.SpringBootAcceptanceTest
 import com.gangbean.stockservice.jwt.TokenProvider
 import com.gangbean.stockservice.repository.AccountRepository
+import com.gangbean.stockservice.repository.AccountStockRepository
 import com.gangbean.stockservice.repository.StockRepository
 import io.restassured.RestAssured
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +26,9 @@ class StockBuyingAcceptanceTest extends Specification {
 
     @Autowired
     TokenProvider tokenProvider
+
+    @Autowired
+    AccountStockRepository accountStockRepository
 
     String token
 
@@ -55,7 +59,7 @@ class StockBuyingAcceptanceTest extends Specification {
      * and 구매가격이 주식의 현재 가격이상이고
      * and 계좌잔액이 충분하면
      * when 주식구매요청시
-     * then 201 Created 응답이 구매한 주식의 ID, 잔여량, 평균금액과 함께 반환되고
+     * then 201 Created 응답이 기존에 구매한 주식의 ID, 잔여량, 평균금액과 함께 반환되고
      * then 주식의 잔여량이 감소하고
      * then 계좌주식의 잔여량이 늘어납니다.
      */
@@ -85,6 +89,9 @@ class StockBuyingAcceptanceTest extends Specification {
 
         and:
         assert account.get().balance() >= price * amount
+
+        and:
+        assert accountStockRepository.findByAccountIdAndStockId(accountId, stockId).isEmpty()
 
         when:
         def response = RestAssured.given().log().all()

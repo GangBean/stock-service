@@ -4,6 +4,7 @@ import com.gangbean.stockservice.domain.Account;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 
@@ -15,9 +16,9 @@ public class AccountInfoResponse {
     private String accountNumber;
     private String bankName;
     private Long bankNumber;
-    private Long balance;
+    private BigDecimal balance;
 
-    public AccountInfoResponse(Long id, String accountNumber, String bankName, Long bankNumber, Long balance) {
+    public AccountInfoResponse(Long id, String accountNumber, String bankName, Long bankNumber, BigDecimal balance) {
         this.id = id;
         this.accountNumber = accountNumber;
         this.bankName = bankName;
@@ -41,7 +42,7 @@ public class AccountInfoResponse {
         return bankNumber;
     }
 
-    public Long balance() {
+    public BigDecimal balance() {
         return balance;
     }
 

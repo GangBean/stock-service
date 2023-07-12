@@ -1,25 +1,25 @@
 package com.gangbean.stockservice.dto;
 
-import com.gangbean.stockservice.domain.AccountStockTrade;
+import com.gangbean.stockservice.domain.AccountStock;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @Getter
 @NoArgsConstructor
 public class StockBuyResponse {
     private Long stockId;
-    private Long amount;
-    private Long averagePrice;
+    private BigDecimal amount;
+    private BigDecimal averagePrice;
 
-    public StockBuyResponse(Long stockId, Long amount, Long averagePrice) {
+    public StockBuyResponse(Long stockId, BigDecimal amount, BigDecimal averagePrice) {
         this.stockId = stockId;
         this.amount = amount;
         this.averagePrice = averagePrice;
     }
 
-    public static StockBuyResponse responseOf(AccountStockTrade accountStockTrade, List<AccountStockTrade> buyList) {
-        return new StockBuyResponse();
+    public static StockBuyResponse responseOf(AccountStock accountStock) {
+        return new StockBuyResponse(accountStock.what().id(), accountStock.howMany(), accountStock.howMuch());
     }
 }

@@ -5,12 +5,12 @@ import com.gangbean.stockservice.domain.Bank;
 import com.gangbean.stockservice.domain.Member;
 import com.gangbean.stockservice.dto.*;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
-import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
 import com.gangbean.stockservice.exception.account.TradeBetweenSameAccountsException;
 import com.gangbean.stockservice.repository.AccountRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 
@@ -25,7 +25,7 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountInfoResponse responseOfAccountCreate(Member member, Bank bank, Long balance) {
+    public AccountInfoResponse responseOfAccountCreate(Member member, Bank bank, BigDecimal balance) {
         String accountNumber = "1";
         Account saved = accountRepository.save(new Account(accountNumber, member, bank, balance, new HashSet<>()));
         return AccountInfoResponse.responseOf(saved);
@@ -42,22 +42,17 @@ public class AccountService {
 
     public AccountDetailInfoResponse responseOfAccountDetail(Long id, Member member) {
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id));
-
-        if (!account.isOwner(member)) {
-            throw new AccountNotOwnedByLoginUser("해당 계좌의 소유자가 아닙니다: " + id);
-        }
+                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id))
+                .ownedBy(member);
 
         return AccountDetailInfoResponse.responseOf(account);
     }
 
     @Transactional
-    public AccountTransferResponse responseOfTransfer(Member member, Long accountId, String toAccountNumber, LocalDateTime tradeAt, Long amount) {
+    public AccountTransferResponse responseOfTransfer(Member member, Long accountId, String toAccountNumber, LocalDateTime tradeAt, BigDecimal amount) {
         Account fromAccount = accountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + accountId));
-        if (!fromAccount.isOwner(member)) {
-            throw new AccountNotOwnedByLoginUser("본인의 계좌가 아닙니다: " + accountId);
-        }
+                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + accountId))
+                .ownedBy(member);
 
         Account toAccount = accountRepository.findByNumber(toAccountNumber)
                 .orElseThrow(() -> new AccountNotExistsException("입력된 계좌번호에 해당하는 계좌가 존재하지 않습니다: " + toAccountNumber));
@@ -72,7 +67,7 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountPaymentResponse responseOfPayment(Long id, LocalDateTime tradeAt, Long amount) {
+    public AccountPaymentResponse responseOfPayment(Long id, LocalDateTime tradeAt, BigDecimal amount) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id));
         account.pay(tradeAt, amount);
@@ -81,12 +76,9 @@ public class AccountService {
 
     @Transactional
     public void close(Long id, Member loginUser) {
-        Account account = accountRepository.findById(id).orElseThrow(
-                () -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id));
-
-        if (!account.isOwner(loginUser)) {
-            throw new AccountNotOwnedByLoginUser("해당 계좌의 소유자가 아닙니다: " + id);
-        }
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id))
+                .ownedBy(loginUser);
 
         accountRepository.delete(account);
     }

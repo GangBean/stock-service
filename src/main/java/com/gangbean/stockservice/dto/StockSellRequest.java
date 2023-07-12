@@ -2,17 +2,19 @@ package com.gangbean.stockservice.dto;
 
 import lombok.Getter;
 
+import java.math.BigDecimal;
+
 @Getter
 public class StockSellRequest {
-    private final Long stockId;
+    private Long stockId;
 
-    private final Long accountId;
+    private Long accountId;
 
-    private final Long amount;
+    private BigDecimal amount;
 
-    private final Long price;
+    private BigDecimal price;
 
-    public StockSellRequest(Long stockId, Long accountId, Long amount, Long price) {
+    public StockSellRequest(Long stockId, Long accountId, BigDecimal amount, BigDecimal price) {
         this.stockId = stockId;
         this.accountId = accountId;
         this.amount = amount;

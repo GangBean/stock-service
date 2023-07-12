@@ -30,8 +30,7 @@ public class AccountStock {
 
     public AccountStock() {}
 
-    public AccountStock(Long id, Account account, Stock stock, BigDecimal balance, BigDecimal price, BigDecimal totalPaid, Set<AccountStockTrade> history) {
-        this.id = id;
+    public AccountStock(Account account, Stock stock, BigDecimal balance, BigDecimal price, BigDecimal totalPaid, Set<AccountStockTrade> history) {
         this.account = account;
         this.stock = stock;
         this.balance = balance;
@@ -39,6 +38,12 @@ public class AccountStock {
         this.totalPaid = totalPaid;
         this.history = history;
     }
+
+    public AccountStock(Long id, Account account, Stock stock, BigDecimal balance, BigDecimal price, BigDecimal totalPaid, Set<AccountStockTrade> history) {
+        this(account, stock, balance, price, totalPaid, history);
+        this.id = id;
+    }
+
     public Long id() {
         return id;
     }
