@@ -48,7 +48,7 @@ class AccountCloseAcceptanceTest extends Specification {
      * when 계좌삭제 요청시
      * then 404 Not found가 응답됩니다
      */
-    def closeAccount_NotFound() {
+    def "계좌삭제_미존재계좌"() {
         given:
         def accountId = 3L
 
@@ -78,7 +78,7 @@ class AccountCloseAcceptanceTest extends Specification {
      * when 계좌등록 요청시
      * then 403 Forbidden 응답이 반환된다.
      */
-    def closeAccount_NotOwner() {
+    def "계좌삭제_타인계좌"() {
         given:
         def accountId = 2L
 
@@ -97,7 +97,7 @@ class AccountCloseAcceptanceTest extends Specification {
         then:
         verifyAll {
             response.statusCode() == HttpStatus.FORBIDDEN.value()
-            response.body().jsonPath().getString("message") == "해당 계좌의 소유자가 아닙니다: " + accountId
+            response.body().jsonPath().getString("message") == "본인의 계좌가 아닙니다: " + accountId
         }
     }
 
@@ -108,7 +108,7 @@ class AccountCloseAcceptanceTest extends Specification {
      * when 게좌삭제 요청시
      * then 정상삭제되고 No content가 응답됩니다.
      */
-    def closeAccount_Ok() {
+    def "계좌삭제_정상"() {
         given:
         def accountId = 1L
 

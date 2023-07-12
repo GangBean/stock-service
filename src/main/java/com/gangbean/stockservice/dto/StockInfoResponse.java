@@ -2,15 +2,16 @@ package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.Stock;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class StockInfoResponse {
     private final Long id;
     private final String stockName;
-    private final Long price;
-    private final Long balance;
+    private final BigDecimal price;
+    private final BigDecimal balance;
 
-    public StockInfoResponse(Long id, String stockName, Long price, Long balance) {
+    public StockInfoResponse(Long id, String stockName, BigDecimal price, BigDecimal balance) {
         this.id = id;
         this.stockName = stockName;
         this.price = price;
@@ -21,11 +22,11 @@ public class StockInfoResponse {
         return new StockInfoResponse(stock.id(), stock.name(), stock.howMuch(), stock.howMany());
     }
 
-    public Long getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public Long getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 

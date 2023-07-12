@@ -1,6 +1,7 @@
 package com.gangbean.stockservice.domain;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -11,20 +12,20 @@ public class Trade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime dateTime;
-    private Long amount;
+    private BigDecimal amount;
     @Enumerated(EnumType.STRING)
     private TradeType type;
 
     public Trade() {
     }
 
-    public Trade(TradeType type, LocalDateTime dateTime, Long amount) {
+    public Trade(TradeType type, LocalDateTime dateTime, BigDecimal amount) {
         this.type = type;
         this.dateTime = dateTime;
         this.amount = amount;
     }
 
-    public Trade(Long id, TradeType type, LocalDateTime dateTime, Long amount) {
+    public Trade(Long id, TradeType type, LocalDateTime dateTime, BigDecimal amount) {
         this.id = id;
         this.type = type;
         this.dateTime = dateTime;
@@ -35,7 +36,7 @@ public class Trade {
         return dateTime;
     }
 
-    public Long howMuch() {
+    public BigDecimal howMuch() {
         return amount;
     }
 

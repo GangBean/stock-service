@@ -1,7 +1,13 @@
 package com.gangbean.stockservice.domain;
 
+import com.gangbean.stockservice.exception.*;
+
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class AccountStock {
@@ -15,27 +21,26 @@ public class AccountStock {
 
     @ManyToOne(cascade = CascadeType.REMOVE)
     private Stock stock;
+    private BigDecimal balance;
+    private BigDecimal price;
+    private BigDecimal totalPaid;
 
-    @Enumerated(EnumType.STRING)
-    private StockTradeType tradeType;
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<AccountStockTrade> history;
 
-    private Long balance;
+    public AccountStock() {}
 
-    private Long price;
-
-    public AccountStock() {
-    }
-
-    public AccountStock(Account account, Stock stock, StockTradeType tradeType, Long balance, Long price) {
+    public AccountStock(Account account, Stock stock, BigDecimal balance, BigDecimal price, BigDecimal totalPaid, Set<AccountStockTrade> history) {
         this.account = account;
         this.stock = stock;
-        this.tradeType = tradeType;
         this.balance = balance;
         this.price = price;
+        this.totalPaid = totalPaid;
+        this.history = history;
     }
 
-    public AccountStock(Long id, Account account, Stock stock, StockTradeType tradeType, Long balance, Long price) {
-        this(account, stock, tradeType, balance, price);
+    public AccountStock(Long id, Account account, Stock stock, BigDecimal balance, BigDecimal price, BigDecimal totalPaid, Set<AccountStockTrade> history) {
+        this(account, stock, balance, price, totalPaid, history);
         this.id = id;
     }
 
@@ -43,24 +48,12 @@ public class AccountStock {
         return id;
     }
 
-    public Account account() {
+    public Account whose() {
         return account;
     }
 
-    public Stock stock() {
+    public Stock what() {
         return stock;
-    }
-
-    public Long balance() {
-        return balance;
-    }
-
-    public Long price() {
-        return price;
-    }
-
-    public StockTradeType tradeType() {
-        return tradeType;
     }
 
     @Override
@@ -76,12 +69,47 @@ public class AccountStock {
         return Objects.hash(id);
     }
 
-    public Long totalAmount() {
-        return balance * price *
-                ((tradeType == StockTradeType.SELLING) ? -1 : 1);
+    public BigDecimal howMany() {
+        return balance;
     }
 
-    public Long totalCount() {
-        return balance * ((tradeType == StockTradeType.SELLING) ? -1 : 1);
+    public BigDecimal howMuch() {
+        return price;
+    }
+
+    public BigDecimal howMuchPaid() {
+        return totalPaid;
+    }
+
+    public Set<AccountStockTrade> history() {
+        return history;
+    }
+
+    public void sell(BigDecimal price, BigDecimal amount, LocalDateTime tradeAt) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AccountStockSellAmountBelowZeroException("0이하의 개수는 판매할 수 없습니다: " + amount);
+        }
+        if (price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AccountStockSellPriceBelowZeroException("0이하의 금액으로 판매할 수 없습니다: " + price);
+        }
+        if (balance.compareTo(amount) < 0) {
+            throw new AccountStockNotEnoughBalanceException("보유수량이 부족합니다: " + balance);
+        }
+        balance = balance.subtract(amount);
+        totalPaid = totalPaid.subtract(price.multiply(amount));
+        history.add(new AccountStockTrade(StockTradeType.SELLING, amount, price, tradeAt));
+    }
+
+    public void buy(BigDecimal price, BigDecimal amount, LocalDateTime tradeAt) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AccountStockBuyAmountBelowZeroException("0이하의 개수는 구매할 수 없습니다: " + amount);
+        }
+        if (price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AccountStockBuyPriceBelowZeroException("0이하의 금액으로 구매할 수 없습니다: " + price);
+        }
+        balance = balance.add(amount);
+        totalPaid = totalPaid.add(price.multiply(amount));
+        this.price = totalPaid.divide(balance, RoundingMode.DOWN);
+        history.add(new AccountStockTrade(StockTradeType.BUYING, amount, price, tradeAt));
     }
 }

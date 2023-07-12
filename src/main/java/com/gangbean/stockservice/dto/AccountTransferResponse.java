@@ -3,23 +3,25 @@ package com.gangbean.stockservice.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Getter
 @NoArgsConstructor
 public class AccountTransferResponse {
 
     private Long id;
 
-    private Long balance;
+    private BigDecimal balance;
 
-    public AccountTransferResponse(Long balance) {
+    public AccountTransferResponse(BigDecimal balance) {
         this.balance = balance;
     }
 
-    public static AccountTransferResponse responseOf(Long balance) {
+    public static AccountTransferResponse responseOf(BigDecimal balance) {
         return new AccountTransferResponse(balance);
     }
 
-    public Long balance() {
+    public BigDecimal balance() {
         return balance;
     }
 }

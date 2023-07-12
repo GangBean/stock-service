@@ -5,6 +5,7 @@ import com.gangbean.stockservice.domain.TradeType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -18,9 +19,9 @@ public class TradeInfoResponse {
 
     private LocalDateTime tradeAt;
 
-    private Long amount;
+    private BigDecimal amount;
 
-    public TradeInfoResponse(Long id, TradeType tradeType, LocalDateTime tradeAt, Long amount) {
+    public TradeInfoResponse(Long id, TradeType tradeType, LocalDateTime tradeAt, BigDecimal amount) {
         this.id = id;
         this.tradeType = tradeType;
         this.tradeAt = tradeAt;

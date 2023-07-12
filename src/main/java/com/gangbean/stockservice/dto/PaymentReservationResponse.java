@@ -2,15 +2,16 @@ package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.TradeReservation;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class PaymentReservationResponse {
 
     private final Long accountId;
-    private final Long balance;
+    private final BigDecimal balance;
     private final LocalDateTime sendAt;
 
-    public PaymentReservationResponse(Long accountId, Long balance, LocalDateTime sendAt) {
+    public PaymentReservationResponse(Long accountId, BigDecimal balance, LocalDateTime sendAt) {
         this.accountId = accountId;
         this.balance = balance;
         this.sendAt = sendAt;
@@ -25,7 +26,7 @@ public class PaymentReservationResponse {
         return accountId;
     }
 
-    public Long getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 

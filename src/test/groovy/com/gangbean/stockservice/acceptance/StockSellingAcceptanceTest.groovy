@@ -3,18 +3,16 @@ package com.gangbean.stockservice.acceptance
 import com.gangbean.stockservice.SpringBootAcceptanceTest
 import com.gangbean.stockservice.jwt.TokenProvider
 import com.gangbean.stockservice.repository.AccountRepository
-import com.gangbean.stockservice.repository.AccountStockRepository
 import com.gangbean.stockservice.repository.StockRepository
 import io.restassured.RestAssured
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import spock.lang.Specification
 
 @SpringBootAcceptanceTest
-class StockBuyingAcceptanceTest extends Specification {
+class StockSellingAcceptanceTest extends Specification {
     @LocalServerPort
     int port
 
@@ -26,9 +24,6 @@ class StockBuyingAcceptanceTest extends Specification {
 
     @Autowired
     TokenProvider tokenProvider
-
-    @Autowired
-    AccountStockRepository accountStockRepository
 
     String token
 
@@ -58,12 +53,12 @@ class StockBuyingAcceptanceTest extends Specification {
      * and 주식의 잔여량이 구매량보다 많고
      * and 구매가격이 주식의 현재 가격이상이고
      * and 계좌잔액이 충분하면
-     * when 주식구매요청시
-     * then 201 Created 응답이 기존에 구매한 주식의 ID, 잔여량, 평균금액과 함께 반환되고
-     * then 주식의 잔여량이 감소하고
-     * then 계좌주식의 잔여량이 늘어납니다.
+     * when 주식판매요청시
+     * then 201 Created 응답이 판매한 주식의 ID, 잔여량, 평균금액과 함께 반환되고
+     * then 주식의 잔여량이 증가하고
+     * then 계좌주식의 잔여량이 감소합니다.
      */
-    def "계좌구매요청_정상"() {
+    def "계좌판매요청_정상"() {
         given:
         def accountId = 1L
         def stockId = 1L
@@ -90,16 +85,13 @@ class StockBuyingAcceptanceTest extends Specification {
         and:
         assert account.get().balance() >= price * amount
 
-        and:
-        assert accountStockRepository.findByAccountIdAndStockId(accountId, stockId).isEmpty()
-
         when:
         def response = RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .body(Map.of("amount", amount, "price", price))
                 .when()
-                .post("/api/accounts/{accountId}/stocks/{stockId}", accountId, stockId)
+                .post("/api/accounts/{accountId}/stocks/{stockId}/cancel", accountId, stockId)
                 .then().log().all()
                 .extract()
 
@@ -225,11 +217,12 @@ class StockBuyingAcceptanceTest extends Specification {
      * and 해당 계좌가 존재하고
      * and 해당 게좌가 로그인한 사용자의 계좌이고
      * and 주식이 존재하고
-     * and 주식의 잔여량이 구매량보다 적으면
-     * when 주식구매요청시
+     * and 해당 주식을 보유하고 있고
+     * and 보유주식의 잔여량이 판매량보다 적으면
+     * when 주식판매요청시
      * then 406 Not Acceptable 응답이 반환됩니다.
      */
-    def "계좌구매요청_주식잔량부족"() {
+    def "계좌판매요청_보유주식잔량부족"() {
         given:
         def accountId = 1L
         def stockId = 1L
@@ -248,7 +241,11 @@ class StockBuyingAcceptanceTest extends Specification {
         assert stock.isPresent()
 
         and:
-        assert stock.get().howMany() < amount
+        def accountStock = accountStockRepository.findAllByAccountIdAndStockId(accountId, stockId)
+        assert accountStock.isPre()
+
+        and:
+        assert accountStock.get().howMany() < amount
 
         when:
         def response = RestAssured.given().log().all()
@@ -256,14 +253,14 @@ class StockBuyingAcceptanceTest extends Specification {
                 .header("Authorization", token)
                 .body(Map.of("amount", amount, "price", price))
                 .when()
-                .post("/api/accounts/{accountId}/stocks/{stockId}", accountId, stockId)
+                .post("/api/accounts/{accountId}/stocks/{stockId}/selling", accountId, stockId)
                 .then().log().all()
                 .extract()
 
         then:
         verifyAll {
-            response.statusCode() == HttpStatus.NOT_ACCEPTABLE.value()
-            response.jsonPath().getString("message") == "주식의 잔량이 부족합니다: " + stock.get().howMany()
+            response.statusCode() == HttpStatus.BAD_REQUEST.value()
+            response.jsonPath().getString("message") == "주식의 보유량이 부족합니다: " + stock.get().howMany()
         }
     }
 
@@ -271,11 +268,59 @@ class StockBuyingAcceptanceTest extends Specification {
      * given 로그인한 상태로 계좌ID, 주식ID, 구매량, 가격을 입력하고
      * and 해당 계좌가 존재하고
      * and 해당 게좌가 로그인한 사용자의 계좌이고
+     * and 주식이 존재하고
+     * and 해당 주식을 보유하고 있지 않을때
+     * when 주식판매요청시
+     * then 400 Bad Request 응답이 반환됩니다.
+     */
+    def "계좌판매요청_보유주식아님"() {
+        given:
+        def accountId = 1L
+        def stockId = 1L
+        def amount = 1_000_000L
+        def price = 1_000L
+
+        and:
+        def account = accountRepository.findById(accountId)
+        assert account.isPresent()
+
+        and:
+        assert account.get().whose().getUsername() == username
+
+        and:
+        def stock = stockRepository.findById(stockId)
+        assert stock.isPresent()
+
+        and:
+        def accountStock = accountStockRepository.findAllByAccountIdAndStockId(accountId, stockId)
+        assert accountStock.isEmpty()
+
+        when:
+        def response = RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", token)
+                .body(Map.of("amount", amount, "price", price))
+                .when()
+                .post("/api/accounts/{accountId}/stocks/{stockId}/selling", accountId, stockId)
+                .then().log().all()
+                .extract()
+
+        then:
+        verifyAll {
+            response.statusCode() == HttpStatus.BAD_REQUEST.value()
+            response.jsonPath().getString("message") == "보유한 주식이 아닙니다: " + stockId
+        }
+    }
+
+    /**
+     * given 로그인한 상태로 계좌ID, 주식ID, 판매량, 가격을 입력하고
+     * and 해당 계좌가 존재하고
+     * and 해당 게좌가 로그인한 사용자의 계좌이고
      * and 주식이 존재하지 않으면
-     * when 주식구매요청시
+     * when 주식판매요청시
      * then 404 Not Found 응답이 반환됩니다.
      */
-    def "계좌구매요청_미존재주식"() {
+    def "계좌판매요청_미존재주식"() {
         given:
         def accountId = 1L
         def stockId = 10L
@@ -299,7 +344,7 @@ class StockBuyingAcceptanceTest extends Specification {
                 .header("Authorization", token)
                 .body(Map.of("amount", amount, "price", price))
                 .when()
-                .post("/api/accounts/{accountId}/stocks/{stockId}", accountId, stockId)
+                .post("/api/accounts/{accountId}/stocks/{stockId}/selling", accountId, stockId)
                 .then().log().all()
                 .extract()
 
@@ -311,13 +356,13 @@ class StockBuyingAcceptanceTest extends Specification {
     }
 
     /**
-     * given 로그인한 상태로 계좌ID, 주식ID, 구매량, 가격을 입력하고
+     * given 로그인한 상태로 계좌ID, 주식ID, 판매량, 가격을 입력하고
      * and 해당 계좌가 존재하고
      * and 해당 게좌가 로그인한 사용자의 계좌가 아닐때
-     * when 주식구매요청시
+     * when 주식판매요청시
      * then 403 Forbidden 응답이 반환됩니다.
      */
-    def "계좌구매요청_타인게좌"() {
+    def "계좌판매요청_타인게좌"() {
         given:
         def accountId = 2L
         def stockId = 1L
@@ -337,7 +382,7 @@ class StockBuyingAcceptanceTest extends Specification {
                 .header("Authorization", token)
                 .body(Map.of("amount", amount, "price", price))
                 .when()
-                .post("/api/accounts/{accountId}/stocks/{stockId}", accountId, stockId)
+                .post("/api/accounts/{accountId}/stocks/{stockId}/selling", accountId, stockId)
                 .then().log().all()
                 .extract()
 
@@ -349,12 +394,12 @@ class StockBuyingAcceptanceTest extends Specification {
     }
 
     /**
-     * given 로그인한 상태로 계좌ID, 주식ID, 구매량, 가격을 입력하고
+     * given 로그인한 상태로 계좌ID, 주식ID, 판매량, 가격을 입력하고
      * and 해당 계좌가 존재하지 않으면
-     * when 주식구매요청시
+     * when 주식판매요청시
      * then 404 Not Found 응답이 반환됩니다.
      */
-    def "계좌구매요청_미존재계좌"() {
+    def "계좌판매요청_미존재계좌"() {
         given:
         def accountId = 10L
         def stockId = 1L
@@ -371,7 +416,7 @@ class StockBuyingAcceptanceTest extends Specification {
                 .header("Authorization", token)
                 .body(Map.of("amount", amount, "price", price))
                 .when()
-                .post("/api/accounts/{accountId}/stocks/{stockId}", accountId, stockId)
+                .post("/api/accounts/{accountId}/stocks/{stockId}/selling", accountId, stockId)
                 .then().log().all()
                 .extract()
 
