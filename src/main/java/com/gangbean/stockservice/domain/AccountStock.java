@@ -1,66 +1,42 @@
 package com.gangbean.stockservice.domain;
 
-import javax.persistence.*;
+import com.gangbean.stockservice.exception.AccountStockBuyBelowZeroException;
+import com.gangbean.stockservice.exception.AccountStockNotEnoughBalanceException;
+import com.gangbean.stockservice.exception.AccountStockSellBelowZeroException;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
-@Entity
 public class AccountStock {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(cascade = CascadeType.REMOVE)
     private Account account;
-
-    @ManyToOne(cascade = CascadeType.REMOVE)
     private Stock stock;
+    private BigDecimal balance;
+    private BigDecimal price;
+    private BigDecimal totalPaid;
 
-    @Enumerated(EnumType.STRING)
-    private StockTradeType tradeType;
+    public AccountStock() {}
 
-    private Long balance;
-
-    private Long price;
-
-    public AccountStock() {
-    }
-
-    public AccountStock(Account account, Stock stock, StockTradeType tradeType, Long balance, Long price) {
+    public AccountStock(Long id, Account account, Stock stock, BigDecimal balance, BigDecimal price, BigDecimal totalPaid) {
+        this.id = id;
         this.account = account;
         this.stock = stock;
-        this.tradeType = tradeType;
         this.balance = balance;
         this.price = price;
+        this.totalPaid = totalPaid;
     }
-
-    public AccountStock(Long id, Account account, Stock stock, StockTradeType tradeType, Long balance, Long price) {
-        this(account, stock, tradeType, balance, price);
-        this.id = id;
-    }
-
     public Long id() {
         return id;
     }
 
-    public Account account() {
+    public Account whose() {
         return account;
     }
 
-    public Stock stock() {
+    public Stock what() {
         return stock;
-    }
-
-    public Long balance() {
-        return balance;
-    }
-
-    public Long price() {
-        return price;
-    }
-
-    public StockTradeType tradeType() {
-        return tradeType;
     }
 
     @Override
@@ -76,12 +52,35 @@ public class AccountStock {
         return Objects.hash(id);
     }
 
-    public Long totalAmount() {
-        return balance * price *
-                ((tradeType == StockTradeType.SELLING) ? -1 : 1);
+    public BigDecimal howMany() {
+        return balance;
     }
 
-    public Long totalCount() {
-        return balance * ((tradeType == StockTradeType.SELLING) ? -1 : 1);
+    public BigDecimal howMuch() {
+        return price;
+    }
+
+    public BigDecimal howMuchTotal() {
+        return totalPaid;
+    }
+
+    public void sell(BigDecimal count) {
+        if (count.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AccountStockSellBelowZeroException("0이하의 개수는 팔 수 없습니다: " + count);
+        }
+        if (balance.compareTo(count) < 0) {
+            throw new AccountStockNotEnoughBalanceException("보유수량이 부족합니다: " + balance);
+        }
+        balance = balance.subtract(count);
+        totalPaid = totalPaid.subtract(price.multiply(count));
+    }
+
+    public void buy(BigDecimal price, BigDecimal count) {
+        if (count.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AccountStockBuyBelowZeroException("0이하의 개수는 구매할 수 없습니다: " + count);
+        }
+        balance = balance.add(count);
+        totalPaid = totalPaid.add(price.multiply(count));
+        this.price = totalPaid.divide(balance, RoundingMode.DOWN);
     }
 }

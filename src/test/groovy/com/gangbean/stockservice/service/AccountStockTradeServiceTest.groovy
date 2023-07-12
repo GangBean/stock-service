@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
-class AccountStockServiceTest extends Specification {
+class AccountStockTradeServiceTest extends Specification {
 
     AccountStockService accountStockService
 
@@ -48,8 +48,8 @@ class AccountStockServiceTest extends Specification {
         Long boughtAmount = 15L
         Long boughtPrice = 9_000L
         def request = new StockSellRequest(stockId, accountId, sellAmount, sellPrice)
-        def newBuy = new AccountStock(1L, account, stock, StockTradeType.BUYING, sellAmount, sellPrice)
-        def bought = new AccountStock(2L, account, stock, StockTradeType.SELLING, boughtAmount, boughtPrice)
+        def newBuy = new AccountStockTrade(1L, account, stock, StockTradeType.BUYING, sellAmount, sellPrice)
+        def bought = new AccountStockTrade(2L, account, stock, StockTradeType.SELLING, boughtAmount, boughtPrice)
 
         when:
         def response = accountStockService.responseOfSell(request, LocalDateTime.now())
@@ -82,8 +82,8 @@ class AccountStockServiceTest extends Specification {
         Long newBuyPrice = 10_050L
         Long boughtAmount = 5L
         Long boughtPrice = 9_000L
-        def newBuy = new AccountStock(1L, account, stock, StockTradeType.BUYING, newBuyAmount, newBuyPrice)
-        def bought = new AccountStock(2L, account, stock, StockTradeType.BUYING, boughtAmount, boughtPrice)
+        def newBuy = new AccountStockTrade(1L, account, stock, StockTradeType.BUYING, newBuyAmount, newBuyPrice)
+        def bought = new AccountStockTrade(2L, account, stock, StockTradeType.BUYING, boughtAmount, boughtPrice)
 
         when:
         def response = accountStockService.responseOfBuy(TEST_MEMBER, accountId, stockId, newBuyAmount, newBuyPrice, LocalDateTime.now())

@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.dto;
 
-import com.gangbean.stockservice.domain.AccountStock;
+import com.gangbean.stockservice.domain.AccountStockTrade;
 import lombok.Getter;
 
 import java.util.List;
@@ -17,15 +17,15 @@ public class StockSellResponse {
         this.averagePrice = averagePrice;
     }
 
-    public static StockSellResponse responseOf(AccountStock accountStock, List<AccountStock> buyList) {
+    public static StockSellResponse responseOf(AccountStockTrade accountStockTrade, List<AccountStockTrade> buyList) {
         Long totalSum = buyList.stream()
-                .mapToLong(AccountStock::totalAmount)
+                .mapToLong(AccountStockTrade::totalAmount)
                 .sum();
         Long totalCount = buyList.stream()
-                .mapToLong(AccountStock::totalCount)
+                .mapToLong(AccountStockTrade::totalCount)
                 .sum();
-        return new StockSellResponse(accountStock.stock().id()
-                , accountStock.balance()
+        return new StockSellResponse(accountStockTrade.stock().id()
+                , accountStockTrade.balance()
                 , totalSum / totalCount);
     }
 }

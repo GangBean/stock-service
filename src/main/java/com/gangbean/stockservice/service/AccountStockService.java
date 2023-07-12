@@ -47,10 +47,10 @@ public class AccountStockService {
 
         account.withDraw(buyAt, price * amount);
 
-        AccountStock accountStock = accountStockRepository.save(new AccountStock(account, stock, StockTradeType.BUYING, amount, price));
+        AccountStockTrade accountStockTrade = accountStockRepository.save(new AccountStockTrade(account, stock, StockTradeType.BUYING, amount, price));
 
-        List<AccountStock> stockTradeList = accountStockRepository.findAllByAccountIdAndStockId(accountId, stockId);
-        return StockBuyResponse.responseOf(accountStock, stockTradeList);
+        List<AccountStockTrade> stockTradeList = accountStockRepository.findAllByAccountIdAndStockId(accountId, stockId);
+        return StockBuyResponse.responseOf(accountStockTrade, stockTradeList);
     }
 
     @Transactional
@@ -63,9 +63,9 @@ public class AccountStockService {
         account.deposit(sellAt,stockSellRequest.getAmount() * stockSellRequest.getPrice());
         stock.buy(stockSellRequest.getPrice(), stockSellRequest.getAmount());
 
-        AccountStock accountStock = accountStockRepository.save(new AccountStock(account, stock, StockTradeType.SELLING, stockSellRequest.getAmount(), stockSellRequest.getPrice()));
+        AccountStockTrade accountStockTrade = accountStockRepository.save(new AccountStockTrade(account, stock, StockTradeType.SELLING, stockSellRequest.getAmount(), stockSellRequest.getPrice()));
 
-        List<AccountStock> stockTradeList = accountStockRepository.findAllByAccountIdAndStockId(accountStock.stock().id(), accountStock.stock().id());
-        return StockSellResponse.responseOf(accountStock, stockTradeList);
+        List<AccountStockTrade> stockTradeList = accountStockRepository.findAllByAccountIdAndStockId(accountStockTrade.stock().id(), accountStockTrade.stock().id());
+        return StockSellResponse.responseOf(accountStockTrade, stockTradeList);
     }
 }
