@@ -13,6 +13,8 @@ TRUNCATE TABLE trade;
 TRUNCATE TABLE trade_reservation;
 truncate table user_authority;
 truncate table account_trades;
+truncate table stock_history;
+truncate table stock_histories;
 
 alter table account alter column id restart with 1;
 alter table account_stock alter column id restart with 1;
@@ -23,5 +25,6 @@ alter table stock alter column id restart with 1;
 alter table stock_history alter column id restart with 1;
 alter table trade alter column id restart with 1;
 alter table trade_reservation alter column id restart with 1;
+alter table stock_history alter column id restart with 1;
 
 SET REFERENTIAL_INTEGRITY TRUE;
