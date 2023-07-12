@@ -32,15 +32,15 @@ class TradeReservationServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000_000L
-        Account account = new Account(accountId, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(accountId, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance as BigDecimal, new HashSet<>())
 
         and:
         def amount = 100_000L
         def tradeAt = LocalDateTime.of(2023, 7, 2, 15,0)
-        def reservation = new TradeReservation(1L, account, tradeAt, amount)
+        def reservation = new TradeReservation(1L, account, tradeAt, amount as BigDecimal)
 
         when:
-        def response = tradeReservationService.responseOfPaymentReservation(accountId, tradeAt, amount)
+        def response = tradeReservationService.responseOfPaymentReservation(TEST_MEMBER, accountId, tradeAt, amount as BigDecimal)
 
         then:
         1 * accountRepository.findById(accountId) >> Optional.of(account)

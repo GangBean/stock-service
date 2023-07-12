@@ -1,8 +1,10 @@
 package com.gangbean.stockservice.domain;
 
 import com.gangbean.stockservice.exception.account.AccountNotEnoughBalanceException;
-import com.gangbean.stockservice.exception.TradeReservationCannotAllowBelowZeroAmountException;
-import com.gangbean.stockservice.exception.TradeReservationOnlyAcceptHourlyBasisTimeException;
+import com.gangbean.stockservice.exception.reservation.TradeReservationAtPastTimeException;
+import com.gangbean.stockservice.exception.reservation.TradeReservationBelowZeroAmountException;
+import com.gangbean.stockservice.exception.reservation.TradeReservationNotHourlyBasisTimeException;
+import com.gangbean.stockservice.util.BatchExecutionTime;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -52,35 +54,6 @@ public class TradeReservation {
         return id;
     }
 
-    private BigDecimal aboveZero(BigDecimal amount) {
-        if (belowBasis(amount)) {
-            throw new TradeReservationCannotAllowBelowZeroAmountException("0이하의 금액은 예약불가합니다: " + amount);
-        }
-        return amount;
-    }
-
-    private boolean belowBasis(BigDecimal amount) {
-        return amount.compareTo(BigDecimal.ZERO) <= 0;
-    }
-
-    private LocalDateTime hourlyBasis(LocalDateTime tradeAt) {
-        if (isNotHourlyBasis(tradeAt)) {
-            throw new TradeReservationOnlyAcceptHourlyBasisTimeException("결제예약은 매 시간단위로만 요청가능합니다: " + tradeAt);
-        }
-        return tradeAt;
-    }
-
-    private static boolean isNotHourlyBasis(LocalDateTime tradeAt) {
-        return tradeAt.truncatedTo(ChronoUnit.HOURS) != tradeAt;
-    }
-
-    private Account enoughBalanced(Account account, BigDecimal amount) {
-        if (account.balance().compareTo(amount) < 0) {
-            throw new AccountNotEnoughBalanceException("계좌잔액을 초과하는 금액은 예약불가합니다: " + account.balance());
-        }
-        return account;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -92,5 +65,37 @@ public class TradeReservation {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    private BigDecimal aboveZero(BigDecimal amount) {
+        if (belowBasis(amount)) {
+            throw new TradeReservationBelowZeroAmountException("0이하의 금액은 예약불가합니다: " + amount);
+        }
+        return amount;
+    }
+
+    private boolean belowBasis(BigDecimal amount) {
+        return amount.compareTo(BigDecimal.ZERO) <= 0;
+    }
+
+    private LocalDateTime hourlyBasis(LocalDateTime tradeAt) {
+        if (isNotHourlyBasis(tradeAt)) {
+            throw new TradeReservationNotHourlyBasisTimeException("결제예약은 매 시간단위로만 요청가능합니다: " + tradeAt);
+        }
+        if (BatchExecutionTime.isExecutionImpossibleAt("Reservation", tradeAt)) {
+            throw new TradeReservationAtPastTimeException("다음 수행 예정시각 이전으로 예약할 수 없습니다: " + BatchExecutionTime.nextExecutionTime("Reservation"));
+        }
+        return tradeAt;
+    }
+
+    private static boolean isNotHourlyBasis(LocalDateTime tradeAt) {
+        return !tradeAt.truncatedTo(ChronoUnit.HOURS).equals(tradeAt);
+    }
+
+    private Account enoughBalanced(Account account, BigDecimal amount) {
+        if (account.isOverBalance(amount)) {
+            throw new AccountNotEnoughBalanceException("계좌의 잔액이 부족합니다: " + account.balance());
+        }
+        return account;
     }
 }
