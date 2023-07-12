@@ -37,14 +37,14 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance as BigDecimal, new HashSet<>())
 
         and:
         def amount = 100L
         def tradeAt = LocalDateTime.now()
 
         when:
-        def response = accountService.responseOfPayment(id, tradeAt, amount)
+        def response = accountService.responseOfPayment(TEST_MEMBER, id, tradeAt, amount as BigDecimal)
 
         then:
         1 * accountRepository.findById(id) >> Optional.of(account)

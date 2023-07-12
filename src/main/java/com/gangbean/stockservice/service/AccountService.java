@@ -71,11 +71,12 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountPaymentResponse responseOfPayment(Long id, LocalDateTime tradeAt, BigDecimal amount) {
-        Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id));
+    public AccountPaymentResponse responseOfPayment(Member member, Long accountId, LocalDateTime tradeAt, BigDecimal amount) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + accountId))
+                .ownedBy(member);
         account.pay(tradeAt, amount);
-        return AccountPaymentResponse.responseOf(account.balance());
+        return AccountPaymentResponse.responseOf(account);
     }
 
     @Transactional
