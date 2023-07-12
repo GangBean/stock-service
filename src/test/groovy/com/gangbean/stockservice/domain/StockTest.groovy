@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.domain
 
-import com.gangbean.stockservice.domain.Stock
+
 import spock.lang.Specification
 
 class StockTest extends Specification {
@@ -9,15 +9,15 @@ class StockTest extends Specification {
         given:
         Long stockId = 1L
         String name = "카카오"
-        Long price = 1000L
-        Long balance = 100L
-        def stock = new Stock(stockId, name, price, balance)
+        BigDecimal price = 1000L
+        BigDecimal balance = 100L
+        def stock = new Stock(stockId, name, price, balance, new HashSet<>())
 
         when:
         String anotherName = "다음"
-        Long anotherPrice = 500L
-        Long anotherBalance = 200L
-        def anotherStock = new Stock(stockId, anotherName, anotherPrice, anotherBalance)
+        BigDecimal anotherPrice = 500L
+        BigDecimal anotherBalance = 200L
+        def anotherStock = new Stock(stockId, anotherName, anotherPrice, anotherBalance, new HashSet<>())
 
         then:
         stock == anotherStock
@@ -27,11 +27,11 @@ class StockTest extends Specification {
         given:
         Long stockId = 1L
         String name = "카카오"
-        Long price = 1000L
-        Long balance = 100L
+        BigDecimal price = 1000L
+        BigDecimal balance = 100L
 
         when:
-        def stock = new Stock(stockId, name, price, balance)
+        def stock = new Stock(stockId, name, price, balance, new HashSet<>())
 
         then:
         stock.howMany() == balance
@@ -41,10 +41,10 @@ class StockTest extends Specification {
         given:
         Long stockId = 1L
         String name = "카카오"
-        Long price = 1000L
+        BigDecimal price = 1000L
 
         when:
-        def stock = new Stock(stockId, name, price, 100L)
+        def stock = new Stock(stockId, name, price, 100 as BigDecimal, new HashSet<>())
 
         then:
         stock.howMuch() == price
@@ -56,7 +56,7 @@ class StockTest extends Specification {
         String name = "카카오"
 
         when:
-        def stock = new Stock(stockId, name, 1000L, 100L)
+        def stock = new Stock(stockId, name, 1000 as BigDecimal, 100 as BigDecimal, new HashSet<>())
 
         then:
         stock.name() == name
@@ -67,7 +67,7 @@ class StockTest extends Specification {
         Long stockId = 1L
 
         when:
-        def stock = new Stock(stockId, "카카오", 1000L, 100L)
+        def stock = new Stock(stockId, "카카오", 1000 as BigDecimal, 100 as BigDecimal, new HashSet<>())
 
         then:
         stock.id() == stockId

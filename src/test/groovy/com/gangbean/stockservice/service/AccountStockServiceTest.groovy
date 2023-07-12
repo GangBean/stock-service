@@ -35,7 +35,7 @@ class AccountStockServiceTest extends Specification {
         String stockName = "카카오"
         BigDecimal price = 10_000L
         BigDecimal balance = 100L
-        Stock stock = new Stock(stockId, stockName, price, balance)
+        Stock stock = new Stock(stockId, stockName, price, balance, new HashSet<>())
         BigDecimal sellAmount = 5L
         BigDecimal sellPrice = 9_950L
         LocalDateTime sellAt = LocalDateTime.of(2013, 7, 13, 14, 0)
@@ -70,14 +70,12 @@ class AccountStockServiceTest extends Specification {
         String stockName = "카카오"
         BigDecimal price = 10_000L
         BigDecimal balance = 100L
-        Stock stock = new Stock(stockId, stockName, price, balance)
+        Stock stock = new Stock(stockId, stockName, price, balance, new HashSet<>())
         BigDecimal newBuyAmount = 10L
         BigDecimal newBuyPrice = 10_050L
-        LocalDateTime newBuyAt = LocalDateTime.of(2013, 7, 13, 14, 0)
         BigDecimal boughtAmount = 5L
         BigDecimal boughtPrice = 9_000L
         LocalDateTime boughtAt = LocalDateTime.of(2013, 7, 1, 15, 0)
-        def newBuy = new AccountStockTrade(2L, StockTradeType.BUYING, newBuyAmount, newBuyPrice,newBuyAt)
         def bought = new AccountStockTrade(1L, StockTradeType.BUYING, boughtAmount, boughtPrice, boughtAt)
         def accountStock = new AccountStock(1L, account, stock, boughtAmount, boughtPrice, boughtAmount * boughtPrice, new HashSet<>(Set.of(bought)))
 

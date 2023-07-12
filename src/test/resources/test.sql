@@ -25,3 +25,7 @@ insert into account_trades(account_id, trades_id) values(1, 2);
 insert into account_trades(account_id, trades_id) values(1, 3);
 
 insert into account_stock(balance, price, total_paid, account_id, stock_id) values(10000, 1000, 10000000, 1, 1);
+insert into stock_history(price, written_at) values (80, '2023-07-01T13:00:00');
+insert into stock_history(price, written_at) values (90, '2023-07-01T14:00:00');
+insert into stock_histories(stock_id, histories_id) values (1, 1);
+insert into stock_histories(stock_id, histories_id) values (1, 2);

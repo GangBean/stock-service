@@ -11,8 +11,8 @@ import java.time.LocalDateTime
 
 class AccountStockTest extends Specification {
 
-    Account account = new Account(1L, "00001", MemberTest.TEST_MEMBER, new Bank(1L, "은행", 1L), 1000L, new HashSet<>())
-    Stock stock = new Stock(1L, "카카오", 1000L, 100L)
+    Account account = new Account(1L, "00001", MemberTest.TEST_MEMBER, new Bank(1L, "은행", 1L), 1000L as BigDecimal, new HashSet<>())
+    Stock stock = new Stock(1L, "카카오", 1000L as BigDecimal, 100L as BigDecimal, new HashSet<>())
     AccountStock accountStock
     Long id
     BigDecimal balance

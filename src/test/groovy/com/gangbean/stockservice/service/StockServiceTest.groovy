@@ -4,9 +4,7 @@ import com.gangbean.stockservice.domain.Stock
 import com.gangbean.stockservice.domain.StockHistory
 import com.gangbean.stockservice.dto.StockHistoryInfoResponse
 import com.gangbean.stockservice.dto.StockInfoResponse
-import com.gangbean.stockservice.repository.StockHistoryRepository
 import com.gangbean.stockservice.repository.StockRepository
-import com.gangbean.stockservice.service.StockService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -18,12 +16,9 @@ class StockServiceTest extends Specification {
 
     StockService stockService
 
-    StockHistoryRepository stockHistoryRepository
-
     def setup() {
         stockRepository = Mock()
-        stockHistoryRepository = Mock()
-        stockService = new StockService(stockRepository, stockHistoryRepository)
+        stockService = new StockService(stockRepository)
     }
 
     def "주식 서비스는 입력된 id에 해당하는 주식과 해당주식의 이력을 응답형태로 반환해줍니다"() {
@@ -32,18 +27,17 @@ class StockServiceTest extends Specification {
         String stockName = "카카오"
         Long price = 10_000L
         Long balance = 100L
-        Stock stock = new Stock(stockId, stockName, price, balance)
         LocalDateTime when = LocalDateTime.of(2023,7,1,14,0)
         Long priorPrice = 900L
-        def history = new StockHistory(stock, when, priorPrice)
-        def history2 = new StockHistory(stock, when.plusHours(2), 1_200L)
+        def history = new StockHistory(1L, when, priorPrice)
+        def history2 = new StockHistory(2L, when.plusHours(2), 1_200L)
+        Stock stock = new Stock(stockId, stockName, price as BigDecimal, balance as BigDecimal, new HashSet<>(Set.of(history, history2)))
 
         when:
         def response = stockService.responseOfStockDetail(stockId)
 
         then:
         1 * stockRepository.findById(stockId) >> Optional.of(stock)
-        1 * stockHistoryRepository.findAllByStockId(_) >> List.of(history, history2)
         def histories = List.of(history, history2).stream().map(StockHistoryInfoResponse::responseOf).collect(Collectors.toList())
 
         verifyAll {
@@ -58,12 +52,12 @@ class StockServiceTest extends Specification {
         String stockName = "카카오"
         Long price = 10_000L
         Long balance = 100L
-        Stock stock = new Stock(1L, stockName, price, balance)
+        Stock stock = new Stock(1L, stockName, price as BigDecimal, balance as BigDecimal, new HashSet<>())
 
         String stockName2 = "네이버"
         Long price2 = 15_000L
         Long balance2 = 150L
-        Stock stock2 = new Stock(2L, stockName2, price2, balance2)
+        Stock stock2 = new Stock(2L, stockName2, price2 as BigDecimal, balance2 as BigDecimal, new HashSet<>())
 
         when:
         def allStock = stockService.respondsOfAllStock();

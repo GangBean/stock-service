@@ -9,29 +9,19 @@ public class StockHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    private Stock stock;
     private LocalDateTime writtenAt;
     private Long price;
 
-    public StockHistory() {
+    public StockHistory() {}
 
-    }
-
-    public StockHistory(Stock stock, LocalDateTime writtenAt, Long price) {
-        this.stock = stock;
+    public StockHistory(LocalDateTime writtenAt, Long price) {
         this.writtenAt = writtenAt;
         this.price = price;
     }
 
-    public StockHistory(Long id, Stock stock, LocalDateTime writtenAt, Long price) {
-        this(stock, writtenAt, price);
+    public StockHistory(Long id, LocalDateTime writtenAt, Long price) {
+        this(writtenAt, price);
         this.id = id;
-    }
-
-    public Stock ofWho() {
-        return stock;
     }
 
     public LocalDateTime when() {

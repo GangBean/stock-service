@@ -1,14 +1,18 @@
 package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.StockHistory;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Getter
+@NoArgsConstructor
 public class StockHistoryInfoResponse {
-    private final Long price;
+    private Long price;
 
-    private final LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     public StockHistoryInfoResponse(Long price, LocalDateTime createdAt) {
         this.price = price;

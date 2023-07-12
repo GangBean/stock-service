@@ -1,7 +1,6 @@
 package com.gangbean.stockservice.dto
 
 import com.gangbean.stockservice.domain.Stock
-import com.gangbean.stockservice.dto.StockInfoResponse
 import spock.lang.Specification
 
 class StockInfoResponseTest extends Specification {
@@ -12,11 +11,11 @@ class StockInfoResponseTest extends Specification {
         String stockName = "카카오"
         Long price = 10_000L
         Long balance = 100L
-        Stock stock = new Stock(id, stockName, price, balance)
+        Stock stock = new Stock(id, stockName, price, balance, new HashSet<>())
         def response = StockInfoResponse.responseOf(stock)
 
         when:
-        def anotherResponse = StockInfoResponse.responseOf(new Stock(id, stockName, price, balance))
+        def anotherResponse = StockInfoResponse.responseOf(new Stock(id, stockName, price, balance, new HashSet<>()))
 
         then:
         response == anotherResponse
@@ -28,7 +27,7 @@ class StockInfoResponseTest extends Specification {
         String stockName = "카카오"
         Long price = 10_000L
         Long balance = 100L
-        Stock stock = new Stock(id, stockName, price, balance)
+        Stock stock = new Stock(id, stockName, price, balance, new HashSet<>())
 
         when:
         def response = StockInfoResponse.responseOf(stock)
