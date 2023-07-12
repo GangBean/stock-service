@@ -9,6 +9,7 @@ import com.gangbean.stockservice.dto.AccountInfoResponse
 import com.gangbean.stockservice.dto.TradeInfoResponse
 import com.gangbean.stockservice.exception.account.AccountNotExistsException
 import com.gangbean.stockservice.repository.AccountRepository
+import com.gangbean.stockservice.repository.AccountStockRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -21,9 +22,12 @@ class AccountServiceTest extends Specification {
 
     private AccountRepository accountRepository
 
+    private AccountStockRepository accountStockRepository
+
     def setup() {
         accountRepository = Mock()
-        accountService = new AccountService(accountRepository)
+        accountStockRepository = Mock()
+        accountService = new AccountService(accountRepository, accountStockRepository)
     }
 
     def "계좌 서비스는 결제계좌 ID와 금액을 입력하면 결제를 진행하고, 거래정보를 만들고, 계좌잔액을 돌려줍니다"() {

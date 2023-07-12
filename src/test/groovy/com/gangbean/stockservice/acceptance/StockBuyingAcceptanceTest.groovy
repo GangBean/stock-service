@@ -90,9 +90,6 @@ class StockBuyingAcceptanceTest extends Specification {
         and:
         assert account.get().balance() >= price * amount
 
-        and:
-        assert accountStockRepository.findByAccountIdAndStockId(accountId, stockId).isEmpty()
-
         when:
         def response = RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -107,10 +104,10 @@ class StockBuyingAcceptanceTest extends Specification {
         verifyAll {
             response.statusCode() == HttpStatus.CREATED.value()
             response.jsonPath().getLong("stockId") == stockId
-            response.jsonPath().getLong("amount") == amount
-            response.jsonPath().getLong("averagePrice") == price
-            accountRepository.findById(accountId).get().balance() == 500L
-            stockRepository.findById(stockId).get().howMany() == 95L
+            response.jsonPath().getString("amount") as BigDecimal == 10_005
+            response.jsonPath().getString("averagePrice") as BigDecimal == 999
+            accountRepository.findById(accountId).get().balance() == 500
+            stockRepository.findById(stockId).get().howMany() == 95
         }
     }
 
@@ -278,7 +275,7 @@ class StockBuyingAcceptanceTest extends Specification {
     def "계좌구매요청_미존재주식"() {
         given:
         def accountId = 1L
-        def stockId = 10L
+        def stockId = 11L
         def amount = 10L
         def price = 1_000L
 

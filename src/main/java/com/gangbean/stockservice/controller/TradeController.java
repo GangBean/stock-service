@@ -69,7 +69,7 @@ public class TradeController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ExceptionResponse> handleException(AccountServiceException e) {
+    public ResponseEntity<ExceptionResponse> handleException(AccountException e) {
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

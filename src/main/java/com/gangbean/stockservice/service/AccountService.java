@@ -7,6 +7,7 @@ import com.gangbean.stockservice.dto.*;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.TradeBetweenSameAccountsException;
 import com.gangbean.stockservice.repository.AccountRepository;
+import com.gangbean.stockservice.repository.AccountStockRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +21,11 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    private final AccountStockRepository accountStockRepository;
+
+    public AccountService(AccountRepository accountRepository, AccountStockRepository accountStockRepository) {
         this.accountRepository = accountRepository;
+        this.accountStockRepository = accountStockRepository;
     }
 
     @Transactional
@@ -79,6 +83,8 @@ public class AccountService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id))
                 .ownedBy(loginUser);
+
+        accountStockRepository.deleteAllByAccountId(id);
 
         accountRepository.delete(account);
     }

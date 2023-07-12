@@ -1,6 +1,6 @@
 package com.gangbean.stockservice.domain;
 
-import com.gangbean.stockservice.exception.*;
+import com.gangbean.stockservice.exception.accountstock.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -109,7 +109,7 @@ public class AccountStock {
         }
         balance = balance.add(amount);
         totalPaid = totalPaid.add(price.multiply(amount));
-        this.price = totalPaid.divide(balance, RoundingMode.DOWN);
+        this.price = totalPaid.divide(balance, 0, RoundingMode.DOWN);
         history.add(new AccountStockTrade(StockTradeType.BUYING, amount, price, tradeAt));
     }
 }

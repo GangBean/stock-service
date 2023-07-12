@@ -21,14 +21,15 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create-drop
+    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true
-    defer-datasource-initialization: true
-
+        
 logging:
   level:
-    sql: debug
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
 
 jwt:
   header: Authorization
