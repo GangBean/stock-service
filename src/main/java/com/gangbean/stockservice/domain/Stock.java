@@ -5,12 +5,10 @@ import com.gangbean.stockservice.exception.StockNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.stock.StockBuyForOverCurrentPriceException;
 import com.gangbean.stockservice.exception.stock.StockSellForBelowCurrentPriceException;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Stock {
@@ -24,19 +22,21 @@ public class Stock {
     private BigDecimal price;
 
     private BigDecimal balance;
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<StockHistory> histories;
 
-    public Stock() {
-    }
+    public Stock() {}
 
-    public Stock(Long id, String name, BigDecimal price, BigDecimal balance) {
-        this(name, price, balance);
+    public Stock(Long id, String name, BigDecimal price, BigDecimal balance, Set<StockHistory> histories) {
+        this(name, price, balance, histories);
         this.id = id;
     }
 
-    public Stock(String name, BigDecimal price, BigDecimal balance) {
+    public Stock(String name, BigDecimal price, BigDecimal balance, Set<StockHistory> histories) {
         this.name = name;
         this.price = price;
         this.balance = balance;
+        this.histories = histories;
     }
 
     public Long id() {
@@ -55,17 +55,8 @@ public class Stock {
         return balance;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Stock stock = (Stock) o;
-        return Objects.equals(id, stock.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public Set<StockHistory> histories() {
+        return histories;
     }
 
     public void sell(BigDecimal price, BigDecimal amount) {
@@ -86,5 +77,18 @@ public class Stock {
             throw new StockAmountNotValidException("1개 이상만 구매가능합니다: " + amount);
         }
         balance = balance.add(amount);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Stock stock = (Stock) o;
+        return Objects.equals(id, stock.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

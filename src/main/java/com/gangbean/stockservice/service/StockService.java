@@ -4,7 +4,6 @@ import com.gangbean.stockservice.domain.Stock;
 import com.gangbean.stockservice.dto.StockDetailInfoResponse;
 import com.gangbean.stockservice.dto.StockInfoResponse;
 import com.gangbean.stockservice.exception.StockNotFoundException;
-import com.gangbean.stockservice.repository.StockHistoryRepository;
 import com.gangbean.stockservice.repository.StockRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +16,8 @@ import java.util.stream.Collectors;
 public class StockService {
     private final StockRepository stockRepository;
 
-    private final StockHistoryRepository stockHistoryRepository;
-
-    public StockService(StockRepository stockRepository, StockHistoryRepository stockHistoryRepository) {
+    public StockService(StockRepository stockRepository) {
         this.stockRepository = stockRepository;
-        this.stockHistoryRepository = stockHistoryRepository;
     }
 
     public List<StockInfoResponse> respondsOfAllStock() {
@@ -33,6 +29,6 @@ public class StockService {
     public StockDetailInfoResponse responseOfStockDetail(Long stockId) {
         Stock stock = stockRepository.findById(stockId)
                 .orElseThrow(() -> new StockNotFoundException("입력된 ID에 해당하는 주식이 존재하지 않습니다: " + stockId));
-        return StockDetailInfoResponse.responseOf(stock, stockHistoryRepository.findAllByStockId(stock.id()));
+        return StockDetailInfoResponse.responseOf(stock);
     }
 }
