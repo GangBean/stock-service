@@ -65,7 +65,7 @@ class StockServiceTest extends Specification {
         then:
         1 * stockRepository.findAll() >> List.of(stock, stock2)
         verifyAll {
-            allStock.containsAll(
+            allStock.getStocks().containsAll(
                     StockInfoResponse.responseOf(stock),
                     StockInfoResponse.responseOf(stock2)
             )

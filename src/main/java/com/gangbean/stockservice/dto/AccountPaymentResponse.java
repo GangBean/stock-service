@@ -1,18 +1,21 @@
 package com.gangbean.stockservice.dto;
 
+import com.gangbean.stockservice.domain.Account;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.math.BigDecimal;
 
+@Getter
+@AllArgsConstructor
 public class AccountPaymentResponse {
 
+    private final Long accountId;
 
     private final BigDecimal balance;
 
-    public AccountPaymentResponse(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public static AccountPaymentResponse responseOf(BigDecimal balance) {
-        return new AccountPaymentResponse(balance);
+    public static AccountPaymentResponse responseOf(Account account) {
+        return new AccountPaymentResponse(account.id(), account.balance());
     }
 
     public BigDecimal balance() {

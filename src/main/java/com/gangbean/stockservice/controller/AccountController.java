@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api")
@@ -30,6 +31,14 @@ public class AccountController {
         this.accountService = accountService;
         this.bankService = bankService;
         this.memberService = memberService;
+    }
+
+    @PostMapping("/accounts/{id}/payments")
+    public ResponseEntity<AccountPaymentResponse> pay(@PathVariable Long id, @AuthenticationPrincipal User loginUser
+            , @RequestBody AccountPaymentRequest request) {
+        Member member = memberService.memberOf(loginUser.getUsername()).asMember();
+        AccountPaymentResponse response = accountService.responseOfPayment(member, id, LocalDateTime.now(), request.getPrice());
+        return ResponseEntity.created(URI.create("/api/accounts/" + id + "/payments")).body(response);
     }
 
     @GetMapping("/accounts/{id}")
