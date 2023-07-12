@@ -4,7 +4,7 @@ import com.gangbean.stockservice.domain.Member;
 import com.gangbean.stockservice.dto.*;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
-import com.gangbean.stockservice.exception.account.AccountServiceException;
+import com.gangbean.stockservice.exception.account.AccountException;
 import com.gangbean.stockservice.service.AccountService;
 import com.gangbean.stockservice.service.BankService;
 import com.gangbean.stockservice.service.MemberService;
@@ -61,7 +61,7 @@ public class AccountController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ExceptionResponse> handleException(AccountServiceException e) {
+    public ResponseEntity<ExceptionResponse> handleException(AccountException e) {
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 

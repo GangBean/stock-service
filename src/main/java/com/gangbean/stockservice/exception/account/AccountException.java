@@ -2,8 +2,8 @@ package com.gangbean.stockservice.exception.account;
 
 import com.gangbean.stockservice.exception.StockServiceApplicationException;
 
-public class AccountServiceException extends StockServiceApplicationException {
-    public AccountServiceException(String message) {
+public class AccountException extends StockServiceApplicationException {
+    public AccountException(String message) {
         super(message);
     }
 }

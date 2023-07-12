@@ -35,9 +35,6 @@ class StockRepositoryTest extends Specification {
     }
 
     def "주식 저장소는 저장된 주식전체를 돌려줍니다"() {
-        given:
-        stockRepository.deleteAll()
-
         String stockName = "카카오"
         Long price = 10_000L
         Long balance = 100L
@@ -55,7 +52,7 @@ class StockRepositoryTest extends Specification {
 
         then:
         verifyAll {
-            stocks.size() == 2
+            stocks.size() == 4
             stocks.containsAll(saved, saved2)
         }
     }

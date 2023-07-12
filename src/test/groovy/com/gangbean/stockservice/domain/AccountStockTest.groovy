@@ -1,10 +1,10 @@
 package com.gangbean.stockservice.domain
 
-import com.gangbean.stockservice.exception.AccountStockBuyAmountBelowZeroException
-import com.gangbean.stockservice.exception.AccountStockBuyPriceBelowZeroException
-import com.gangbean.stockservice.exception.AccountStockNotEnoughBalanceException
-import com.gangbean.stockservice.exception.AccountStockSellAmountBelowZeroException
-import com.gangbean.stockservice.exception.AccountStockSellPriceBelowZeroException
+import com.gangbean.stockservice.exception.accountstock.AccountStockBuyAmountBelowZeroException
+import com.gangbean.stockservice.exception.accountstock.AccountStockBuyPriceBelowZeroException
+import com.gangbean.stockservice.exception.accountstock.AccountStockNotEnoughBalanceException
+import com.gangbean.stockservice.exception.accountstock.AccountStockSellAmountBelowZeroException
+import com.gangbean.stockservice.exception.accountstock.AccountStockSellPriceBelowZeroException
 import spock.lang.Specification
 
 import java.time.LocalDateTime
