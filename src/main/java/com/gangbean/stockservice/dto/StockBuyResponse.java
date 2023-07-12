@@ -20,14 +20,6 @@ public class StockBuyResponse {
     }
 
     public static StockBuyResponse responseOf(AccountStockTrade accountStockTrade, List<AccountStockTrade> buyList) {
-        Long totalSum = buyList.stream()
-                .mapToLong(AccountStockTrade::totalAmount)
-                .sum();
-        Long totalCount = buyList.stream()
-                .mapToLong(AccountStockTrade::totalCount)
-                .sum();
-        return new StockBuyResponse(accountStockTrade.stock().id()
-                , accountStockTrade.balance()
-                , totalSum / totalCount);
+        return new StockBuyResponse();
     }
 }

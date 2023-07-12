@@ -3,7 +3,7 @@ package com.gangbean.stockservice.acceptance
 import com.gangbean.stockservice.SpringBootAcceptanceTest
 import com.gangbean.stockservice.jwt.TokenProvider
 import com.gangbean.stockservice.repository.AccountRepository
-import com.gangbean.stockservice.repository.AccountStockRepository
+import com.gangbean.stockservice.repository.AccountStockTradeRepository
 import com.gangbean.stockservice.repository.StockRepository
 import io.restassured.RestAssured
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,7 +24,7 @@ class StockSellingAcceptanceTest extends Specification {
     StockRepository stockRepository
 
     @Autowired
-    AccountStockRepository accountStockRepository
+    AccountStockTradeRepository accountStockRepository
 
     @Autowired
     TokenProvider tokenProvider

@@ -13,7 +13,7 @@ import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 class AccountStockTradeRepositoryTest extends Specification {
 
     @Autowired
-    AccountStockRepository accountStockRepository
+    AccountStockTradeRepository accountStockRepository
 
     @Autowired
     AccountRepository accountRepository
@@ -65,7 +65,7 @@ class AccountStockTradeRepositoryTest extends Specification {
         then:
         verifyAll {
             saved.id() != null
-            saved.balance() == balance
+            saved.amount() == balance
             saved.price() == price
         }
     }

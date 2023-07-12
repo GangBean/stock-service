@@ -8,7 +8,7 @@ import com.gangbean.stockservice.exception.StockNotFoundException;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
 import com.gangbean.stockservice.repository.AccountRepository;
-import com.gangbean.stockservice.repository.AccountStockRepository;
+import com.gangbean.stockservice.repository.AccountStockTradeRepository;
 import com.gangbean.stockservice.repository.StockRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,18 +18,18 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 @Service
-public class AccountStockService {
+public class AccountStockTradeService {
 
     private final AccountRepository accountRepository;
     private final StockRepository stockRepository;
-    private final AccountStockRepository accountStockRepository;
+    private final AccountStockTradeRepository accountStockTradeRepository;
 
-    public AccountStockService(AccountRepository accountRepository
+    public AccountStockTradeService(AccountRepository accountRepository
             , StockRepository stockRepository
-            , AccountStockRepository accountStockRepository) {
+            , AccountStockTradeRepository accountStockTradeRepository) {
         this.accountRepository = accountRepository;
         this.stockRepository = stockRepository;
-        this.accountStockRepository = accountStockRepository;
+        this.accountStockTradeRepository = accountStockTradeRepository;
     }
 
     @Transactional
@@ -47,9 +47,10 @@ public class AccountStockService {
 
         account.withDraw(buyAt, price * amount);
 
-        AccountStockTrade accountStockTrade = accountStockRepository.save(new AccountStockTrade(account, stock, StockTradeType.BUYING, amount, price));
+        AccountStockTrade accountStockTrade = null;
+                //accountStockTradeRepository.save(new AccountStockTrade(account, stock, StockTradeType.BUYING, amount, price));
 
-        List<AccountStockTrade> stockTradeList = accountStockRepository.findAllByAccountIdAndStockId(accountId, stockId);
+        List<AccountStockTrade> stockTradeList = accountStockTradeRepository.findAllByAccountIdAndStockId(accountId, stockId);
         return StockBuyResponse.responseOf(accountStockTrade, stockTradeList);
     }
 
@@ -63,9 +64,11 @@ public class AccountStockService {
         account.deposit(sellAt,stockSellRequest.getAmount() * stockSellRequest.getPrice());
         stock.buy(stockSellRequest.getPrice(), stockSellRequest.getAmount());
 
-        AccountStockTrade accountStockTrade = accountStockRepository.save(new AccountStockTrade(account, stock, StockTradeType.SELLING, stockSellRequest.getAmount(), stockSellRequest.getPrice()));
+        AccountStockTrade accountStockTrade = null;
+        // accountStockTradeRepository.save(new AccountStockTrade(account, stock, StockTradeType.SELLING, stockSellRequest.getAmount(), stockSellRequest.getPrice()));
 
-        List<AccountStockTrade> stockTradeList = accountStockRepository.findAllByAccountIdAndStockId(accountStockTrade.stock().id(), accountStockTrade.stock().id());
+        List<AccountStockTrade> stockTradeList = null;
+        // accountStockTradeRepository.findAllByAccountIdAndStockId(accountStockTrade.stock().id(), accountStockTrade.stock().id());
         return StockSellResponse.responseOf(accountStockTrade, stockTradeList);
     }
 }

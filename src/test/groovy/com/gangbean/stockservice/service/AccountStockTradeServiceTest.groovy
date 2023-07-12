@@ -3,7 +3,7 @@ package com.gangbean.stockservice.service
 import com.gangbean.stockservice.domain.*
 import com.gangbean.stockservice.dto.StockSellRequest
 import com.gangbean.stockservice.repository.AccountRepository
-import com.gangbean.stockservice.repository.AccountStockRepository
+import com.gangbean.stockservice.repository.AccountStockTradeRepository
 import com.gangbean.stockservice.repository.StockRepository
 import spock.lang.Specification
 
@@ -13,19 +13,19 @@ import static com.gangbean.stockservice.domain.MemberTest.TEST_MEMBER
 
 class AccountStockTradeServiceTest extends Specification {
 
-    AccountStockService accountStockService
+    AccountStockTradeService accountStockService
 
     AccountRepository accountRepository
 
     StockRepository stockRepository
 
-    AccountStockRepository accountStockRepository
+    AccountStockTradeRepository accountStockRepository
 
     def setup() {
         accountStockRepository = Mock()
         stockRepository = Mock()
         accountRepository = Mock()
-        accountStockService = new AccountStockService(accountRepository
+        accountStockService = new AccountStockTradeService(accountRepository
                 , stockRepository
                 , accountStockRepository)
     }

@@ -2,8 +2,8 @@ package com.gangbean.stockservice.exception;
 
 import com.gangbean.stockservice.exception.account.AccountServiceException;
 
-public class AccountStockSellBelowZeroException extends AccountServiceException {
-    public AccountStockSellBelowZeroException(String message) {
+public class AccountStockBuyPriceBelowZeroException extends AccountServiceException {
+    public AccountStockBuyPriceBelowZeroException(String message) {
         super(message);
     }
 }

@@ -1,6 +1,8 @@
 package com.gangbean.stockservice.domain;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -10,32 +12,27 @@ public class AccountStockTrade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    private Account account;
-
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    private Stock stock;
-
     @Enumerated(EnumType.STRING)
     private StockTradeType tradeType;
 
-    private Long balance;
+    private BigDecimal amount;
 
-    private Long price;
+    private BigDecimal price;
+
+    private LocalDateTime tradeAt;
 
     public AccountStockTrade() {
     }
 
-    public AccountStockTrade(Account account, Stock stock, StockTradeType tradeType, Long balance, Long price) {
-        this.account = account;
-        this.stock = stock;
+    public AccountStockTrade(StockTradeType tradeType, BigDecimal amount, BigDecimal price, LocalDateTime tradeAt) {
         this.tradeType = tradeType;
-        this.balance = balance;
+        this.amount = amount;
         this.price = price;
+        this.tradeAt = tradeAt;
     }
 
-    public AccountStockTrade(Long id, Account account, Stock stock, StockTradeType tradeType, Long balance, Long price) {
-        this(account, stock, tradeType, balance, price);
+    public AccountStockTrade(Long id, StockTradeType tradeType, BigDecimal amount, BigDecimal price, LocalDateTime tradeAt) {
+        this(tradeType, amount, price, tradeAt);
         this.id = id;
     }
 
@@ -43,24 +40,20 @@ public class AccountStockTrade {
         return id;
     }
 
-    public Account account() {
-        return account;
+    public BigDecimal amount() {
+        return amount;
     }
 
-    public Stock stock() {
-        return stock;
-    }
-
-    public Long balance() {
-        return balance;
-    }
-
-    public Long price() {
+    public BigDecimal price() {
         return price;
     }
 
     public StockTradeType tradeType() {
         return tradeType;
+    }
+
+    public LocalDateTime when() {
+        return tradeAt;
     }
 
     @Override
@@ -76,12 +69,14 @@ public class AccountStockTrade {
         return Objects.hash(id);
     }
 
-    public Long totalAmount() {
-        return balance * price *
-                ((tradeType == StockTradeType.SELLING) ? -1 : 1);
-    }
-
-    public Long totalCount() {
-        return balance * ((tradeType == StockTradeType.SELLING) ? -1 : 1);
+    @Override
+    public String toString() {
+        return "AccountStockTrade{" +
+                "id=" + id +
+                ", tradeType=" + tradeType +
+                ", amount=" + amount +
+                ", price=" + price +
+                ", tradeAt=" + tradeAt +
+                '}';
     }
 }

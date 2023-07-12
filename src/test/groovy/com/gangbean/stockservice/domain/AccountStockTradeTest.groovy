@@ -61,7 +61,7 @@ class AccountStockTradeTest extends Specification {
         def accountStock = new AccountStockTrade(account, stock, StockTradeType.BUYING, balance, averagePrice)
 
         then:
-        accountStock.balance() == balance
+        accountStock.amount() == balance
     }
 
     def "계좌주식은 주식정보를 요청하고, 자신의 주식정보를 반환합니다"() {

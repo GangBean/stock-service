@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AccountStockRepository extends JpaRepository<AccountStockTrade, Long> {
+public interface AccountStockTradeRepository extends JpaRepository<AccountStockTrade, Long> {
     List<AccountStockTrade> findAllByAccountIdAndStockId(Long accountId, Long stockId);
 }
