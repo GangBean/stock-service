@@ -138,4 +138,8 @@ public class Account {
         }
         return balance;
     }
+
+    public boolean isOverBalance(BigDecimal amount) {
+        return balance.compareTo(amount) < 0;
+    }
 }
