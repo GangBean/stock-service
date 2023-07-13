@@ -4,9 +4,13 @@ import com.gangbean.stockservice.exception.StockAmountNotValidException;
 import com.gangbean.stockservice.exception.StockNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.stock.StockBuyForOverCurrentPriceException;
 import com.gangbean.stockservice.exception.stock.StockSellForBelowCurrentPriceException;
+import com.gangbean.stockservice.util.StringUtil;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
 
@@ -90,5 +94,21 @@ public class Stock {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void updatePrice(StockPrice stockPrice, LocalDateTime now) {
+        BigDecimal before = price;
+        histories.add(new StockHistory(now, price));
+        price = stockPrice.generateNextPrice(price);
+        announceResult(before);
+    }
+
+    private void announceResult(BigDecimal before) {
+        System.out.println(">>>>>>>>> | " + StringUtil.paddLeftWith(name,10) + " | "
+                + StringUtil.paddLeftWith(new DecimalFormat("#,###").format(before.divide(BigDecimal.ONE, 0, RoundingMode.DOWN)),16)
+                + " | " + StringUtil.paddLeftWith(new DecimalFormat("#,###").format(price), 16)
+                + " | " + StringUtil.paddLeftWith(new DecimalFormat("+#,###;-#,###").format(before.subtract(price)),16)
+                + " | (" + new DecimalFormat("+#.###;-#.###").format(before.subtract(price).divide(before, 3, RoundingMode.HALF_UP).multiply(new BigDecimal(100))) + " %)"
+                + " | ");
     }
 }

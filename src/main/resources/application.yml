@@ -17,12 +17,11 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        show_sql: true
     defer-datasource-initialization: true
 
 logging:
   level:
-    sql: debug
+    sql: info
 
 jwt:
   header: Authorization

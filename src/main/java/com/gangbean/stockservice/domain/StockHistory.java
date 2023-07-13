@@ -1,6 +1,7 @@
 package com.gangbean.stockservice.domain;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -10,16 +11,16 @@ public class StockHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime writtenAt;
-    private Long price;
+    private BigDecimal price;
 
     public StockHistory() {}
 
-    public StockHistory(LocalDateTime writtenAt, Long price) {
+    public StockHistory(LocalDateTime writtenAt, BigDecimal price) {
         this.writtenAt = writtenAt;
         this.price = price;
     }
 
-    public StockHistory(Long id, LocalDateTime writtenAt, Long price) {
+    public StockHistory(Long id, LocalDateTime writtenAt, BigDecimal price) {
         this(writtenAt, price);
         this.id = id;
     }
@@ -28,7 +29,7 @@ public class StockHistory {
         return writtenAt;
     }
 
-    public Long howMuch() {
+    public BigDecimal howMuch() {
         return price;
     }
 
