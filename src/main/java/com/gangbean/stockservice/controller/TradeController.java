@@ -9,6 +9,7 @@ import com.gangbean.stockservice.service.AccountService;
 import com.gangbean.stockservice.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/accounts/{accountId}")
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class TradeController {
 
     private final MemberService memberService;
@@ -35,7 +37,7 @@ public class TradeController {
         Member member = memberService.memberOf(loginUser.getUsername()).asMember();
         AccountTransferResponse response = accountService.responseOfTransfer(member, accountId
                 , request.getReceiverAccountNumber(), LocalDateTime.now(), request.getAmount());
-        return ResponseEntity.created(URI.create(String.format("/api/accounts/%s/trades/%s", accountId, response.getId()))).body(response);
+        return ResponseEntity.created(URI.create(String.format("/api/accounts/%s/trades", accountId))).body(response);
     }
 
     @ExceptionHandler

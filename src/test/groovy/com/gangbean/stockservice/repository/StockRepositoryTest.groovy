@@ -52,7 +52,7 @@ class StockRepositoryTest extends Specification {
 
         then:
         verifyAll {
-            stocks.size() == 4
+            stocks.size() == 5
             stocks.containsAll(saved, saved2)
         }
     }

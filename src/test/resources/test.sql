@@ -18,6 +18,7 @@ insert into trade(type, date_time, amount) values('WITHDRAW', '2023-07-02T01:25:
 insert into trade(type, date_time, amount) values('PAYMENT', '2023-07-03T17:55:00', 1000);
 
 insert into stock(balance, name, price) values(100, '백만전자', 100);
+insert into stock(balance, name, price) values(100, '십만전자', 100);
 insert into stock(id, balance, name, price) values(10, 100, '천만전자', 100);
 
 insert into account_trades(account_id, trades_id) values(1, 1);

@@ -16,6 +16,7 @@ import com.gangbean.stockservice.service.AccountStockService;
 import com.gangbean.stockservice.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/api")
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class AccountStockController {
 
     private final MemberService memberService;

@@ -9,8 +9,8 @@ import java.util.Map;
 public class BatchExecutionTime {
 
     public static final Map<String, LocalDateTime> BATCH_LIST = Map.of(
-            "Reservation", LocalDateTime.MIN
-            , "Stock", LocalDateTime.MIN);
+            "Reservation", LocalDateTime.now()
+            , "Stock", LocalDateTime.now());
     private final static Map<String, LocalDateTime> NEXT_EXECUTION = new HashMap<>(BATCH_LIST);
 
     public static void write(String batchName, LocalDateTime endAt) {

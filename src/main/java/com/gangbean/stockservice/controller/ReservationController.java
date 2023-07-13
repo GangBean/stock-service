@@ -14,6 +14,7 @@ import com.gangbean.stockservice.service.MemberService;
 import com.gangbean.stockservice.service.TradeReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api")
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class ReservationController {
 
     private final MemberService memberService;

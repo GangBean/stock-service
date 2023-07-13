@@ -50,6 +50,8 @@ public class AccountStockService {
         marketStock.sell(price, amount);
         account.withDraw(buyAt, price.multiply(amount));
 
+        accountStockRepository.save(accountStock);
+
         return StockBuyResponse.responseOf(accountStock);
     }
 

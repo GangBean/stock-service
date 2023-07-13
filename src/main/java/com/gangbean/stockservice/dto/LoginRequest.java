@@ -6,11 +6,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
-@Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginDto {
+public class LoginRequest {
 
     @NotNull
     @Size(min = 3, max = 50)

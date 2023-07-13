@@ -12,13 +12,11 @@ public class AccountOpenRequest {
     private String bankName;
     private Long bankNumber;
     private BigDecimal balance;
-    private Long memberId;
 
     public AccountOpenRequest(String bankName, Long bankNumber, BigDecimal balance, Long memberId) {
         this.bankName = bankName;
         this.bankNumber = bankNumber;
         this.balance = balance;
-        this.memberId = memberId;
     }
 
     public static AccountOpenRequest requestOf(Account account) {

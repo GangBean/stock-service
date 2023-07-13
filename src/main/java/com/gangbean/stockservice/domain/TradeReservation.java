@@ -98,4 +98,8 @@ public class TradeReservation {
         }
         return account;
     }
+
+    public void executeTrade() {
+        account.pay(tradeAt, amount);
+    }
 }
