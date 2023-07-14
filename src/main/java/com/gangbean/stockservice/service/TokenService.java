@@ -3,6 +3,7 @@ package com.gangbean.stockservice.service;
 import com.gangbean.stockservice.domain.Member;
 import com.gangbean.stockservice.domain.Token;
 import com.gangbean.stockservice.dto.LoginResponse;
+import com.gangbean.stockservice.exception.member.RefreshTokenNotFoundException;
 import com.gangbean.stockservice.jwt.TokenProvider;
 import com.gangbean.stockservice.repository.TokenRepository;
 import java.util.Date;
@@ -64,14 +65,14 @@ public class TokenService {
     }
 
     private Token notExpiredAndMatchedToken(Long loginMemberId, Date now, String refreshToken) {
-        Token token = tokenRepository
+        Token matchedToken = tokenRepository
             .findByRefreshToken(refreshToken)
-            .orElseThrow(() -> new IllegalArgumentException("Refresh Token이 존재하지 않습니다."));
+            .orElseThrow(() -> new RefreshTokenNotFoundException("일치하는 Refresh Token이 존재하지 않습니다: " + refreshToken));
 
-        token.isExpired(now);
-        token.isSameMember(loginMemberId);
+        matchedToken.isExpired(now);
+        matchedToken.isOwnedBy(loginMemberId);
 
-        return token;
+        return matchedToken;
     }
 
     private Authentication currentAuthentication() {

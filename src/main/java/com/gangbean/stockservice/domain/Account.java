@@ -19,7 +19,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 @Entity
 public class Account {
@@ -34,7 +33,7 @@ public class Account {
     @ManyToOne
     private Member member;
 
-    @OneToOne
+    @ManyToOne
     private Bank bank;
 
     private BigDecimal balance;

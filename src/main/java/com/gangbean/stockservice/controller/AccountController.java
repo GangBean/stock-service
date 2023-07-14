@@ -65,9 +65,9 @@ public class AccountController {
     @PostMapping("/accounts")
     public ResponseEntity<AccountInfoResponse> openAccount(@RequestBody AccountOpenRequest request
             , @AuthenticationPrincipal User loginUser) {
-        BankInfoResponse bankInfoResponse = bankService.validateBank(request.bankName(), request.bankNumber());
+        BankInfoResponse bankInfoResponse = bankService.existingBank(request.bankName(), request.bankNumber());
         Member member = memberService.memberOf(loginUser.getUsername()).asMember();
-        AccountInfoResponse response = accountService.responseOfAccountCreate(member, bankInfoResponse.asBank(), request.getBalance());
+        AccountInfoResponse response = accountService.responseOfAccountOpen(member, bankInfoResponse.asBank(), request.getBalance());
         return ResponseEntity.created(URI.create("/api/accounts/" + response.getId())).body(response);
     }
 

@@ -22,7 +22,7 @@ class BankServiceTest extends Specification {
         def number = 0L
 
         when:
-        bankService.validateBank(name, number)
+        bankService.existingBank(name, number)
 
         then:
         1 * bankRepository.findByNameAndNumber(name, number) >> Optional.empty()
@@ -38,7 +38,7 @@ class BankServiceTest extends Specification {
         def bank = new Bank(id, name, number)
 
         when:
-        BankInfoResponse response = bankService.validateBank(name, number)
+        BankInfoResponse response = bankService.existingBank(name, number)
 
         then:
         1 * bankRepository.findByNameAndNumber(name, number) >> Optional.of(bank)

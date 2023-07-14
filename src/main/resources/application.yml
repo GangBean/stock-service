@@ -21,8 +21,8 @@ spring:
 
 logging:
   level:
-    sql: DEBUG
-    org.hibernate.type: TRACE
+    sql: INFO
+    org.hibernate.type: INFO
 
 jwt:
   header: Authorization
