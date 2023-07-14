@@ -14,7 +14,7 @@ class TradeTest extends Specification {
         Long amount = 1_000L
         LocalDateTime tradeAt = LocalDateTime.of(2023,07,01,14,0)
         TradeType type = TradeType.DEPOSIT
-        Account account = new Account(1L, "00000", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000L, new HashSet<>())
+        Account account = new Account(1L, "00000", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000L, new HashSet<>(), new HashSet<>())
 
         when:
         Trade trade = new Trade(id, type, tradeAt, amount)
@@ -28,7 +28,7 @@ class TradeTest extends Specification {
         Long amount = 1_000L
         LocalDateTime tradeAt = LocalDateTime.of(2023,07,01,14,0)
         TradeType type = TradeType.DEPOSIT
-        Account account = new Account(1L, "00000", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000L, new HashSet<>())
+        Account account = new Account(1L, "00000", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000L, new HashSet<>(), new HashSet<>())
 
         when:
         Trade trade = new Trade(1L, type, tradeAt, amount)
@@ -41,7 +41,7 @@ class TradeTest extends Specification {
         given:
         Long amount = 1_000L
         LocalDateTime tradeAt = LocalDateTime.of(2023,07,01,14,0)
-        Account account = new Account(1L, "00000", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000L, new HashSet<>())
+        Account account = new Account(1L, "00000", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000L, new HashSet<>(), new HashSet<>())
 
         when:
         Trade trade = new Trade(1L, TradeType.WITHDRAW, tradeAt, amount)
@@ -53,7 +53,7 @@ class TradeTest extends Specification {
     def "거래는 언제 거래가 이뤄졌는지 알려줍니다" () {
         given:
         LocalDateTime tradeAt = LocalDateTime.of(2023,07,01,14,0)
-        Account account = new Account(1L, "00000", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000L, new HashSet<>())
+        Account account = new Account(1L, "00000", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000L, new HashSet<>(), new HashSet<>())
 
         when:
         Trade trade = new Trade(1L, TradeType.PAYMENT, tradeAt, 1_000L)

@@ -14,7 +14,7 @@ class AccountTest extends Specification {
         Long memberId = 1L
         String userName = "사용자"
         String password = "1234"
-        def member = new Member.MemberBuilder().userId(memberId)
+        def member = new Member.MemberBuilder().id(memberId)
             .username(userName)
             .password(password)
             .nickname(userName).build()
@@ -26,7 +26,7 @@ class AccountTest extends Specification {
         Long balance = 1000L
 
         when:
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         then:
         noExceptionThrown()
@@ -37,7 +37,7 @@ class AccountTest extends Specification {
         Long memberId = 1L
         String userName = "사용자"
         String password = "1234"
-        def member = new Member.MemberBuilder().userId(memberId)
+        def member = new Member.MemberBuilder().id(memberId)
                 .username(userName)
                 .password(password)
                 .nickname(userName).build()
@@ -47,7 +47,7 @@ class AccountTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1000L
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         when:
         account.withDraw(LocalDateTime.now(), amount)
@@ -66,7 +66,7 @@ class AccountTest extends Specification {
         Long memberId = 1L
         String userName = "사용자"
         String password = "1234"
-        def member = new Member.MemberBuilder().userId(memberId)
+        def member = new Member.MemberBuilder().id(memberId)
                 .username(userName)
                 .password(password)
                 .nickname(userName).build()
@@ -76,7 +76,7 @@ class AccountTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1000L
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         Long amount = 1000L
 
@@ -92,7 +92,7 @@ class AccountTest extends Specification {
         Long memberId = 1L
         String userName = "사용자"
         String password = "1234"
-        def member = new Member.MemberBuilder().userId(memberId)
+        def member = new Member.MemberBuilder().id(memberId)
                 .username(userName)
                 .password(password)
                 .nickname(userName).build()
@@ -102,7 +102,7 @@ class AccountTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         when:
         account.deposit(LocalDateTime.now(), amount)
@@ -121,7 +121,7 @@ class AccountTest extends Specification {
         Long memberId = 1L
         String userName = "사용자"
         String password = "1234"
-        def member = new Member.MemberBuilder().userId(memberId)
+        def member = new Member.MemberBuilder().id(memberId)
                 .username(userName)
                 .password(password)
                 .nickname(userName).build()
@@ -131,12 +131,12 @@ class AccountTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         Long amount = 1_000L
 
         when:
-        account.deposit(LocalDateTime.now(), amount)
+        account.deposit(LocalDateTime.now(), amount as BigDecimal)
 
         then:
         account.balance() == 2_000L
@@ -147,7 +147,7 @@ class AccountTest extends Specification {
         Long memberId = 1L
         String userName = "사용자"
         String password = "1234"
-        def member = new Member.MemberBuilder().userId(memberId)
+        def member = new Member.MemberBuilder().id(memberId)
                 .username(userName)
                 .password(password)
                 .nickname(userName).build()
@@ -159,7 +159,7 @@ class AccountTest extends Specification {
         Long balance = 1000L
 
         when:
-        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(id, number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         then:
         verifyAll {
@@ -175,7 +175,7 @@ class AccountTest extends Specification {
         Long memberId = 1L
         String userName = "사용자"
         String password = "1234"
-        def member = new Member.MemberBuilder().userId(memberId)
+        def member = new Member.MemberBuilder().id(memberId)
                 .username(userName)
                 .password(password)
                 .nickname(userName).build()
@@ -186,7 +186,7 @@ class AccountTest extends Specification {
         Long balance = 1000L
 
         when:
-        new Account(number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>())
+        new Account(number, member, new Bank(bankId, bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         then:
         noExceptionThrown()

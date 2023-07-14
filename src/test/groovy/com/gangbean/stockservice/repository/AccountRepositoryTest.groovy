@@ -39,8 +39,8 @@ class AccountRepositoryTest extends Specification {
         String number = "000000004"
         String number2 = "000000005"
         Long balance = 1000L
-        def saved = accountRepository.save(new Account(number, TEST_MEMBER, bank, balance as BigDecimal, new HashSet<>()))
-        def saved2 = accountRepository.save(new Account(number2, TEST_MEMBER, bank, balance as BigDecimal, new HashSet<>()))
+        def saved = accountRepository.save(new Account(number, TEST_MEMBER, bank, balance as BigDecimal, new HashSet<>(), new HashSet<>()))
+        def saved2 = accountRepository.save(new Account(number2, TEST_MEMBER, bank, balance as BigDecimal, new HashSet<>(), new HashSet<>()))
 
         when:
         def list = accountRepository.findAll()
@@ -56,7 +56,7 @@ class AccountRepositoryTest extends Specification {
         given:
         String number = "000000003";
         Long balance = 1000L
-        Account account = new Account(number, TEST_MEMBER, bank, balance as BigDecimal, new HashSet<>() as Set<Trade>)
+        Account account = new Account(number, TEST_MEMBER, bank, balance as BigDecimal, new HashSet<>() as Set<Trade>, new HashSet<>())
         def saved = accountRepository.save(account)
 
         when:
@@ -75,7 +75,7 @@ class AccountRepositoryTest extends Specification {
         given:
         String number = "000000002";
         Long balance = 1000L
-        Account account = new Account(number, TEST_MEMBER, bank, balance as BigDecimal, new HashSet<>() as Set<Trade>)
+        Account account = new Account(number, TEST_MEMBER, bank, balance as BigDecimal, new HashSet<>() as Set<Trade>, new HashSet<>())
         def saved = accountRepository.save(account)
 
         when:
@@ -89,7 +89,7 @@ class AccountRepositoryTest extends Specification {
         given:
         String number = "000000001";
         Long balance = 1000L
-        Account account = new Account(number, TEST_MEMBER, bank, balance, new HashSet<>())
+        Account account = new Account(number, TEST_MEMBER, bank, balance, new HashSet<>(), new HashSet<>())
 
         when:
         def saved = accountRepository.save(account)

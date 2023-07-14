@@ -20,7 +20,7 @@ public class AccountOpenRequest {
     }
 
     public static AccountOpenRequest requestOf(Account account) {
-        return new AccountOpenRequest(account.bank().name(), account.bank().number(), account.balance(), account.whose().getUserId());
+        return new AccountOpenRequest(account.bank().name(), account.bank().number(), account.balance(), account.whose().getId());
     }
 
     public String bankName() {

@@ -17,12 +17,12 @@ public class AccountStock {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
-    private Account account;
-
-    @ManyToOne(cascade = CascadeType.REMOVE)
     private Stock stock;
+
     private BigDecimal balance;
+
     private BigDecimal price;
+
     private BigDecimal totalPaid;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -30,8 +30,7 @@ public class AccountStock {
 
     public AccountStock() {}
 
-    public AccountStock(Account account, Stock stock, BigDecimal balance, BigDecimal price, BigDecimal totalPaid, Set<AccountStockTrade> history) {
-        this.account = account;
+    public AccountStock(Stock stock, BigDecimal balance, BigDecimal price, BigDecimal totalPaid, Set<AccountStockTrade> history) {
         this.stock = stock;
         this.balance = balance;
         this.price = price;
@@ -39,17 +38,13 @@ public class AccountStock {
         this.history = history;
     }
 
-    public AccountStock(Long id, Account account, Stock stock, BigDecimal balance, BigDecimal price, BigDecimal totalPaid, Set<AccountStockTrade> history) {
-        this(account, stock, balance, price, totalPaid, history);
+    public AccountStock(Long id, Stock stock, BigDecimal balance, BigDecimal price, BigDecimal totalPaid, Set<AccountStockTrade> history) {
+        this(stock, balance, price, totalPaid, history);
         this.id = id;
     }
 
     public Long id() {
         return id;
-    }
-
-    public Account whose() {
-        return account;
     }
 
     public Stock what() {

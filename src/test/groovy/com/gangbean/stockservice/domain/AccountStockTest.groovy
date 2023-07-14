@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 class AccountStockTest extends Specification {
 
-    Account account = new Account(1L, "00001", MemberTest.TEST_MEMBER, new Bank(1L, "은행", 1L), 1000L as BigDecimal, new HashSet<>())
+    Account account = new Account(1L, "00001", MemberTest.TEST_MEMBER, new Bank(1L, "은행", 1L), 1000L as BigDecimal, new HashSet<>(), new HashSet<>())
     Stock stock = new Stock(1L, "카카오", 1000L as BigDecimal, 100L as BigDecimal, new HashSet<>())
     AccountStock accountStock
     Long id
@@ -26,7 +26,7 @@ class AccountStockTest extends Specification {
         averagePrice = 1_000
         total = 100_000
         stockTrades = new HashSet<>();
-        accountStock = new AccountStock(id, account, stock, balance, averagePrice, total, stockTrades)
+        accountStock = new AccountStock(id, stock, balance, averagePrice, total, stockTrades)
     }
 
     def "계좌주식은 0이하의 금액으로 구매할 수 없습니다"(BigDecimal price) {
@@ -201,18 +201,9 @@ class AccountStockTest extends Specification {
         what == stock
     }
 
-    def "게좌주식은 계좌를 요구하고 본인의 계좌를 알려줍니다"() {
-        when:
-        def whose = accountStock.whose()
-
-        then:
-        noExceptionThrown()
-        whose == account
-    }
-
     def "계좌주식은 id가 같으면 동등합니다"() {
         when:
-        def clone = new AccountStock(1L, null, null, null, null, null, null)
+        def clone = new AccountStock(1L, null, null, null, null, null)
 
         then:
         noExceptionThrown()

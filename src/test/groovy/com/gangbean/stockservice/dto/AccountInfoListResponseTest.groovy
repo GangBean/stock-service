@@ -15,7 +15,7 @@ class AccountInfoListResponseTest extends Specification {
         def bankName = "은행"
         def bankNumber = 1L
         List<AccountInfoResponse> list = new ArrayList<>()
-        list.add(AccountInfoResponse.responseOf(new Account(id, number,TEST_MEMBER,  new Bank(bankName, bankNumber), balance, new HashSet<>())))
+        list.add(AccountInfoResponse.responseOf(new Account(id, number,TEST_MEMBER,  new Bank(bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())))
         def response = new AccountInfoListResponse(list)
 
         when:
@@ -39,7 +39,7 @@ class AccountInfoListResponseTest extends Specification {
         def bankName = "은행"
         def bankNumber = 1L
         List<AccountInfoResponse> list = new ArrayList<>()
-        list.add(AccountInfoResponse.responseOf(new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())))
+        list.add(AccountInfoResponse.responseOf(new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())))
 
         when:
         new AccountInfoListResponse(list)

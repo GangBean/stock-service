@@ -4,12 +4,22 @@ import com.gangbean.stockservice.exception.account.AccountCannotDepositBelowZero
 import com.gangbean.stockservice.exception.account.AccountNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
 import com.gangbean.stockservice.exception.account.AccountTransferBelowZeroAmountException;
-
-import javax.persistence.*;
+import com.gangbean.stockservice.exception.accountstock.AccountStockNotExistsException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Account {
@@ -17,28 +27,37 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true)
     private String number;
+
     @ManyToOne
     private Member member;
+
     @OneToOne
     private Bank bank;
+
     private BigDecimal balance;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Trade> trades;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<AccountStock> stocks;
 
     public Account() {}
 
-    public Account(String number, Member member, Bank bank, BigDecimal balance, Set<Trade> trades) {
+    public Account(String number, Member member, Bank bank, BigDecimal balance, Set<Trade> trades, Set<AccountStock> stocks) {
         this.number = number;
         this.member = member;
         this.bank = bank;
         this.balance = moreThanZero(balance);
         this.trades = trades;
+        this.stocks = stocks;
     }
 
-    public Account(Long id, String number, Member member, Bank bank, BigDecimal balance, Set<Trade> trades) {
-        this(number, member, bank, balance, trades);
+    public Account(Long id, String number, Member member, Bank bank, BigDecimal balance, Set<Trade> trades, Set<AccountStock> stocks) {
+        this(number, member, bank, balance, trades, stocks);
         this.id = id;
     }
 
@@ -103,6 +122,30 @@ public class Account {
         trades.add(new Trade(TradeType.PAYMENT, tradeAt, amount));
     }
 
+    public void buyStock(Stock marketStock, BigDecimal price, BigDecimal amount, LocalDateTime buyAt) {
+        AccountStock accountStock = myStock(marketStock)
+            .orElseGet(() -> emptyAccountStock(marketStock));
+        accountStock.buy(price, amount, buyAt);
+        this.pay(buyAt, price.multiply(amount));
+    }
+
+    public void sellStock(Stock marketStock, BigDecimal price, BigDecimal amount, LocalDateTime sellAt) {
+        AccountStock accountStock = myStock(marketStock)
+            .orElseThrow(() -> new AccountStockNotExistsException("보유한 주식이 아닙니다: " + marketStock.id()));
+        accountStock.sell(price, amount, sellAt);
+        this.deposit(sellAt, price.multiply(amount));
+    }
+
+    public Optional<AccountStock> myStock(Long stockId) {
+        return stocks.stream()
+            .filter(accountStock -> Objects.equals(accountStock.what().id(), stockId))
+            .findAny();
+    }
+
+    public boolean isOverBalance(BigDecimal amount) {
+        return balance.compareTo(amount) < 0;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
@@ -139,7 +182,16 @@ public class Account {
         return balance;
     }
 
-    public boolean isOverBalance(BigDecimal amount) {
-        return balance.compareTo(amount) < 0;
+    private Optional<AccountStock> myStock(Stock marketStock) {
+        return stocks.stream()
+            .filter(stock -> Objects.equals(stock.what(), marketStock))
+            .findAny();
+    }
+
+    private AccountStock emptyAccountStock(Stock marketStock) {
+        AccountStock newAccountStock
+            = new AccountStock(marketStock, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, new HashSet<>());
+        stocks.add(newAccountStock);
+        return newAccountStock;
     }
 }

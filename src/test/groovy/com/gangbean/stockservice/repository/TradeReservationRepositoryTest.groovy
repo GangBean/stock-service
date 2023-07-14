@@ -28,7 +28,7 @@ class TradeReservationRepositoryTest extends Specification {
     def "결제예약 리포지토리는 결제예약을 저장합니다"() {
         given:
         def bank = bankRepository.save(new Bank("은행", 1L))
-        def account = accountRepository.save(new Account("0", TEST_MEMBER, bank, 10_000L, new HashSet<>()))
+        def account = accountRepository.save(new Account("0", TEST_MEMBER, bank, 10_000L, new HashSet<>(), new HashSet<>()))
         def tradeAt = LocalDateTime.of(2023, 11, 23, 15, 0)
         Long amount = 1_000L
 

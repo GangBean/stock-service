@@ -1,11 +1,11 @@
 package com.gangbean.stockservice.acceptance
 
 import com.gangbean.stockservice.SpringBootAcceptanceTest
-import com.gangbean.stockservice.jwt.TokenProvider
 import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.AccountStockRepository
 import com.gangbean.stockservice.repository.StockRepository
 import io.restassured.RestAssured
+import org.hibernate.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
@@ -25,6 +25,9 @@ class StockSellingAcceptanceTest extends Specification {
 
     @Autowired
     AccountStockRepository accountStockRepository
+
+    @Autowired
+    SessionFactory sessionFactory
 
     String token
 
@@ -67,7 +70,7 @@ class StockSellingAcceptanceTest extends Specification {
         def price = 100L
 
         and:
-        def account = accountRepository.findById(accountId)
+        def account = accountRepository.findOneWithMemberAndStocksById(accountId)
         assert account.isPresent()
 
         and:
@@ -78,7 +81,7 @@ class StockSellingAcceptanceTest extends Specification {
         assert stock.isPresent()
 
         and:
-        def accountStock = accountStockRepository.findByAccountIdAndStockId(accountId, stockId)
+        def accountStock = account.get().myStock(stockId)
         assert accountStock.isPresent()
 
         and:
@@ -127,7 +130,7 @@ class StockSellingAcceptanceTest extends Specification {
         def price = 1_000_000
 
         and:
-        def account = accountRepository.findById(accountId)
+        def account = accountRepository.findOneWithMemberAndStocksById(accountId)
         assert account.isPresent()
 
         and:
@@ -138,7 +141,7 @@ class StockSellingAcceptanceTest extends Specification {
         assert stock.isPresent()
 
         and:
-        def accountStock = accountStockRepository.findByAccountIdAndStockId(accountId, stockId)
+        def accountStock = account.get().myStock(stockId)
         assert accountStock.isPresent()
 
         and:
@@ -182,7 +185,7 @@ class StockSellingAcceptanceTest extends Specification {
         def price = 1_000L
 
         and:
-        def account = accountRepository.findById(accountId)
+        def account = accountRepository.findOneWithMemberAndStocksById(accountId)
         assert account.isPresent()
 
         and:
@@ -193,7 +196,7 @@ class StockSellingAcceptanceTest extends Specification {
         assert stock.isPresent()
 
         and:
-        def accountStock = accountStockRepository.findByAccountIdAndStockId(accountId, stockId)
+        def accountStock = account.get().myStock(stockId)
         assert accountStock.isPresent()
 
         and:
@@ -219,7 +222,7 @@ class StockSellingAcceptanceTest extends Specification {
     /**
      * given 로그인한 상태로 계좌ID, 주식ID, 판매량, 가격을 입력하고
      * and 해당 계좌가 존재하고
-     * and 해당 게좌가 로그인한 사용자의 계좌이고
+     * and 해당 계좌가 로그인한 사용자의 계좌이고
      * and 주식이 존재하고
      * and 해당 주식을 보유하고 있지 않을때
      * when 주식판매요청시
@@ -233,7 +236,7 @@ class StockSellingAcceptanceTest extends Specification {
         def price = 1_000L
 
         and:
-        def account = accountRepository.findById(accountId)
+        def account = accountRepository.findOneWithMemberAndStocksById(accountId)
         assert account.isPresent()
 
         and:
@@ -244,7 +247,7 @@ class StockSellingAcceptanceTest extends Specification {
         assert stock.isPresent()
 
         and:
-        def accountStock = accountStockRepository.findByAccountIdAndStockId(accountId, stockId)
+        def accountStock = account.get().myStock(stockId)
         assert accountStock.isEmpty()
 
         when:

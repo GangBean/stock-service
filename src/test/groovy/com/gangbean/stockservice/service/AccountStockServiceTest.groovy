@@ -30,7 +30,6 @@ class AccountStockServiceTest extends Specification {
     def "계좌주식 서비스는 주식판매요청을 받아 주식판매를 진행하고, 기존 구매를 반영한 주식판매결과를 반환해줍니다"() {
         given:
         Long accountId = 1L
-        Account account = new Account(accountId, "0", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000_000 as BigDecimal, new HashSet<>())
         Long stockId = 1L
         String stockName = "카카오"
         BigDecimal price = 10_000L
@@ -43,15 +42,15 @@ class AccountStockServiceTest extends Specification {
         BigDecimal boughtPrice = 9_000L
         LocalDateTime boughtAt = LocalDateTime.of(2013, 7, 1, 15, 0)
         def bought = new AccountStockTrade(2L, StockTradeType.SELLING, boughtAmount, boughtPrice, boughtAt)
-        def accountStock = new AccountStock(1L, account, stock, boughtAmount, boughtPrice, boughtAmount * boughtPrice, new HashSet<>(Set.of(bought)))
+        def accountStock = new AccountStock(1L, stock, boughtAmount, boughtPrice, boughtAmount * boughtPrice, new HashSet<>(Set.of(bought)))
+        Account account = new Account(accountId, "0", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000_000 as BigDecimal, new HashSet<>(), new HashSet<>(Set.of(accountStock)))
 
         when:
         def response = accountStockService.responseOfSell(TEST_MEMBER, accountId, stockId, sellAmount, sellPrice, LocalDateTime.now())
 
         then:
         1 * stockRepository.findById(stockId) >> Optional.of(stock)
-        1 * accountRepository.findById(accountId) >> Optional.of(account)
-        1 * accountStockRepository.findByAccountIdAndStockId(accountId, stockId) >> Optional.of(accountStock)
+        1 * accountRepository.findOneWithMemberAndStocksById(accountId) >> Optional.of(account)
 
         verifyAll {
             response.getStockId() == stockId
@@ -65,7 +64,6 @@ class AccountStockServiceTest extends Specification {
     def "계좌주식 서비스는 주식구매요청을 받아 주식구매를 진행하고, 기존 구매를 반영한 주식구매결과를 반환해줍니다"() {
         given:
         Long accountId = 1L
-        Account account = new Account(accountId, "0", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000_000 as BigDecimal, new HashSet<>())
         Long stockId = 1L
         String stockName = "카카오"
         BigDecimal price = 10_000L
@@ -77,15 +75,15 @@ class AccountStockServiceTest extends Specification {
         BigDecimal boughtPrice = 9_000L
         LocalDateTime boughtAt = LocalDateTime.of(2013, 7, 1, 15, 0)
         def bought = new AccountStockTrade(1L, StockTradeType.BUYING, boughtAmount, boughtPrice, boughtAt)
-        def accountStock = new AccountStock(1L, account, stock, boughtAmount, boughtPrice, boughtAmount * boughtPrice, new HashSet<>(Set.of(bought)))
+        def accountStock = new AccountStock(1L, stock, boughtAmount, boughtPrice, boughtAmount * boughtPrice, new HashSet<>(Set.of(bought)))
+        Account account = new Account(accountId, "0", TEST_MEMBER, new Bank(1L, "은행", 1L), 1_000_000 as BigDecimal, new HashSet<>(), new HashSet<>(Set.of(accountStock)))
 
         when:
         def response = accountStockService.responseOfBuy(TEST_MEMBER, accountId, stockId, newBuyAmount, newBuyPrice, LocalDateTime.now())
 
         then:
         1 * stockRepository.findById(stockId) >> Optional.of(stock)
-        1 * accountRepository.findById(accountId) >> Optional.of(account)
-        1 * accountStockRepository.findByAccountIdAndStockId(accountId, stockId) >> Optional.of(accountStock)
+        1 * accountRepository.findOneWithMemberAndStocksById(accountId) >> Optional.of(account)
 
         verifyAll {
             response.getStockId() == stockId

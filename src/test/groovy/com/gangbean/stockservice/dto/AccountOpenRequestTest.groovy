@@ -13,7 +13,7 @@ class AccountOpenRequestTest extends Specification {
         String bankName = "은행"
         String accountNumber = "1"
         Long balance = 100L
-        Account account = new Account(accountNumber, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(accountNumber, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         when:
         def request = AccountOpenRequest.requestOf(account)

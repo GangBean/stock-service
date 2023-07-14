@@ -52,7 +52,7 @@ public class AccountController {
     @GetMapping("/accounts")
     public ResponseEntity<AccountInfoListResponse> accountList(@AuthenticationPrincipal User loginUser) {
         Member member = memberService.memberOf(loginUser.getUsername()).asMember();
-        return ResponseEntity.ok(accountService.allAccounts(member.getUserId()));
+        return ResponseEntity.ok(accountService.allAccounts(member.getId()));
     }
 
     @DeleteMapping("/accounts/{id}")

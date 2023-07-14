@@ -8,6 +8,7 @@ import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.TradeBetweenSameAccountsException;
 import com.gangbean.stockservice.repository.AccountRepository;
 import com.gangbean.stockservice.repository.AccountStockRepository;
+import com.gangbean.stockservice.repository.TradeReservationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,17 +22,21 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
 
+    private final TradeReservationRepository tradeReservationRepository;
+
     private final AccountStockRepository accountStockRepository;
 
-    public AccountService(AccountRepository accountRepository, AccountStockRepository accountStockRepository) {
+    public AccountService(AccountRepository accountRepository, AccountStockRepository accountStockRepository,
+        TradeReservationRepository tradeReservationRepository) {
         this.accountRepository = accountRepository;
+        this.tradeReservationRepository = tradeReservationRepository;
         this.accountStockRepository = accountStockRepository;
     }
 
     @Transactional
     public AccountInfoResponse responseOfAccountCreate(Member member, Bank bank, BigDecimal balance) {
         String accountNumber = "1";
-        Account saved = accountRepository.save(new Account(accountNumber, member, bank, balance, new HashSet<>()));
+        Account saved = accountRepository.save(new Account(accountNumber, member, bank, balance, new HashSet<>(), new HashSet<>()));
         return AccountInfoResponse.responseOf(saved);
     }
 
@@ -41,7 +46,7 @@ public class AccountService {
     }
 
     public AccountInfoListResponse allAccounts(Long memberId) {
-        return AccountInfoListResponse.responseOf(accountRepository.findAllByMemberUserId(memberId));
+        return AccountInfoListResponse.responseOf(accountRepository.findAllByMemberId(memberId));
     }
 
     public AccountDetailInfoResponse responseOfAccountDetail(Long id, Member member) {
@@ -80,12 +85,12 @@ public class AccountService {
     }
 
     @Transactional
-    public void close(Long id, Member loginUser) {
-        Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id))
+    public void close(Long accountId, Member loginUser) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + accountId))
                 .ownedBy(loginUser);
 
-        accountStockRepository.deleteAllByAccountId(id);
+        tradeReservationRepository.deleteAllByAccountId(accountId);
 
         accountRepository.delete(account);
     }

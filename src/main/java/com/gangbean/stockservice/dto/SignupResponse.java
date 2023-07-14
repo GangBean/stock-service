@@ -37,7 +37,7 @@ public class SignupResponse {
         if(member == null) return null;
 
         return SignupResponse.builder()
-                .id(member.getUserId())
+                .id(member.getId())
                 .username(member.getUsername())
                 .nickname(member.getNickname())
                 .authorityResponseSet(member.getAuthorities().stream()
@@ -48,7 +48,7 @@ public class SignupResponse {
 
     public Member asMember() {
         return new Member(id, username, password
-                , nickname, true
+                , nickname
                 , authorityResponseSet.stream()
                     .map(AuthorityResponse::getAuthorityName)
                     .map(Authority::new)

@@ -10,6 +10,7 @@ import com.gangbean.stockservice.dto.TradeInfoResponse
 import com.gangbean.stockservice.exception.account.AccountNotExistsException
 import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.AccountStockRepository
+import com.gangbean.stockservice.repository.TradeReservationRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -24,10 +25,13 @@ class AccountServiceTest extends Specification {
 
     private AccountStockRepository accountStockRepository
 
+    private TradeReservationRepository tradeReservationRepository;
+
     def setup() {
         accountRepository = Mock()
         accountStockRepository = Mock()
-        accountService = new AccountService(accountRepository, accountStockRepository)
+        tradeReservationRepository = Mock()
+        accountService = new AccountService(accountRepository, accountStockRepository, tradeReservationRepository)
     }
 
     def "계좌 서비스는 결제계좌 ID와 금액을 입력하면 결제를 진행하고, 거래정보를 만들고, 계좌잔액을 돌려줍니다"() {
@@ -37,7 +41,7 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance as BigDecimal, new HashSet<>())
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance as BigDecimal, new HashSet<>(), new HashSet<>())
 
         and:
         def amount = 100L
@@ -60,12 +64,12 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         and:
         Long toAccountId = 2L
         String toAccountNumber = "1111"
-        Account toAccount = new Account(toAccountId, toAccountNumber, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
+        Account toAccount = new Account(toAccountId, toAccountNumber, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         and:
         def amount = 100L
@@ -97,7 +101,7 @@ class AccountServiceTest extends Specification {
         def tradeAt = LocalDateTime.of(2023,07,05,14,20)
         def trade = new Trade(tradeId, tradeType, tradeAt, amount)
 
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(Set.of(trade)))
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(Set.of(trade)), new HashSet<>())
 
         when:
         def response = accountService.responseOfAccountDetail(id, TEST_MEMBER)
@@ -122,14 +126,14 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
-        Account account2 = new Account(2L, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
+        Account account2 = new Account(2L, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         when:
-        AccountInfoListResponse response = accountService.allAccounts(TEST_MEMBER.getUserId())
+        AccountInfoListResponse response = accountService.allAccounts(TEST_MEMBER.getId())
 
         then:
-        1 * accountRepository.findAllByMemberUserId(TEST_MEMBER.getUserId()) >> List.of(account, account2)
+        1 * accountRepository.findAllByMemberId(TEST_MEMBER.getId()) >> List.of(account, account2)
 
         verifyAll {
             response.accountInfoList().size() == 2
@@ -158,7 +162,7 @@ class AccountServiceTest extends Specification {
         String bankName = "은행"
         Long bankNumber = 1L
         Long balance = 1_000L
-        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>())
+        Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         when:
         AccountInfoResponse response = accountService.accountFindById(id)
@@ -182,7 +186,7 @@ class AccountServiceTest extends Specification {
         Long bankNumber = 1L
         Long balance = 1_000L
         def bank = new Bank(bankName, bankNumber)
-        Account account = new Account(1L, number, TEST_MEMBER, bank, balance, new HashSet<>())
+        Account account = new Account(1L, number, TEST_MEMBER, bank, balance, new HashSet<>(), new HashSet<>())
 
         when:
         def response = accountService.responseOfAccountCreate(TEST_MEMBER, bank, balance)

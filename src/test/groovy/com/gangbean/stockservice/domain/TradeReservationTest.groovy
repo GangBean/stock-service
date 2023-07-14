@@ -22,7 +22,7 @@ class TradeReservationTest extends Specification {
         Long id = 1L
         LocalDateTime tradeAt = LocalDateTime.of(2023, 12, 30, 1, 0)
         Long balance = 1_000L
-        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), balance as BigDecimal, new HashSet<>())
+        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), balance as BigDecimal, new HashSet<>(), new HashSet<>())
 
         when:
         Long amount = 10_000L
@@ -40,7 +40,7 @@ class TradeReservationTest extends Specification {
         given:
         Long id = 1L
         LocalDateTime tradeAt = LocalDateTime.of(2023, 12, 30, 1, 0)
-        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>())
+        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>(), new HashSet<>())
 
         when:
         def reservation = new TradeReservation(id, account, tradeAt, 100L as BigDecimal)
@@ -53,7 +53,7 @@ class TradeReservationTest extends Specification {
         given:
         Long id = 1L
         LocalDateTime tradeAt = LocalDateTime.of(2023, 12, 30, 1, 0)
-        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>())
+        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>(), new HashSet<>())
 
         when:
         def reservation = new TradeReservation(id, account, tradeAt, amount as BigDecimal)
@@ -73,7 +73,7 @@ class TradeReservationTest extends Specification {
         Long id = 1L
         LocalDateTime tradeAt = LocalDateTime.of(2023, 12, 30, 1, 0)
         Long amount = 1_000L
-        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>())
+        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>(), new HashSet<>())
 
         when:
         def reservation = new TradeReservation(id, account, tradeAt, 1_000L as BigDecimal)
@@ -86,7 +86,7 @@ class TradeReservationTest extends Specification {
         given:
         Long id = 1L
         LocalDateTime tradeAt = LocalDateTime.of(2023, 12, 30, hour, minute)
-        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>())
+        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>(), new HashSet<>())
 
         when:
         new TradeReservation(id, account, tradeAt, 100L as BigDecimal)
@@ -107,7 +107,7 @@ class TradeReservationTest extends Specification {
         given:
         Long id = 1L
         LocalDateTime tradeAt = LocalDateTime.of(2023, 12, 30, 14, 00)
-        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>())
+        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>(), new HashSet<>())
 
         when:
         def reservation = new TradeReservation(id, account, tradeAt, 100L as BigDecimal)
@@ -121,7 +121,7 @@ class TradeReservationTest extends Specification {
     def "결제에약은 id를 반환합니다"() {
         given:
         Long id = 1L;
-        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>())
+        Account account = new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>(), new HashSet<>())
 
         when:
         def reservation = new TradeReservation(id, account, LocalDateTime.of(2023, 7, 1, 14, 0), 100L as BigDecimal)
@@ -132,7 +132,7 @@ class TradeReservationTest extends Specification {
 
     def "결제예약은 id를 요구합니다"() {
         when:
-        new TradeReservation(1L, new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>()), LocalDateTime.of(2023, 7, 1, 14, 0), 100L as BigDecimal)
+        new TradeReservation(1L, new Account(1L, "1", TEST_MEMBER, new Bank("은행", 1L), 1000L as BigDecimal, new HashSet<>(), new HashSet<>()), LocalDateTime.of(2023, 7, 1, 14, 0), 100L as BigDecimal)
 
         then:
         noExceptionThrown()

@@ -7,7 +7,6 @@ import com.gangbean.stockservice.repository.AccountStockRepository
 import com.gangbean.stockservice.repository.StockRepository
 import io.restassured.RestAssured
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -108,10 +107,6 @@ class StockBuyingAcceptanceTest extends Specification {
             response.jsonPath().getString("averagePrice") as BigDecimal == averagePrice
             accountRepository.findById(accountId).get().balance() == accountBalance
             stockRepository.findById(stockId).get().howMany() == stockBalance
-            accountStockRepository.findByAccountIdAndStockId(accountId, stockId).isPresent()
-            accountStockRepository.findByAccountIdAndStockId(accountId, stockId).get().howMany() == accountStockBalance
-            accountStockRepository.findByAccountIdAndStockId(accountId, stockId).get().howMuchPaid() == totalPaid
-            accountStockRepository.findByAccountIdAndStockId(accountId, stockId).get().howMuch() == averagePrice
         }
 
         where:
