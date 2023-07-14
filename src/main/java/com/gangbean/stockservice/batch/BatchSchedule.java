@@ -31,7 +31,7 @@ public class BatchSchedule {
         this.jobLauncher = jobLauncher;
     }
 
-    @Scheduled(initialDelay = 30 * 1000, fixedDelay = 30 * 1000)
+    @Scheduled(cron = "0 */5 * * * *")
     public void runStockUpdateBatch() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         LOGGER.info(">>>>>>>>>>>>> START Scheduled Stock Job <<<<<<<<<<<<<<<<<<");
 
@@ -46,7 +46,7 @@ public class BatchSchedule {
         LOGGER.info(">>>>>>>>>>>>> FINISHED Scheduled Stock Job <<<<<<<<<<<<<<<<<<");
     }
 
-    @Scheduled(initialDelay = 30 * 1000, fixedDelay = 30 * 1000)
+    @Scheduled(cron = "0 0 * * * *")
     public void runExecuteReservedTradeBatch() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         LOGGER.info(">>>>>>>>>>>>> START Scheduled Reservation Job <<<<<<<<<<<<<<<<<<");
 
@@ -54,8 +54,8 @@ public class BatchSchedule {
                 .addLong("time", System.currentTimeMillis())
                 .toJobParameters();
 
-        Job stockUpdate = (Job) context.getBean("executeReservedPayment");
-        JobExecution execution = jobLauncher.run(stockUpdate, jobParameters);
+        Job reservedPayment = (Job) context.getBean("executeReservedPayment");
+        JobExecution execution = jobLauncher.run(reservedPayment, jobParameters);
         BatchStatus status = execution.getStatus();
         LOGGER.info(status.toString());
 

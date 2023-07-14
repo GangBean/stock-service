@@ -9,7 +9,6 @@ import com.gangbean.stockservice.dto.AccountInfoResponse
 import com.gangbean.stockservice.dto.TradeInfoResponse
 import com.gangbean.stockservice.exception.account.AccountNotExistsException
 import com.gangbean.stockservice.repository.AccountRepository
-import com.gangbean.stockservice.repository.AccountStockRepository
 import com.gangbean.stockservice.repository.TradeReservationRepository
 import spock.lang.Specification
 
@@ -23,15 +22,15 @@ class AccountServiceTest extends Specification {
 
     private AccountRepository accountRepository
 
-    private AccountStockRepository accountStockRepository
+    private TradeReservationRepository tradeReservationRepository
 
-    private TradeReservationRepository tradeReservationRepository;
+    private AccountNumberGenerator accountNumberGenerator
 
     def setup() {
         accountRepository = Mock()
-        accountStockRepository = Mock()
         tradeReservationRepository = Mock()
-        accountService = new AccountService(accountRepository, accountStockRepository, tradeReservationRepository)
+        accountNumberGenerator = Mock()
+        accountService = new AccountService(accountRepository, tradeReservationRepository, accountNumberGenerator)
     }
 
     def "계좌 서비스는 결제계좌 ID와 금액을 입력하면 결제를 진행하고, 거래정보를 만들고, 계좌잔액을 돌려줍니다"() {
@@ -192,6 +191,7 @@ class AccountServiceTest extends Specification {
         def response = accountService.responseOfAccountCreate(TEST_MEMBER, bank, balance)
 
         then:
+        1 * accountNumberGenerator.newAccountNumber() >> "00000000001234"
         1 * accountRepository.save(_) >> account
 
         verifyAll {

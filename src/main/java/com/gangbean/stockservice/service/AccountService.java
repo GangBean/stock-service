@@ -7,7 +7,6 @@ import com.gangbean.stockservice.dto.*;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.TradeBetweenSameAccountsException;
 import com.gangbean.stockservice.repository.AccountRepository;
-import com.gangbean.stockservice.repository.AccountStockRepository;
 import com.gangbean.stockservice.repository.TradeReservationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,18 +23,19 @@ public class AccountService {
 
     private final TradeReservationRepository tradeReservationRepository;
 
-    private final AccountStockRepository accountStockRepository;
+    private final AccountNumberGenerator accountNumberGenerator;
 
-    public AccountService(AccountRepository accountRepository, AccountStockRepository accountStockRepository,
-        TradeReservationRepository tradeReservationRepository) {
+    public AccountService(AccountRepository accountRepository,
+        TradeReservationRepository tradeReservationRepository,
+        AccountNumberGenerator accountNumberGenerator) {
         this.accountRepository = accountRepository;
         this.tradeReservationRepository = tradeReservationRepository;
-        this.accountStockRepository = accountStockRepository;
+        this.accountNumberGenerator = accountNumberGenerator;
     }
 
     @Transactional
     public AccountInfoResponse responseOfAccountCreate(Member member, Bank bank, BigDecimal balance) {
-        String accountNumber = "1";
+        String accountNumber = accountNumberGenerator.newAccountNumber();
         Account saved = accountRepository.save(new Account(accountNumber, member, bank, balance, new HashSet<>(), new HashSet<>()));
         return AccountInfoResponse.responseOf(saved);
     }
