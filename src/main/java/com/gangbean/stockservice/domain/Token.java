@@ -1,5 +1,7 @@
 package com.gangbean.stockservice.domain;
 
+import com.gangbean.stockservice.exception.member.RefreshTokenExpiredException;
+import com.gangbean.stockservice.exception.member.RefreshTokenNotMatchedException;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -36,14 +38,14 @@ public class Token {
 
     public boolean isExpired(Date now) {
         if (expiration.before(now)) {
-            throw new IllegalArgumentException("이미 만료된 Refresh Token 입니다.");
+            throw new RefreshTokenExpiredException("이미 만료된 Refresh Token 입니다.");
         }
         return false;
     }
 
-    public void isSameMember(Long loginMemberId) {
+    public void isOwnedBy(Long loginMemberId) {
         if (!Objects.equals(member.getId(), loginMemberId)) {
-            throw new IllegalArgumentException("로그인한 유저의 Refresh Token이 아닙니다.");
+            throw new RefreshTokenNotMatchedException("로그인한 유저의 Refresh Token이 아닙니다.");
         }
     }
 }

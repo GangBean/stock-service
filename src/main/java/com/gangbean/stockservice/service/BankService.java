@@ -16,7 +16,7 @@ public class BankService {
         this.bankRepository = bankRepository;
     }
 
-    public BankInfoResponse validateBank(String name, Long number) {
+    public BankInfoResponse existingBank(String name, Long number) {
         return BankInfoResponse.responseOf(bankRepository.findByNameAndNumber(name, number)
                 .orElseThrow(() -> new BankNotFoundException(
                         String.format("은행 이름과 번호에 해당하는 은행이 존재하지 않습니다: %s / %d", name, number))));

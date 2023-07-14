@@ -5,6 +5,8 @@ import com.gangbean.stockservice.dto.ExceptionResponse;
 import com.gangbean.stockservice.dto.LoginRequest;
 import com.gangbean.stockservice.dto.LoginResponse;
 import com.gangbean.stockservice.exception.member.MemberNotFoundException;
+import com.gangbean.stockservice.exception.member.RefreshTokenExpiredException;
+import com.gangbean.stockservice.exception.member.RefreshTokenNotFoundException;
 import com.gangbean.stockservice.service.MemberService;
 import com.gangbean.stockservice.service.TokenService;
 import com.gangbean.stockservice.util.SecurityUtil;
@@ -43,7 +45,7 @@ public class AuthController {
     private final TokenService tokenService;
 
     public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder
-        ,MemberService memberService, TokenService tokenService) {
+        , MemberService memberService, TokenService tokenService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.memberService = memberService;
         this.tokenService = tokenService;
@@ -82,6 +84,16 @@ public class AuthController {
     @ExceptionHandler
     public ResponseEntity<ExceptionResponse> handleException(MemberNotFoundException e) {
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleException(RefreshTokenNotFoundException e) {
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleException(RefreshTokenExpiredException e) {
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     private Authentication newAuthentication(Long principal, String credential) {

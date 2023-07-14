@@ -188,7 +188,7 @@ class AccountServiceTest extends Specification {
         Account account = new Account(1L, number, TEST_MEMBER, bank, balance, new HashSet<>(), new HashSet<>())
 
         when:
-        def response = accountService.responseOfAccountCreate(TEST_MEMBER, bank, balance)
+        def response = accountService.responseOfAccountOpen(TEST_MEMBER, bank, balance)
 
         then:
         1 * accountNumberGenerator.newAccountNumber() >> "00000000001234"

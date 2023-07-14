@@ -34,7 +34,7 @@ public class AccountService {
     }
 
     @Transactional
-    public AccountInfoResponse responseOfAccountCreate(Member member, Bank bank, BigDecimal balance) {
+    public AccountInfoResponse responseOfAccountOpen(Member member, Bank bank, BigDecimal balance) {
         String accountNumber = accountNumberGenerator.newAccountNumber();
         Account saved = accountRepository.save(new Account(accountNumber, member, bank, balance, new HashSet<>(), new HashSet<>()));
         return AccountInfoResponse.responseOf(saved);
