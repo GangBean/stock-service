@@ -7,7 +7,7 @@ import com.gangbean.stockservice.domain.Stock;
 import com.gangbean.stockservice.dto.StockBuyResponse;
 import com.gangbean.stockservice.dto.StockSellResponse;
 import com.gangbean.stockservice.exception.accountstock.AccountStockNotExistsException;
-import com.gangbean.stockservice.exception.StockNotFoundException;
+import com.gangbean.stockservice.exception.stock.StockNotFoundException;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.repository.AccountRepository;
 import com.gangbean.stockservice.repository.AccountStockRepository;
@@ -49,6 +49,8 @@ public class AccountStockService {
         accountStock.buy(price, amount, buyAt);
         marketStock.sell(price, amount);
         account.withDraw(buyAt, price.multiply(amount));
+
+        accountStockRepository.save(accountStock);
 
         return StockBuyResponse.responseOf(accountStock);
     }

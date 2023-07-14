@@ -1,10 +1,11 @@
 package com.gangbean.stockservice.controller;
 
-import com.gangbean.stockservice.dto.LoginDto;
-import com.gangbean.stockservice.dto.TokenDto;
+import com.gangbean.stockservice.dto.ExceptionResponse;
+import com.gangbean.stockservice.dto.LoginRequest;
+import com.gangbean.stockservice.dto.LoginResponse;
+import com.gangbean.stockservice.exception.member.MemberNotFoundException;
 import com.gangbean.stockservice.jwt.JwtFilter;
 import com.gangbean.stockservice.jwt.TokenProvider;
-import com.gangbean.stockservice.service.MemberService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -23,20 +21,18 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 public class AuthController {
 
-    private final MemberService memberService;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public AuthController(MemberService memberService , TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
-        this.memberService = memberService;
+    public AuthController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<LoginResponse> authorize(@Valid @RequestBody LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
+            new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -46,6 +42,11 @@ public class AuthController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER_KEY, JwtFilter.AUTHORIZATION_HEADER_VALUE_PREFIX + jwt);
 
-        return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(new LoginResponse(jwt), httpHeaders, HttpStatus.OK);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> handleException(MemberNotFoundException e) {
+        return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 }

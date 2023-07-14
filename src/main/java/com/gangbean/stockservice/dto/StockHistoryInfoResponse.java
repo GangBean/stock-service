@@ -4,17 +4,18 @@ import com.gangbean.stockservice.domain.StockHistory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
 @NoArgsConstructor
 public class StockHistoryInfoResponse {
-    private Long price;
+    private BigDecimal price;
 
     private LocalDateTime createdAt;
 
-    public StockHistoryInfoResponse(Long price, LocalDateTime createdAt) {
+    public StockHistoryInfoResponse(BigDecimal price, LocalDateTime createdAt) {
         this.price = price;
         this.createdAt = createdAt;
     }

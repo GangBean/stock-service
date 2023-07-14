@@ -3,7 +3,10 @@ package com.gangbean.stockservice.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gangbean.stockservice.domain.Authority;
 import com.gangbean.stockservice.domain.Member;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,11 +14,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberDto {
+public class SignupRequest {
 
     private Long id;
 
@@ -32,17 +34,17 @@ public class MemberDto {
     @Size(min = 3, max = 50)
     private String nickname;
 
-    private Set<AuthorityDto> authorityDtoSet;
+    private Set<AuthorityResponse> authorityResponseSet;
 
-    public static MemberDto from(Member member) {
+    public static SignupRequest from(Member member) {
         if(member == null) return null;
 
-        return MemberDto.builder()
+        return SignupRequest.builder()
                 .id(member.getUserId())
                 .username(member.getUsername())
                 .nickname(member.getNickname())
-                .authorityDtoSet(member.getAuthorities().stream()
-                .map(authority -> AuthorityDto.builder().authorityName(authority.getAuthorityName()).build())
+                .authorityResponseSet(member.getAuthorities().stream()
+                .map(authority -> AuthorityResponse.builder().authorityName(authority.getAuthorityName()).build())
                 .collect(Collectors.toSet()))
             .build();
     }
@@ -50,8 +52,8 @@ public class MemberDto {
     public Member asMember() {
         return new Member(id, username, password
                 , nickname, true
-                , authorityDtoSet.stream()
-                    .map(AuthorityDto::getAuthorityName)
+                , authorityResponseSet.stream()
+                    .map(AuthorityResponse::getAuthorityName)
                     .map(Authority::new)
                     .collect(Collectors.toSet()));
     }

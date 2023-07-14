@@ -3,14 +3,16 @@ package com.gangbean.stockservice.controller;
 import com.gangbean.stockservice.dto.ExceptionResponse;
 import com.gangbean.stockservice.dto.StockDetailInfoResponse;
 import com.gangbean.stockservice.dto.StockListResponse;
-import com.gangbean.stockservice.exception.StockNotFoundException;
+import com.gangbean.stockservice.exception.stock.StockNotFoundException;
 import com.gangbean.stockservice.service.StockService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class StockController {
 
     private final StockService stockService;

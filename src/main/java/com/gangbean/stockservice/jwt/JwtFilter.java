@@ -19,13 +19,16 @@ public class JwtFilter extends GenericFilterBean {
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
     public static final String AUTHORIZATION_HEADER_KEY = "Authorization";
     public static final String AUTHORIZATION_HEADER_VALUE_PREFIX = "Bearer ";
+    public static final int AUTHORIZATION_HEADER_VALUE_PREFIX_LENGTH = 7;
+    public static final String EMPTY_TOKEN = "";
     private TokenProvider tokenProvider;
     public JwtFilter(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse
+            , FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String jwt = resolveToken(httpServletRequest);
         String requestURI = httpServletRequest.getRequestURI();
@@ -42,12 +45,16 @@ public class JwtFilter extends GenericFilterBean {
     }
 
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER_KEY);
+        return hasTextAndStartsWithValidPrefix(request.getHeader(AUTHORIZATION_HEADER_KEY)) ?
+                prefixRemovedToken(request.getHeader(AUTHORIZATION_HEADER_KEY)) : EMPTY_TOKEN;
+    }
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(AUTHORIZATION_HEADER_VALUE_PREFIX)) {
-            return bearerToken.substring(7);
-        }
+    private static String prefixRemovedToken(String authorizationHeaderValue) {
+        return authorizationHeaderValue.substring(AUTHORIZATION_HEADER_VALUE_PREFIX_LENGTH);
+    }
 
-        return null;
+    private static boolean hasTextAndStartsWithValidPrefix(String bearerToken) {
+        return StringUtils.hasText(bearerToken)
+                && bearerToken.startsWith(AUTHORIZATION_HEADER_VALUE_PREFIX);
     }
 }

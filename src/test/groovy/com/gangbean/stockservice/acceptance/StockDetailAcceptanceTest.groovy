@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import spock.lang.Specification
 
+import java.util.stream.Collectors
+
 @SpringBootAcceptanceTest
 class StockDetailAcceptanceTest extends Specification{
 
@@ -60,7 +62,9 @@ class StockDetailAcceptanceTest extends Specification{
             response.statusCode() == HttpStatus.OK.value()
             response.jsonPath().getLong("stockId") == stockId
             response.jsonPath().getString("stockName") == "백만전자"
-            response.jsonPath().getList("histories.price", Long.class).containsAll(80L, 90L)
+            response.jsonPath().getList("histories.price").stream()
+                    .map(BigDecimal::new)
+                    .collect(Collectors.toList()).containsAll(new BigDecimal(80), new BigDecimal(90))
         }
     }
 

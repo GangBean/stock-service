@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class AccountTransferResponse {
 
-    private Long id;
-
     private BigDecimal balance;
 
     public AccountTransferResponse(BigDecimal balance) {

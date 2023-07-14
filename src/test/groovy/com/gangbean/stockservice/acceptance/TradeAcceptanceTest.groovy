@@ -81,8 +81,6 @@ class TradeAcceptanceTest extends Specification {
                 .then().log().all()
                 .extract()
 
-        System.out.println(accountRepository.findAll())
-
         then:
         verifyAll {
             response.statusCode() == HttpStatus.CREATED.value()

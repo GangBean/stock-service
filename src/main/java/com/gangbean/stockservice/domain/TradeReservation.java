@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.domain;
 
+import com.gangbean.stockservice.exception.StockServiceApplicationException;
 import com.gangbean.stockservice.exception.account.AccountNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.reservation.TradeReservationAtPastTimeException;
 import com.gangbean.stockservice.exception.reservation.TradeReservationBelowZeroAmountException;
@@ -18,12 +19,15 @@ public class TradeReservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Account account;
 
     private LocalDateTime tradeAt;
 
     private BigDecimal amount;
+
+    @Enumerated(value = EnumType.STRING)
+    private ReservationStatus status;
 
     public TradeReservation() {}
 
@@ -31,6 +35,7 @@ public class TradeReservation {
         this.account = enoughBalanced(account, amount);
         this.tradeAt = hourlyBasis(tradeAt);
         this.amount = aboveZero(amount);
+        this.status = ReservationStatus.READY;
     }
 
     public TradeReservation(Long id, Account account, LocalDateTime tradeAt, BigDecimal amount) {
@@ -54,6 +59,17 @@ public class TradeReservation {
         return id;
     }
 
+    public void execute() {
+        try {
+            account.pay(tradeAt, amount);
+            status = status.complete();
+        } catch (StockServiceApplicationException e) {
+            status = status.error();
+        }
+
+        System.out.println(">>>>>>> complete trade " + this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,6 +81,15 @@ public class TradeReservation {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "TradeReservation{" +
+                "id=" + id +
+                ", tradeAt=" + tradeAt +
+                ", amount=" + amount +
+                '}';
     }
 
     private BigDecimal aboveZero(BigDecimal amount) {

@@ -63,10 +63,10 @@ class StockBuyingAcceptanceTest extends Specification {
      * then 주식의 잔여량이 감소하고
      * then 계좌주식의 잔여량이 늘어납니다.
      */
-    def "계좌구매요청_정상"() {
+    def "계좌구매요청_정상"(Long accountId, Long stockId, BigDecimal accountStockBalance
+                    , BigDecimal averagePrice, BigDecimal totalPaid
+                    , BigDecimal accountBalance, BigDecimal stockBalance) {
         given:
-        def accountId = 1L
-        def stockId = 1L
         def amount = 5L
         def price = 100L
 
@@ -104,11 +104,20 @@ class StockBuyingAcceptanceTest extends Specification {
         verifyAll {
             response.statusCode() == HttpStatus.CREATED.value()
             response.jsonPath().getLong("stockId") == stockId
-            response.jsonPath().getString("amount") as BigDecimal == 10_005
-            response.jsonPath().getString("averagePrice") as BigDecimal == 999
-            accountRepository.findById(accountId).get().balance() == 500
-            stockRepository.findById(stockId).get().howMany() == 95
+            response.jsonPath().getString("amount") as BigDecimal == accountStockBalance
+            response.jsonPath().getString("averagePrice") as BigDecimal == averagePrice
+            accountRepository.findById(accountId).get().balance() == accountBalance
+            stockRepository.findById(stockId).get().howMany() == stockBalance
+            accountStockRepository.findByAccountIdAndStockId(accountId, stockId).isPresent()
+            accountStockRepository.findByAccountIdAndStockId(accountId, stockId).get().howMany() == accountStockBalance
+            accountStockRepository.findByAccountIdAndStockId(accountId, stockId).get().howMuchPaid() == totalPaid
+            accountStockRepository.findByAccountIdAndStockId(accountId, stockId).get().howMuch() == averagePrice
         }
+
+        where:
+        accountId | stockId | accountStockBalance | averagePrice | totalPaid  | accountBalance | stockBalance
+        1L        | 1L      | 10_005              | 999          | 10_000_500 | 500            | 95
+        1L        | 2L      | 5                   | 100          | 500        | 500            | 95
     }
 
     /**

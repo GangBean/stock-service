@@ -3,8 +3,8 @@ package com.gangbean.stockservice.service;
 import com.gangbean.stockservice.domain.Authority;
 import com.gangbean.stockservice.domain.Member;
 import com.gangbean.stockservice.domain.Role;
-import com.gangbean.stockservice.dto.MemberDto;
-import com.gangbean.stockservice.exception.NotFoundMemberException;
+import com.gangbean.stockservice.dto.SignupRequest;
+import com.gangbean.stockservice.dto.SignupResponse;
 import com.gangbean.stockservice.exception.member.DuplicateMemberException;
 import com.gangbean.stockservice.exception.member.MemberNotFoundException;
 import com.gangbean.stockservice.repository.MemberRepository;
@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
+@Transactional(readOnly = true)
 @Service
 public class MemberService {
 
@@ -27,8 +28,8 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberDto signup(MemberDto memberDto) {
-        if (memberRepository.findOneWithAuthoritiesByUsername(memberDto.getUsername()).orElse(null) != null) {
+    public SignupResponse signup(SignupRequest signupResponse) {
+        if (memberRepository.findOneWithAuthoritiesByUsername(signupResponse.getUsername()).orElse(null) != null) {
             throw new DuplicateMemberException("이미 가입되어 있는 유저입니다.");
         }
 
@@ -37,32 +38,29 @@ public class MemberService {
             .build();
 
         Member member = Member.builder()
-            .username(memberDto.getUsername())
-            .password(passwordEncoder.encode(memberDto.getPassword()))
-            .nickname(memberDto.getNickname())
+            .username(signupResponse.getUsername())
+            .password(passwordEncoder.encode(signupResponse.getPassword()))
+            .nickname(signupResponse.getNickname())
             .authorities(Collections.singleton(authority))
             .activated(true)
             .build();
 
-        return MemberDto.from(memberRepository.save(member));
+        return SignupResponse.from(memberRepository.save(member));
     }
 
-    @Transactional(readOnly = true)
-    public MemberDto getUserWithAuthorities(String username) {
-        return MemberDto.from(memberRepository.findOneWithAuthoritiesByUsername(username).orElse(null));
+    public SignupResponse getUserWithAuthorities(String username) {
+        return SignupResponse.from(memberRepository.findOneWithAuthoritiesByUsername(username).orElse(null));
     }
 
-    @Transactional(readOnly = true)
-    public MemberDto getMyUserWithAuthorities() {
-        return MemberDto.from(
+    public SignupResponse getMyUserWithAuthorities() {
+        return SignupResponse.from(
             SecurityUtil.getCurrentUsername()
                 .flatMap(memberRepository::findOneWithAuthoritiesByUsername)
-                .orElseThrow(() -> new NotFoundMemberException("Member not found"))
-        );
+                .orElseThrow(() -> new MemberNotFoundException("로그인 정보가 잘못되었습니다. 다시 로그인 해주세요.")));
     }
 
-    public MemberDto memberOf(String username) {
-        return MemberDto.from(memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberNotFoundException("ID 혹은 패스워드가 잘못되었습니다.")));
+    public SignupResponse memberOf(String username) {
+        return SignupResponse.from(memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberNotFoundException("로그인 정보가 잘못되었습니다. 다시 로그인 해주세요.")));
     }
 }

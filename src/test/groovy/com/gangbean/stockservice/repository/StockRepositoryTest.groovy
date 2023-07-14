@@ -18,7 +18,7 @@ class StockRepositoryTest extends Specification {
         String stockName = "카카오"
         Long price = 10_000L
         Long balance = 100L
-        Stock stock = new Stock(stockName, price, balance, new HashSet<>())
+        Stock stock = new Stock(stockName, price as BigDecimal, balance as BigDecimal, new HashSet<>())
         def saved = stockRepository.save(stock)
 
         when:
@@ -38,13 +38,13 @@ class StockRepositoryTest extends Specification {
         String stockName = "카카오"
         Long price = 10_000L
         Long balance = 100L
-        Stock stock = new Stock(stockName, price, balance, new HashSet<>())
+        Stock stock = new Stock(stockName, price as BigDecimal, balance as BigDecimal, new HashSet<>())
         def saved = stockRepository.save(stock)
 
         String stockName2 = "네이버"
         Long price2 = 15_000L
         Long balance2 = 150L
-        Stock stock2 = new Stock(stockName2, price2, balance2, new HashSet<>())
+        Stock stock2 = new Stock(stockName2, price2 as BigDecimal, balance2 as BigDecimal, new HashSet<>())
         def saved2 = stockRepository.save(stock2)
 
         when:
@@ -52,7 +52,7 @@ class StockRepositoryTest extends Specification {
 
         then:
         verifyAll {
-            stocks.size() == 4
+            stocks.size() == 5
             stocks.containsAll(saved, saved2)
         }
     }
@@ -62,7 +62,7 @@ class StockRepositoryTest extends Specification {
         String stockName = "카카오"
         Long price = 10_000L
         Long balance = 100L
-        Stock stock = new Stock(stockName, price, balance, new HashSet<>())
+        Stock stock = new Stock(stockName, price as BigDecimal, balance as BigDecimal, new HashSet<>())
 
         when:
         def saved = stockRepository.save(stock)

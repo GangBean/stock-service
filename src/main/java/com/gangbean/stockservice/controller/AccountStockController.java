@@ -4,8 +4,8 @@ import com.gangbean.stockservice.domain.Member;
 import com.gangbean.stockservice.dto.*;
 import com.gangbean.stockservice.exception.accountstock.AccountStockNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.accountstock.AccountStockNotExistsException;
-import com.gangbean.stockservice.exception.StockNotEnoughBalanceException;
-import com.gangbean.stockservice.exception.StockNotFoundException;
+import com.gangbean.stockservice.exception.stock.StockNotEnoughBalanceException;
+import com.gangbean.stockservice.exception.stock.StockNotFoundException;
 import com.gangbean.stockservice.exception.account.AccountNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
@@ -16,6 +16,7 @@ import com.gangbean.stockservice.service.AccountStockService;
 import com.gangbean.stockservice.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/api")
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class AccountStockController {
 
     private final MemberService memberService;
