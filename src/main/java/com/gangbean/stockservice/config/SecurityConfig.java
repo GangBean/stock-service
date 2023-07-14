@@ -60,11 +60,10 @@ public class SecurityConfig {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/hello").permitAll()
                 .antMatchers("/api/login").permitAll()
                 .antMatchers("/api/signup").permitAll()
-                .antMatchers("/api/accounts").permitAll()
-                .antMatchers("/api/accounts/*").permitAll()
+                .antMatchers("/api/accounts").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/api/accounts/*").hasAnyRole("ADMIN", "USER")
                 .anyRequest().authenticated()
 
                 .and()

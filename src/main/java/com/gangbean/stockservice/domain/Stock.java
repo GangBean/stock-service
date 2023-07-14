@@ -1,7 +1,7 @@
 package com.gangbean.stockservice.domain;
 
-import com.gangbean.stockservice.exception.StockAmountNotValidException;
-import com.gangbean.stockservice.exception.StockNotEnoughBalanceException;
+import com.gangbean.stockservice.exception.stock.StockAmountNotValidException;
+import com.gangbean.stockservice.exception.stock.StockNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.stock.StockBuyForOverCurrentPriceException;
 import com.gangbean.stockservice.exception.stock.StockSellForBelowCurrentPriceException;
 import com.gangbean.stockservice.util.StringUtil;
@@ -83,6 +83,13 @@ public class Stock {
         balance = balance.add(amount);
     }
 
+    public void updatePrice(StockPrice stockPrice, LocalDateTime now) {
+        BigDecimal before = price;
+        histories.add(new StockHistory(now, price));
+        price = stockPrice.generateNextPrice(price);
+        announceResult(before);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,13 +101,6 @@ public class Stock {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public void updatePrice(StockPrice stockPrice, LocalDateTime now) {
-        BigDecimal before = price;
-        histories.add(new StockHistory(now, price));
-        price = stockPrice.generateNextPrice(price);
-        announceResult(before);
     }
 
     private void announceResult(BigDecimal before) {

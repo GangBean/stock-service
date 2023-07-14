@@ -3,7 +3,7 @@ package com.gangbean.stockservice.controller;
 import com.gangbean.stockservice.dto.ExceptionResponse;
 import com.gangbean.stockservice.dto.StockDetailInfoResponse;
 import com.gangbean.stockservice.dto.StockListResponse;
-import com.gangbean.stockservice.exception.StockNotFoundException;
+import com.gangbean.stockservice.exception.stock.StockNotFoundException;
 import com.gangbean.stockservice.service.StockService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

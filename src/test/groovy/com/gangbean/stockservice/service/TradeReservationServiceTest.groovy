@@ -5,6 +5,7 @@ import com.gangbean.stockservice.domain.Bank
 import com.gangbean.stockservice.domain.TradeReservation
 import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.TradeReservationRepository
+import com.gangbean.stockservice.util.BatchExecutionTime
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -37,6 +38,7 @@ class TradeReservationServiceTest extends Specification {
         and:
         def amount = 100_000L
         def tradeAt = LocalDateTime.of(2023, 7, 2, 15,0)
+        BatchExecutionTime.write("Reservation", tradeAt)
         def reservation = new TradeReservation(1L, account, tradeAt, amount as BigDecimal)
 
         when:

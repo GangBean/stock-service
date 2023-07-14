@@ -3,14 +3,17 @@ package com.gangbean.stockservice.util;
 import com.gangbean.stockservice.exception.BatchNameNotExistsException;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
 public class BatchExecutionTime {
 
+    public static final LocalDateTime INITIAL_EXECUTION_TIME =
+            LocalDateTime.now().plusHours(1).truncatedTo(ChronoUnit.HOURS);
     public static final Map<String, LocalDateTime> BATCH_LIST = Map.of(
-            "Reservation", LocalDateTime.now()
-            , "Stock", LocalDateTime.now());
+            "Reservation", INITIAL_EXECUTION_TIME
+            , "Stock", INITIAL_EXECUTION_TIME);
     private final static Map<String, LocalDateTime> NEXT_EXECUTION = new HashMap<>(BATCH_LIST);
 
     public static void write(String batchName, LocalDateTime endAt) {

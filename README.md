@@ -47,3 +47,10 @@
 8. 목록조회 API 자료구조: Set vs List
 9. @Embeddable 을 통한 일급컬렉션 엔티티 구성
 10. git branch 전략: github flow
+11. reservationExecute batch 오류
+    - Reservation &rarr; Account &rarr; Trades 를 참조하고 있는 관계에서,
+    - 첫번째는 ManyToOne / LAZY / cascade ALL
+    - 두번째는 OneToMany / LAZY / cascade ALL
+    - 위와 같이 설정했는데 배치 실행시 한번의 배치 수행시 같은 Account 에 대한 예약이 여러건이면, Account 와 Trades 의 연관관계 테이블에 마지막 반영분만 insert 된다.
+    - 전체 대상 select &rarr; account select &rarr; trades select &rarr; item processor 건별처리 &rarr; [reservation select 한건 &rarr; bank select 한건 &rarr; member select 한건 &rarr; trade insert 한건 &rarr; trades insert 한건 &rarr;] 반복 &rarr; account update &rarr; reservation update all &rarr; account_trades insert 1건
+    - saveAll을 해서 그런가? 건별로 save를 해볼까?

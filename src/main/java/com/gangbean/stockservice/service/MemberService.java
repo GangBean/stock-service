@@ -5,7 +5,6 @@ import com.gangbean.stockservice.domain.Member;
 import com.gangbean.stockservice.domain.Role;
 import com.gangbean.stockservice.dto.SignupRequest;
 import com.gangbean.stockservice.dto.SignupResponse;
-import com.gangbean.stockservice.exception.NotFoundMemberException;
 import com.gangbean.stockservice.exception.member.DuplicateMemberException;
 import com.gangbean.stockservice.exception.member.MemberNotFoundException;
 import com.gangbean.stockservice.repository.MemberRepository;
@@ -57,12 +56,11 @@ public class MemberService {
         return SignupResponse.from(
             SecurityUtil.getCurrentUsername()
                 .flatMap(memberRepository::findOneWithAuthoritiesByUsername)
-                .orElseThrow(() -> new NotFoundMemberException("Member not found"))
-        );
+                .orElseThrow(() -> new MemberNotFoundException("로그인 정보가 잘못되었습니다. 다시 로그인 해주세요.")));
     }
 
     public SignupResponse memberOf(String username) {
         return SignupResponse.from(memberRepository.findByUsername(username)
-                .orElseThrow(() -> new MemberNotFoundException("ID 혹은 패스워드가 잘못되었습니다.")));
+                .orElseThrow(() -> new MemberNotFoundException("로그인 정보가 잘못되었습니다. 다시 로그인 해주세요.")));
     }
 }
