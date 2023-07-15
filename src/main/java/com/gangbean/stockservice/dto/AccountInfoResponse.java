@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gangbean.stockservice.domain.Account;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,9 +14,14 @@ import java.util.Objects;
 public class AccountInfoResponse {
 
     private Long id;
+
     private String accountNumber;
+
     private String bankName;
+
     private Long bankNumber;
+
+    @JsonFormat(pattern = "#")
     private BigDecimal balance;
 
     public AccountInfoResponse(Long id, String accountNumber, String bankName, Long bankNumber, BigDecimal balance) {

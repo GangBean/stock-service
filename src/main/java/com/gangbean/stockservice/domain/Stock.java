@@ -26,6 +26,7 @@ public class Stock {
     private BigDecimal price;
 
     private BigDecimal balance;
+
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StockHistory> histories;
 

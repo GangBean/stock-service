@@ -20,6 +20,7 @@ public class Bank {
     public Bank(Long id) {
         this.id = id;
     }
+
     @Builder
     public Bank(String name, Long number) {
         this.name = name;

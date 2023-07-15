@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class AccountTransferResponse {
 
+    @JsonFormat(pattern = "#,###")
     private BigDecimal balance;
 
     public AccountTransferResponse(BigDecimal balance) {

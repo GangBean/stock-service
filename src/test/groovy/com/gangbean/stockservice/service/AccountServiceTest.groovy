@@ -103,10 +103,10 @@ class AccountServiceTest extends Specification {
         Account account = new Account(id, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(Set.of(trade)), new HashSet<>())
 
         when:
-        def response = accountService.responseOfAccountDetail(id, TEST_MEMBER)
+        def response = accountService.responseOfAccountDetail(id, TEST_MEMBER, null)
 
         then:
-        1 * accountRepository.findById(id) >> Optional.of(account)
+        1 * accountRepository.findTop10ByIdOrderByTradesIdDesc(id) >> Optional.of(account)
 
         verifyAll {
             response.id() == id
@@ -129,10 +129,10 @@ class AccountServiceTest extends Specification {
         Account account2 = new Account(2L, number, TEST_MEMBER, new Bank(bankName, bankNumber), balance, new HashSet<>(), new HashSet<>())
 
         when:
-        AccountInfoListResponse response = accountService.allAccounts(TEST_MEMBER.getId())
+        AccountInfoListResponse response = accountService.allAccounts(TEST_MEMBER.getId(), null)
 
         then:
-        1 * accountRepository.findAllByMemberId(TEST_MEMBER.getId()) >> List.of(account, account2)
+        1 * accountRepository.findAllByMemberIdOrderByIdDesc(TEST_MEMBER.getId()) >> List.of(account, account2)
 
         verifyAll {
             response.accountInfoList().size() == 2

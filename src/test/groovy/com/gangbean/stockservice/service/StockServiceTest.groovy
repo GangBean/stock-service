@@ -34,10 +34,10 @@ class StockServiceTest extends Specification {
         Stock stock = new Stock(stockId, stockName, price as BigDecimal, balance as BigDecimal, new HashSet<>(Set.of(history, history2)))
 
         when:
-        def response = stockService.responseOfStockDetail(stockId)
+        def response = stockService.responseOfStockDetail(stockId, null)
 
         then:
-        1 * stockRepository.findById(stockId) >> Optional.of(stock)
+        1 * stockRepository.findTop10ByIdOrderByHistoriesWrittenAtDesc(stockId) >> Optional.of(stock)
         def histories = List.of(history, history2).stream().map(StockHistoryInfoResponse::responseOf).collect(Collectors.toList())
 
         verifyAll {
@@ -63,7 +63,7 @@ class StockServiceTest extends Specification {
         def allStock = stockService.respondsOfAllStock();
 
         then:
-        1 * stockRepository.findAll() >> List.of(stock, stock2)
+        1 * stockRepository.findAllByOrderByNameDesc() >> List.of(stock, stock2)
         verifyAll {
             allStock.getStocks().containsAll(
                     StockInfoResponse.responseOf(stock),

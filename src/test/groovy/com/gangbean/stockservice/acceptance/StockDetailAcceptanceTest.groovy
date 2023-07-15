@@ -76,7 +76,7 @@ class StockDetailAcceptanceTest extends Specification{
      */
     def "주식상세조회_미존재주식"() {
         given:
-        def stockId = 101L
+        def stockId = 1010L
 
         and:
         assert stockRepository.findById(stockId)

@@ -21,9 +21,17 @@ insert into trade_reservation(amount, status, account_id, trade_at) values(100, 
 insert into trade_reservation(amount, status, account_id, trade_at) values(100, 'READY', 2, '2023-07-15T17:00:00');
 insert into trade_reservation(amount, status, account_id, trade_at) values(100, 'READY', 2, '2023-07-15T17:00:00');
 
+insert into stock(id, balance, name, price) values(10, 100, '천만전자', 11100);
 insert into stock(balance, name, price) values(100, '백만전자', 100);
 insert into stock(balance, name, price) values(100, '십만전자', 100);
-insert into stock(id, balance, name, price) values(10, 100, '천만전자', 100);
+insert into stock(balance, name, price) values(100, '화장품회사', 10000);
+insert into stock(balance, name, price) values(100, '만전자', 10000);
+insert into stock(balance, name, price) values(100, '천전자', 1500);
+insert into stock(balance, name, price) values(100, '백전자', 1000);
+insert into stock(id, balance, name, price) values(100, 100, '핸드폰회사', 2100);
+insert into stock(id, balance, name, price) values(101, 100, '컴퓨터회사', 3100);
+insert into stock(id, balance, name, price) values(102, 100, '피자회사', 5100);
+insert into stock(id, balance, name, price) values(103, 100, '과자회사', 9100);
 
 insert into account_trades(account_id, trades_id) values(1, 1);
 insert into account_trades(account_id, trades_id) values(1, 2);

@@ -1,14 +1,21 @@
 package com.gangbean.stockservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gangbean.stockservice.domain.Stock;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class StockInfoResponse {
+
     private final Long id;
+
     private final String stockName;
+
+    @JsonFormat(pattern = "#,###")
     private final BigDecimal price;
+
+    @JsonFormat(pattern = "#,###")
     private final BigDecimal balance;
 
     public StockInfoResponse(Long id, String stockName, BigDecimal price, BigDecimal balance) {

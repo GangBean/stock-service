@@ -1,27 +1,49 @@
 package com.gangbean.stockservice.controller;
 
 import com.gangbean.stockservice.domain.Member;
-import com.gangbean.stockservice.dto.*;
+import com.gangbean.stockservice.dto.AccountDetailInfoResponse;
+import com.gangbean.stockservice.dto.AccountInfoListResponse;
+import com.gangbean.stockservice.dto.AccountInfoResponse;
+import com.gangbean.stockservice.dto.AccountOpenRequest;
+import com.gangbean.stockservice.dto.AccountPaymentRequest;
+import com.gangbean.stockservice.dto.AccountPaymentResponse;
+import com.gangbean.stockservice.dto.BankInfoResponse;
+import com.gangbean.stockservice.dto.ExceptionResponse;
+import com.gangbean.stockservice.exception.account.AccountException;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
-import com.gangbean.stockservice.exception.account.AccountException;
 import com.gangbean.stockservice.service.AccountService;
 import com.gangbean.stockservice.service.BankService;
 import com.gangbean.stockservice.service.MemberService;
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.time.LocalDateTime;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
 @PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class AccountController {
+
+    public static final String LAST_TRADE_HEADER = "Last-Trade-Id";
+    public static final String LAST_ACCOUNT_HEADER = "Last-Account-Id";
 
     private final AccountService accountService;
 
@@ -44,15 +66,32 @@ public class AccountController {
     }
 
     @GetMapping("/accounts/{id}")
-    public ResponseEntity<AccountDetailInfoResponse> accountDetail(@PathVariable Long id, @AuthenticationPrincipal User loginUser) {
+    public ResponseEntity<AccountDetailInfoResponse> accountDetail(@Valid HttpServletRequest request
+        , @PathVariable Long id, @AuthenticationPrincipal User loginUser) {
         Member member = memberService.memberOf(loginUser.getUsername()).asMember();
-        return ResponseEntity.ok(accountService.responseOfAccountDetail(id, member));
+
+        Long lastEntityId = (request.getHeader(LAST_TRADE_HEADER) == null) ? null
+            : Long.parseLong(request.getHeader(LAST_TRADE_HEADER));
+
+        AccountDetailInfoResponse response = accountService.responseOfAccountDetail(id, member, lastEntityId);
+        HttpHeaders headers = new HttpHeaders(new LinkedMultiValueMap<>(Map.of(
+            LAST_TRADE_HEADER, List.of(String.valueOf(response.lastIndex())))
+        ));
+        return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<AccountInfoListResponse> accountList(@AuthenticationPrincipal User loginUser) {
+    public ResponseEntity<AccountInfoListResponse> accountList(@Valid HttpServletRequest request, @AuthenticationPrincipal User loginUser) {
         Member member = memberService.memberOf(loginUser.getUsername()).asMember();
-        return ResponseEntity.ok(accountService.allAccounts(member.getId()));
+
+        Long lastEntityId = (request.getHeader(LAST_ACCOUNT_HEADER) == null) ? null
+            : Long.parseLong(request.getHeader(LAST_ACCOUNT_HEADER));
+        AccountInfoListResponse response = accountService.allAccounts(member.getId(), lastEntityId);
+
+        HttpHeaders headers = new HttpHeaders(new LinkedMultiValueMap<>(Map.of(
+            LAST_ACCOUNT_HEADER, List.of(String.valueOf(response.lastIndex())))
+        ));
+        return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
     @DeleteMapping("/accounts/{id}")

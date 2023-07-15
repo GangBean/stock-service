@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gangbean.stockservice.domain.Account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ public class AccountPaymentResponse {
 
     private final Long accountId;
 
+    @JsonFormat(pattern = "#,###")
     private final BigDecimal balance;
 
     public static AccountPaymentResponse responseOf(Account account) {

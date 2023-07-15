@@ -89,10 +89,13 @@ public class MemberService {
     public void withdraw(Long memberId) {
         Member loginMember = memberRepository.findById(memberId)
             .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원 ID 입니다: " + memberId));
+
         tokenRepository.deleteAllByMemberId(memberId);
-        accountRepository.findAllByMemberId(memberId).stream()
+
+        accountRepository.findAllByMemberIdOrderByIdDesc(memberId).stream()
             .map(Account::id)
             .forEach(accountId -> accountService.close(accountId, loginMember));
+
         memberRepository.deleteById(memberId);
     }
 }

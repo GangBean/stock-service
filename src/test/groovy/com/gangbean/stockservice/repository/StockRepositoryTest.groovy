@@ -13,6 +13,18 @@ class StockRepositoryTest extends Specification {
     @Autowired
     StockRepository stockRepository
 
+    def "전체 주식이 10개를 초과할때 주식 저장소는 id 기준 10개의 주식을 돌려줍니다"() {
+        given:
+        def all = stockRepository.findAll()
+
+        when:
+        def stocks = stockRepository.findTop10ByOrderById()
+
+        then:
+        all.size() > 10
+        stocks.size() == 10
+    }
+
     def "주식 저장소는 입력된 id에 해당하는 주식을 돌려줍니다"() {
         given:
         String stockName = "카카오"
@@ -52,7 +64,7 @@ class StockRepositoryTest extends Specification {
 
         then:
         verifyAll {
-            stocks.size() == 5
+            stocks.size() == 13
             stocks.containsAll(saved, saved2)
         }
     }

@@ -10,7 +10,9 @@ public class StockHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDateTime writtenAt;
+
     private BigDecimal price;
 
     public StockHistory() {}

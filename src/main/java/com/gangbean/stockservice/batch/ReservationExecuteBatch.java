@@ -90,9 +90,7 @@ public class ReservationExecuteBatch {
 
     @Bean
     public ItemWriter<TradeReservation> reservationWriter() {
-        return items -> {
-            Objects.equals(items, null);
-        };
+        return items -> Objects.equals(items, null);
     }
 
 }

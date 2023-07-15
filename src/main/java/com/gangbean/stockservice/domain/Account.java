@@ -27,7 +27,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 14)
     private String number;
 
     @ManyToOne
@@ -89,10 +89,6 @@ public class Account {
 
     public Set<Trade> trades() {
         return trades;
-    }
-
-    public void clearStocks() {
-        stocks.clear();
     }
 
     public void deposit(LocalDateTime tradeAt, BigDecimal amount) {
