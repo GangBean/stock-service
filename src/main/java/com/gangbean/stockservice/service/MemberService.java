@@ -75,7 +75,6 @@ public class MemberService {
     }
 
     public Member memberOf(String username, String password) {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> username: " + username);
         Member loginMember = memberRepository.findByUsername(username)
             .orElseThrow(() -> new MemberNotFoundException("이름에 해당하는 멤버정보가 없습니다: " + username));
 
@@ -90,10 +89,13 @@ public class MemberService {
     public void withdraw(Long memberId) {
         Member loginMember = memberRepository.findById(memberId)
             .orElseThrow(() -> new MemberNotFoundException("존재하지 않는 회원 ID 입니다: " + memberId));
+
         tokenRepository.deleteAllByMemberId(memberId);
-        accountRepository.findAllByMemberId(memberId).stream()
+
+        accountRepository.findAllByMemberIdOrderByIdDesc(memberId).stream()
             .map(Account::id)
             .forEach(accountId -> accountService.close(accountId, loginMember));
+
         memberRepository.deleteById(memberId);
     }
 }

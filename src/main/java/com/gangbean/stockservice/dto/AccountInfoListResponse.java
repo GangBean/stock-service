@@ -20,12 +20,16 @@ public class AccountInfoListResponse {
 
     public static AccountInfoListResponse responseOf(List<Account> list) {
         return new AccountInfoListResponse(list.stream()
-                .map(AccountInfoResponse::responseOf)
-                .collect(Collectors.toList()));
+            .map(AccountInfoResponse::responseOf)
+            .collect(Collectors.toList()));
     }
 
     public List<AccountInfoResponse> accountInfoList() {
         return accounts;
+    }
+
+    public Long lastIndex() {
+        return accounts.get(accounts.size() - 1).getId();
     }
 
     @Override

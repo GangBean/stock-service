@@ -21,7 +21,7 @@ spring:
 
 logging:
   level:
-    sql: INFO
+    sql: debug
     org.hibernate.type: INFO
 
 jwt:

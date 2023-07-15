@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gangbean.stockservice.domain.TradeReservation;
 
 import java.math.BigDecimal;
@@ -8,7 +9,10 @@ import java.time.LocalDateTime;
 public class PaymentReservationResponse {
 
     private final Long accountId;
+
+    @JsonFormat(pattern = "#,###")
     private final BigDecimal balance;
+
     private final LocalDateTime sendAt;
 
     public PaymentReservationResponse(Long accountId, BigDecimal balance, LocalDateTime sendAt) {

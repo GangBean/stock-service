@@ -27,7 +27,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 14)
     private String number;
 
     @ManyToOne
@@ -133,6 +133,17 @@ public class Account {
             .orElseThrow(() -> new AccountStockNotExistsException("보유한 주식이 아닙니다: " + marketStock.id()));
         accountStock.sell(price, amount, sellAt);
         this.deposit(sellAt, price.multiply(amount));
+    }
+
+    public void payReservation(LocalDateTime tradeAt, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AccountTransferBelowZeroAmountException("계좌는 0원 이하의 금액은 결제할 수 없습니다: " + amount);
+        }
+        if (amount.compareTo(balance) > 0) {
+            throw new AccountNotEnoughBalanceException("계좌 잔액이 부족합니다: " + balance);
+        }
+        balance = balance.subtract(amount);
+        trades.add(new Trade(TradeType.RESERVATION, tradeAt, amount));
     }
 
     public Optional<AccountStock> myStock(Long stockId) {

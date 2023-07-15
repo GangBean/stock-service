@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gangbean.stockservice.domain.Trade;
 import com.gangbean.stockservice.domain.TradeType;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class TradeInfoResponse {
 
     private LocalDateTime tradeAt;
 
+    @JsonFormat(pattern = "#,###")
     private BigDecimal amount;
 
     public TradeInfoResponse(Long id, TradeType tradeType, LocalDateTime tradeAt, BigDecimal amount) {

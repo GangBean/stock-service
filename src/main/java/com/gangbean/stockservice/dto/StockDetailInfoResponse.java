@@ -1,6 +1,7 @@
 package com.gangbean.stockservice.dto;
 
 import com.gangbean.stockservice.domain.Stock;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,5 +26,9 @@ public class StockDetailInfoResponse {
                 stock.histories().stream()
                         .map(StockHistoryInfoResponse::responseOf)
                         .collect(Collectors.toList()));
+    }
+
+    public LocalDateTime lastIndex() {
+        return histories.get(histories.size() - 1).getCreatedAt();
     }
 }

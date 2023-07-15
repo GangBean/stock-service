@@ -1,5 +1,6 @@
 package com.gangbean.stockservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gangbean.stockservice.domain.StockHistory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,8 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 public class StockHistoryInfoResponse {
+
+    @JsonFormat(pattern = "#,###")
     private BigDecimal price;
 
     private LocalDateTime createdAt;

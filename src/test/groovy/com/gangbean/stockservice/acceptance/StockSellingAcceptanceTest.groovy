@@ -278,7 +278,7 @@ class StockSellingAcceptanceTest extends Specification {
     def "계좌판매요청_미존재주식"() {
         given:
         def accountId = 1L
-        def stockId = 100L
+        def stockId = 1000L
         def amount = 10L
         def price = 1_000L
 

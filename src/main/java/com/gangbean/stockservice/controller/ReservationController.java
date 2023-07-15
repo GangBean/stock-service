@@ -36,8 +36,8 @@ public class ReservationController {
     }
 
     @PostMapping("/accounts/{accountId}/reservations")
-    public ResponseEntity<PaymentReservationResponse> reserve(@PathVariable Long accountId, @AuthenticationPrincipal User loginUser
-            , @RequestBody PaymentReservationRequest request) {
+    public ResponseEntity<PaymentReservationResponse> reserve(@PathVariable Long accountId
+        , @AuthenticationPrincipal User loginUser, @RequestBody PaymentReservationRequest request) {
         Member member = memberService.memberOf(loginUser.getUsername()).asMember();
         PaymentReservationResponse response = tradeReservationService.responseOfPaymentReservation(member, accountId, request.getSendAt(), request.getAmount());
         return ResponseEntity.created(URI.create("/accounts/" + accountId + "/reservations")).body(response);

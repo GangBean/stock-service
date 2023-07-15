@@ -3,17 +3,20 @@ package com.gangbean.stockservice.service;
 import com.gangbean.stockservice.domain.Account;
 import com.gangbean.stockservice.domain.Bank;
 import com.gangbean.stockservice.domain.Member;
-import com.gangbean.stockservice.dto.*;
+import com.gangbean.stockservice.dto.AccountDetailInfoResponse;
+import com.gangbean.stockservice.dto.AccountInfoListResponse;
+import com.gangbean.stockservice.dto.AccountInfoResponse;
+import com.gangbean.stockservice.dto.AccountPaymentResponse;
+import com.gangbean.stockservice.dto.AccountTransferResponse;
 import com.gangbean.stockservice.exception.account.AccountNotExistsException;
 import com.gangbean.stockservice.exception.account.TradeBetweenSameAccountsException;
 import com.gangbean.stockservice.repository.AccountRepository;
 import com.gangbean.stockservice.repository.TradeReservationRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @Service
@@ -45,13 +48,15 @@ public class AccountService {
                         .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id)));
     }
 
-    public AccountInfoListResponse allAccounts(Long memberId) {
-        return AccountInfoListResponse.responseOf(accountRepository.findAllByMemberId(memberId));
+    public AccountInfoListResponse allAccounts(Long memberId, Long prevLastEntityId) {
+        return AccountInfoListResponse.responseOf(prevLastEntityId == null ? accountRepository.findAllByMemberIdOrderByIdDesc(memberId)
+            : accountRepository.findTop10ByMemberIdAndIdLessThanOrderByIdDesc(memberId, prevLastEntityId));
     }
 
-    public AccountDetailInfoResponse responseOfAccountDetail(Long id, Member member) {
-        Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + id))
+    public AccountDetailInfoResponse responseOfAccountDetail(Long accountId, Member member, Long prevLastEntityId) {
+        Account account = ((prevLastEntityId == null) ? accountRepository.findTop10ByIdOrderByTradesIdDesc(accountId)
+            : accountRepository.findTop10ByIdAndTradesIdLessThanOrderByTradesIdDesc(accountId, prevLastEntityId))
+                .orElseThrow(() -> new AccountNotExistsException("입력된 ID에 해당하는 계좌가 존재하지 않습니다: " + accountId))
                 .ownedBy(member);
 
         return AccountDetailInfoResponse.responseOf(account);
