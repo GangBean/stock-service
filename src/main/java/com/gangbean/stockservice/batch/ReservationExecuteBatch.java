@@ -4,6 +4,7 @@ import com.gangbean.stockservice.domain.ReservationStatus;
 import com.gangbean.stockservice.domain.TradeReservation;
 import com.gangbean.stockservice.repository.TradeReservationRepository;
 import com.gangbean.stockservice.util.BatchExecutionTime;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
@@ -59,7 +60,7 @@ public class ReservationExecuteBatch {
             , ItemProcessor<TradeReservation, TradeReservation> processor
             , ItemWriter<TradeReservation> writer) {
         return stepBuilderFactory.get("executePayment")
-                .<TradeReservation, TradeReservation>chunk(100)
+                .<TradeReservation, TradeReservation>chunk(1)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
@@ -80,7 +81,7 @@ public class ReservationExecuteBatch {
     @Bean
     public ItemProcessor<TradeReservation, TradeReservation> executeTrade() {
         return reservation -> {
-            LOGGER.info(reservation.toString());
+            LOGGER.info("Data >>>>>>>>>>>> " + reservation);
             reservation.execute();
             tradeReservationRepository.save(reservation);
             return reservation;
@@ -89,7 +90,9 @@ public class ReservationExecuteBatch {
 
     @Bean
     public ItemWriter<TradeReservation> reservationWriter() {
-        return tradeReservationRepository::saveAll;
+        return items -> {
+            Objects.equals(items, null);
+        };
     }
 
 }

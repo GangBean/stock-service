@@ -16,7 +16,7 @@ public class AccountStock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     private Stock stock;
 
     private BigDecimal balance;

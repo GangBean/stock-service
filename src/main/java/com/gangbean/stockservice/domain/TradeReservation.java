@@ -19,7 +19,7 @@ public class TradeReservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Account account;
 
     private LocalDateTime tradeAt;
@@ -61,7 +61,7 @@ public class TradeReservation {
 
     public void execute() {
         try {
-            account.pay(tradeAt, amount);
+            account.payReservation(tradeAt, amount);
             status = status.complete();
         } catch (StockServiceApplicationException e) {
             status = status.error();

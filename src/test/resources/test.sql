@@ -17,6 +17,10 @@ insert into trade(type, date_time, amount) values('DEPOSIT', '2023-07-01T11:25:0
 insert into trade(type, date_time, amount) values('WITHDRAW', '2023-07-02T01:25:30', 1000);
 insert into trade(type, date_time, amount) values('PAYMENT', '2023-07-03T17:55:00', 1000);
 
+insert into trade_reservation(amount, status, account_id, trade_at) values(100, 'READY', 2, '2023-07-15T17:00:00');
+insert into trade_reservation(amount, status, account_id, trade_at) values(100, 'READY', 2, '2023-07-15T17:00:00');
+insert into trade_reservation(amount, status, account_id, trade_at) values(100, 'READY', 2, '2023-07-15T17:00:00');
+
 insert into stock(balance, name, price) values(100, '백만전자', 100);
 insert into stock(balance, name, price) values(100, '십만전자', 100);
 insert into stock(id, balance, name, price) values(10, 100, '천만전자', 100);

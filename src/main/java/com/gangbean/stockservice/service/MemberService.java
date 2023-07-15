@@ -75,7 +75,6 @@ public class MemberService {
     }
 
     public Member memberOf(String username, String password) {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> username: " + username);
         Member loginMember = memberRepository.findByUsername(username)
             .orElseThrow(() -> new MemberNotFoundException("이름에 해당하는 멤버정보가 없습니다: " + username));
 
