@@ -13,7 +13,7 @@ permissions:
 
 hooks:
   ApplicationStart:
-    - location: /scripts/start.sh # 엔진엑스와 연결되어 있지 않은 포트로 새 버전의 스프링 부트 시작
+    - location: /scripts/deploy.sh # 엔진엑스와 연결되어 있지 않은 포트로 새 버전의 스프링 부트 시작
       timeout: 60
       runas: ec2-user
 
