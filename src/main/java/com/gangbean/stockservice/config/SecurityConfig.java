@@ -61,6 +61,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/login").permitAll()
+                .antMatchers("/profiles").permitAll()
                 .antMatchers("/api/signup").permitAll()
                 .antMatchers("/api/accounts").hasAnyRole("ADMIN", "USER")
                 .antMatchers("/api/accounts/*").hasAnyRole("ADMIN", "USER")
