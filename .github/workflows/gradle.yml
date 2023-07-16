@@ -64,6 +64,12 @@ jobs:
         with:
           name: report_files
           path: report_files_*.tar.gz
+      - name: Upload Test Report as Artifact
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: test_report
+          path: /home/runner/work/stock-service/stock-service/build/reports/tests/test
       - name: Make Zip File
         run: zip -qq -r ./$GITHUB_SHA.zip
         shell: bash
