@@ -23,6 +23,13 @@ permissions:
   contents: read
 
 jobs:
+  - name: Setup MySQL
+    uses: samin/mysql-action@v1
+    with:
+      character set server: 'utf8'
+      mysql database: stock_service
+      mysql user: xbox2537
+      mysql password: xbox2537
   build:
     runs-on: ubuntu-latest
     steps:
