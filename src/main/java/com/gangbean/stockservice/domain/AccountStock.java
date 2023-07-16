@@ -92,6 +92,10 @@ public class AccountStock {
         }
         balance = balance.subtract(amount);
         totalPaid = totalPaid.subtract(price.multiply(amount));
+        if (balance.compareTo(BigDecimal.ZERO) == 0) {
+            totalPaid = BigDecimal.ZERO;
+            price = BigDecimal.ZERO;
+        }
         history.add(new AccountStockTrade(StockTradeType.SELLING, amount, price, tradeAt));
     }
 

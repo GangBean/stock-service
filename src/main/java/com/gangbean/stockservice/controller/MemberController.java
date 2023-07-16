@@ -77,6 +77,6 @@ public class MemberController {
             .asClaim(SecurityUtil.resolveToken(httpServletRequest))
             .get(TokenProvider.MEMBER_ID, Long.class);
         memberService.withdraw(loginMemberId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
