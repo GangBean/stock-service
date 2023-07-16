@@ -5,19 +5,19 @@ spring:
       enabled: true
 
   datasource:
-    url: jdbc:mariadb://gangbean-stock-service-rdb.cplifuxv1ysv.ap-northeast-2.rds.amazonaws.com:3306/stock-service
+    url: jdbc:mariadb://gangbean-stock-service-rdb.cplifuxv1ysv.ap-northeast-2.rds.amazonaws.com:3306/stock_service
     driver-class-name: org.mariadb.jdbc.Driver
     username: xbox2537
     password: xbox2537
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.MariaDB106Dialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
 
 logging:
   level:
