@@ -18,7 +18,7 @@ env:
   BUCKET_NAME: gangbean-stock-service
   CODE_DEPLOY_APP_NAME: gangbean-stock-service-cicd
   DEPLOYMENT_GROUP_NAME: gangbean-stock-service-cicd-group
-  GITHUB_SHA: stock-service
+  GITHUB_SHA: stock-service-$(date+"%Y-%m-%d-%H:%M:%S")
 
 permissions:
   contents: read
