@@ -140,6 +140,7 @@ alter table account_stock
     add constraint FK3wgf1ng3nu77q36stglvvu0mo
         foreign key (stock_id)
             references stock (id);
+
 alter table account_stock_history
     add constraint FKcxqx5fnvo4l4j0prxerp3hxig
         foreign key (history_id)

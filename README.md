@@ -10,7 +10,7 @@
 - EC2는 NginX를 통해 가장 최근의 배포되어 실행중인 Application 서비스로 리버스 프록시됩니다.
 - Application 서비스는 Api 서비스와 Batch 서비스가 같이 실행됩니다.
 - DB는 MariaDB RDS로 EC2서비스에서 연결되어 있습니다.
-
+![img_2.png](img_2.png)
 ## API 목록
 1. 회원가입
    - POST /api/members
@@ -44,10 +44,10 @@
     - DELETE /api/accounts/{accountId}
 
 ## ERD
-회고 참조부탁드립니다.
+![img.png](img.png)
 
 ## DB Schema
-회고 참조부탁드립니다.
+![img_1.png](img_1.png)
 
 ## 고민사항
 1. Exception handling
