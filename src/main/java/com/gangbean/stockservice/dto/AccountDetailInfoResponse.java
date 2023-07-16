@@ -66,7 +66,7 @@ public class AccountDetailInfoResponse {
     }
 
     public Long lastIndex() {
-        return trades.get(trades().size() - 1).getId();
+        return (trades.size() == 0) ? 0 : trades.get(trades().size() - 1).getId();
     }
 
     @Override

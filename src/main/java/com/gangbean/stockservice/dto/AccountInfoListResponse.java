@@ -29,7 +29,7 @@ public class AccountInfoListResponse {
     }
 
     public Long lastIndex() {
-        return accounts.get(accounts.size() - 1).getId();
+        return (accounts.size() == 0) ? 0 : accounts.get(accounts.size() - 1).getId();
     }
 
     @Override

@@ -29,6 +29,6 @@ public class StockDetailInfoResponse {
     }
 
     public LocalDateTime lastIndex() {
-        return histories.get(histories.size() - 1).getCreatedAt();
+        return (histories.size() == 0) ? LocalDateTime.MIN : histories.get(histories.size() - 1).getCreatedAt();
     }
 }
