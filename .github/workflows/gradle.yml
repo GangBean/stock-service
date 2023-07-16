@@ -72,7 +72,7 @@ jobs:
           name: test_report
           path: /home/runner/work/stock-service/stock-service/build/reports/tests/test
       - name: Make Zip File
-        run: zip -qq -r ./$GITHUB_SHA.zip
+        run: zip -qq -r ./$GITHUB_SHA.zip .
         shell: bash
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
