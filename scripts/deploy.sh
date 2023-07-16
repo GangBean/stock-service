@@ -9,7 +9,7 @@ sleep 5
 
 echo "> Build 파일 복사"
 
-cp $REPOSITORY/zip/*.jar $REPOSITORY/
+cp $REPOSITORY/zip/build/libs/*.jar $REPOSITORY/
 
 echo "> 현재 구동 중인 애플리케이션pid 확인"
 
