@@ -1,13 +1,11 @@
 package com.gangbean.stockservice.controller;
 
 
-import com.gangbean.stockservice.dto.AccountInfoResponse;
 import com.gangbean.stockservice.dto.ExceptionResponse;
 import com.gangbean.stockservice.dto.SignupRequest;
 import com.gangbean.stockservice.dto.SignupResponse;
 import com.gangbean.stockservice.exception.member.MemberDuplicateException;
 import com.gangbean.stockservice.jwt.TokenProvider;
-import com.gangbean.stockservice.service.AccountService;
 import com.gangbean.stockservice.service.MemberService;
 import com.gangbean.stockservice.util.SecurityUtil;
 import java.io.IOException;
@@ -50,18 +48,18 @@ public class MemberController {
         response.sendRedirect("/api/user");
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/members")
     public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest signupRequest) {
         return ResponseEntity.ok(memberService.signup(signupRequest));
     }
 
-    @GetMapping("/user")
+    @GetMapping("/members")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<SignupResponse> getMyUserInfo() {
         return ResponseEntity.ok(memberService.getMyUserWithAuthorities());
     }
 
-    @GetMapping("/user/{username}")
+    @GetMapping("/members/{username}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<SignupResponse> getUserInfo(@PathVariable String username) {
         return ResponseEntity.ok(memberService.getUserWithAuthorities(username));
@@ -72,7 +70,7 @@ public class MemberController {
         return new ResponseEntity<>(new ExceptionResponse(e.getMessage()), HttpStatus.CONFLICT);
     }
 
-    @DeleteMapping("/user")
+    @DeleteMapping("/members")
     @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity withdraw(@Valid HttpServletRequest httpServletRequest) {
         Long loginMemberId = tokenProvider
