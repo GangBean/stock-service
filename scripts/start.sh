@@ -4,13 +4,12 @@ ABSPATH=$(readlink -f $0)
 ABSDIR=$(dirname $ABSPATH)
 source ${ABSDIR}/profile.sh
 
-REPOSITORY=/home/ec2-user/app/
-PROJECT_NAME=reservation-service
+REPOSITORY=/home/ec2-user/app/stock-service
 
 echo "> Build 파일 복사"
-echo "> cp $REPOSITORY/zip/*.jar $REPOSITORY/"
+echo "> cp $REPOSITORY/zip/build/libs/*.jar $REPOSITORY/"
 
-cp $REPOSITORY/zip/*.jar $REPOSITORY/
+cp $REPOSITORY/zip/build/libs/*.jar $REPOSITORY/
 
 echo "> 새 애플리케이션 배포"
 JAR_NAME=$(ls -tr $REPOSITORY/*.jar | tail -n 1)
