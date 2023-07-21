@@ -60,6 +60,7 @@ public class SecurityConfig {
 
                 .and()
                 .authorizeRequests()
+                .antMatchers("/index.html").permitAll()
                 .antMatchers("/api/login").permitAll()
                 .antMatchers("/profiles").permitAll()
                 .antMatchers("/api/members").permitAll()
