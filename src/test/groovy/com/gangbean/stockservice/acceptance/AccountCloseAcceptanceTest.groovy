@@ -4,11 +4,21 @@ import com.gangbean.stockservice.SpringBootAcceptanceTest
 import com.gangbean.stockservice.jwt.TokenProvider
 import com.gangbean.stockservice.repository.AccountRepository
 import io.restassured.RestAssured
+import io.restassured.builder.RequestSpecBuilder
+import io.restassured.http.ContentType
+import io.restassured.specification.RequestSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.restdocs.ManualRestDocumentation
 import spock.lang.Specification
+
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration
 
 @SpringBootAcceptanceTest
 class AccountCloseAcceptanceTest extends Specification {
@@ -28,6 +38,10 @@ class AccountCloseAcceptanceTest extends Specification {
 
     String password
 
+    public ManualRestDocumentation restDocumentation = new ManualRestDocumentation()
+
+    private RequestSpecification spec
+
     def setup() {
         RestAssured.port = port
         username = "admin"
@@ -40,6 +54,10 @@ class AccountCloseAcceptanceTest extends Specification {
                 .then().log().all()
                 .extract()
         token = loginResponse.header("Authorization")
+        this.spec = new RequestSpecBuilder().addFilter(
+                documentationConfiguration(this.restDocumentation))
+                .build()
+        this.restDocumentation.beforeTest(getClass(), "계좌삭제_정상");
     }
 
     /***
@@ -116,17 +134,28 @@ class AccountCloseAcceptanceTest extends Specification {
         def account = accountRepository.findById(accountId)
         assert account.isPresent()
 
-        and:
-        assert account.get().whose().getUsername() == username
-
         when:
-        def response = RestAssured.given().log().all()
+        def response = RestAssured.given(this.spec).log().all()
+                .accept(ContentType.JSON)
+                .filter(document("delete-account",
+                        preprocessRequest(modifyUris()
+                                .scheme("https")
+                                .host("ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com")
+                                .removePort(),
+                                prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id").description("계좌ID")
+                        )))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
                 .when()
                 .delete("/api/accounts/{id}", accountId)
-                .then().log().all()
+                .then().log().all().statusCode(HttpStatus.NO_CONTENT.value())
                 .extract()
+        and:
+        assert account.get().whose().getUsername() == username
+
 
         then:
         verifyAll {

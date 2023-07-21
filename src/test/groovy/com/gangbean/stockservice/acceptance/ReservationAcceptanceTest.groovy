@@ -5,14 +5,32 @@ import com.gangbean.stockservice.jwt.TokenProvider
 import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.util.BatchExecutionTime
 import io.restassured.RestAssured
+import io.restassured.builder.RequestSpecBuilder
+import io.restassured.specification.RequestSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.restdocs.ManualRestDocumentation
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration
 
 @SpringBootAcceptanceTest
 class ReservationAcceptanceTest extends Specification {
@@ -40,6 +58,10 @@ class ReservationAcceptanceTest extends Specification {
 
     LocalDateTime nextExecuteTime
 
+    public ManualRestDocumentation restDocumentation = new ManualRestDocumentation()
+
+    private RequestSpecification spec
+
     def setup() {
         RestAssured.port = port
         username = "admin"
@@ -57,6 +79,10 @@ class ReservationAcceptanceTest extends Specification {
         reserveAt = LocalDateTime.of(2023, 7, 12, 20, 0, 0)
         nextExecuteTime = LocalDateTime.of(2023, 7, 12, 19, 0, 0)
         BatchExecutionTime.write("Reservation", nextExecuteTime)
+        this.spec = new RequestSpecBuilder().addFilter(
+                documentationConfiguration(this.restDocumentation))
+                .build()
+        this.restDocumentation.beforeTest(getClass(), "예약결제_정상");
     }
 
     /**
@@ -91,8 +117,28 @@ class ReservationAcceptanceTest extends Specification {
         assert reserveAt.truncatedTo(ChronoUnit.HOURS) == reserveAt
 
         when:
-        def response = RestAssured.given().log().all()
+        def response = RestAssured.given(this.spec).log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .filter(document("reservation",
+                        preprocessRequest(modifyUris()
+                                .scheme("https")
+                                .host("ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com")
+                                .removePort(),
+                                prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id").description("계좌ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("amount").description("결제요청금액"),
+                                fieldWithPath("sendAt").description("결제예약 요청일시")
+                        ),
+                        responseFields(
+                                fieldWithPath("accountId").description("계좌ID"),
+                                fieldWithPath("balance").description("계좌잔액"),
+                                fieldWithPath("sendAt").description("결제예약 확정일시")
+                        )
+                ))
                 .header("Authorization", token)
                 .body(Map.of("amount", amount, "sendAt", reserveAt))
                 .when()

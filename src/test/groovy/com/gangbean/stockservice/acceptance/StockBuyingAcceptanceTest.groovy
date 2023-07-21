@@ -6,11 +6,31 @@ import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.AccountStockRepository
 import com.gangbean.stockservice.repository.StockRepository
 import io.restassured.RestAssured
+import io.restassured.builder.RequestSpecBuilder
+import io.restassured.specification.RequestSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.restdocs.ManualRestDocumentation
 import spock.lang.Specification
+
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration
 
 @SpringBootAcceptanceTest
 class StockBuyingAcceptanceTest extends Specification {
@@ -35,6 +55,10 @@ class StockBuyingAcceptanceTest extends Specification {
 
     String password
 
+    public ManualRestDocumentation restDocumentation = new ManualRestDocumentation()
+
+    private RequestSpecification spec
+
     def setup() {
         RestAssured.port = port
         username = "admin"
@@ -47,6 +71,11 @@ class StockBuyingAcceptanceTest extends Specification {
                 .then().log().all()
                 .extract()
         token = loginResponse.header("Authorization")
+        this.spec = new RequestSpecBuilder().addFilter(
+                documentationConfiguration(this.restDocumentation))
+                .build()
+        this.restDocumentation.beforeTest(getClass(), "주식구매요청_정상");
+
     }
 
     /**
@@ -62,7 +91,7 @@ class StockBuyingAcceptanceTest extends Specification {
      * then 주식의 잔여량이 감소하고
      * then 계좌주식의 잔여량이 늘어납니다.
      */
-    def "계좌구매요청_정상"(Long accountId, Long stockId, BigDecimal accountStockBalance
+    def "주식구매요청_정상"(Long accountId, Long stockId, BigDecimal accountStockBalance
                     , BigDecimal averagePrice, BigDecimal totalPaid
                     , BigDecimal accountBalance, BigDecimal stockBalance) {
         given:
@@ -90,9 +119,30 @@ class StockBuyingAcceptanceTest extends Specification {
         assert account.get().balance() >= price * amount
 
         when:
-        def response = RestAssured.given().log().all()
+        def response = RestAssured.given(this.spec).log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
+                .filter(document("stock-buying",
+                        preprocessRequest(modifyUris()
+                                .scheme("https")
+                                .host("ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com")
+                                .removePort(),
+                                prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("accountId").description("계좌ID"),
+                                parameterWithName("stockId").description("주식ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("amount").description("구매요청수량"),
+                                fieldWithPath("price").description("구매요청금액")
+                        ),
+                        responseFields(
+                                fieldWithPath("stockId").description("주식ID"),
+                                fieldWithPath("amount").description("주식보유량"),
+                                fieldWithPath("averagePrice").description("보유주식평균금액")
+                        )
+                ))
                 .body(Map.of("amount", amount, "price", price))
                 .when()
                 .post("/api/accounts/{accountId}/stocks/{stockId}", accountId, stockId)
