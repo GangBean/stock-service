@@ -25,6 +25,7 @@ public class AccountStock {
 
     private BigDecimal totalPaid;
 
+    @OrderBy("tradeAt desc")
     @OneToMany(cascade = CascadeType.ALL)
     private Set<AccountStockTrade> history;
 
