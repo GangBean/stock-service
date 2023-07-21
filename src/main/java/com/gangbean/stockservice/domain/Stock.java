@@ -1,8 +1,8 @@
 package com.gangbean.stockservice.domain;
 
 import com.gangbean.stockservice.exception.stock.StockAmountNotValidException;
-import com.gangbean.stockservice.exception.stock.StockNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.stock.StockBuyForOverCurrentPriceException;
+import com.gangbean.stockservice.exception.stock.StockNotEnoughBalanceException;
 import com.gangbean.stockservice.exception.stock.StockSellForBelowCurrentPriceException;
 import com.gangbean.stockservice.util.StringUtil;
 
@@ -27,6 +27,7 @@ public class Stock {
 
     private BigDecimal balance;
 
+    @OrderBy("writtenAt desc")
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StockHistory> histories;
 

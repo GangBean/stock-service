@@ -5,20 +5,14 @@ import com.gangbean.stockservice.exception.account.AccountNotEnoughBalanceExcept
 import com.gangbean.stockservice.exception.account.AccountNotOwnedByLoginUser;
 import com.gangbean.stockservice.exception.account.AccountTransferBelowZeroAmountException;
 import com.gangbean.stockservice.exception.accountstock.AccountStockNotExistsException;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Account {
@@ -41,6 +35,7 @@ public class Account {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Trade> trades;
 
+    @OrderBy("id desc")
     @OneToMany(cascade = CascadeType.ALL)
     private Set<AccountStock> stocks;
 
