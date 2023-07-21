@@ -1,20 +1,33 @@
 package com.gangbean.stockservice.repository;
 
 import com.gangbean.stockservice.domain.Stock;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 public interface StockRepository extends JpaRepository<Stock, Long> {
 
     List<Stock> findAllByOrderByNameDesc();
 
-    Optional<Stock> findTop10ByIdOrderByHistoriesWrittenAtDesc(Long id);
+    @Query(nativeQuery = true, value = "SELECT s.*, sh.*\n" +
+            " FROM stock s\n" +
+            " LEFT OUTER JOIN stock_histories h on h.stock_id = s.id\n" +
+            " LEFT OUTER JOIN stock_history sh on h.histories_id = sh.id\n" +
+            "WHERE s.id = :id\n" +
+            "ORDER BY sh.written_at DESC limit 10")
+    Optional<Stock> findTop10ByIdOrderByHistoriesWrittenAtDesc(@Param("id") Long id);
 
-    @Query("SELECT s FROM Stock s LEFT OUTER JOIN FETCH s.histories h WHERE s.id = :id AND h.writtenAt > :prevWrittenAt ORDER BY h.writtenAt DESC")
+    @Query(nativeQuery = true, value = "SELECT s.*, sh.*\n" +
+            " FROM stock s\n" +
+            " LEFT OUTER JOIN stock_histories h on h.stock_id = s.id\n" +
+            " LEFT OUTER JOIN stock_history sh on h.histories_id = sh.id\n" +
+            "WHERE s.id = :id\n" +
+            "  AND sh.written_at < :prevWrittenAt\n" +
+            "ORDER BY sh.written_at DESC limit 10")
     Optional<Stock> findTop10ByIdAndHistoriesWrittenAtGreaterThanOrderByWrittenAtDesc(@Param("id") Long id
         , @Param("prevWrittenAt") LocalDateTime prevLastEntityIndex);
 
