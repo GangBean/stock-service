@@ -3,11 +3,32 @@ package com.gangbean.stockservice.acceptance
 import com.gangbean.stockservice.SpringBootAcceptanceTest
 import com.gangbean.stockservice.repository.AccountRepository
 import io.restassured.RestAssured
+import io.restassured.builder.RequestSpecBuilder
+import io.restassured.specification.RequestSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.restdocs.ManualRestDocumentation
 import spock.lang.Specification
+
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration
 
 @SpringBootAcceptanceTest
 class TradeAcceptanceTest extends Specification {
@@ -24,6 +45,10 @@ class TradeAcceptanceTest extends Specification {
 
     String password
 
+    public ManualRestDocumentation restDocumentation = new ManualRestDocumentation()
+
+    private RequestSpecification spec
+
     def setup() {
         RestAssured.port = port
         username = "admin"
@@ -36,6 +61,11 @@ class TradeAcceptanceTest extends Specification {
                 .then().log().all()
                 .extract()
         token = loginResponse.header("Authorization")
+        this.spec = new RequestSpecBuilder().addFilter(
+                documentationConfiguration(this.restDocumentation))
+                .build()
+        this.restDocumentation.beforeTest(getClass(), "transferOk");
+
     }
 
     /**
@@ -72,9 +102,27 @@ class TradeAcceptanceTest extends Specification {
         assert amount > 0
 
         when:
-        def response = RestAssured.given().log().all()
+        def response = RestAssured.given(this.spec).log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
+                .filter(document("stock-selling",
+                        preprocessRequest(modifyUris()
+                                .scheme("https")
+                                .host("ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com")
+                                .removePort(),
+                                prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id").description("계좌ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("amount").description("송금요청금액"),
+                                fieldWithPath("receiverAccountNumber").description("요청 수신계좌번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("balance").description("계좌잔약")
+                        )
+                ))
                 .body(Map.of("receiverAccountNumber", accountNumber, "amount", amount))
                 .when()
                 .post("/api/accounts/{id}/trades", accountId)

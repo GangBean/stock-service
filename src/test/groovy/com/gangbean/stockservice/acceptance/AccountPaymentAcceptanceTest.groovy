@@ -5,13 +5,36 @@ import com.gangbean.stockservice.domain.Account
 import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.BankRepository
 import io.restassured.RestAssured
+import io.restassured.builder.RequestSpecBuilder
 import io.restassured.response.ExtractableResponse
 import io.restassured.response.Response
+import io.restassured.specification.RequestSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.restdocs.ManualRestDocumentation
 import spock.lang.Specification
+
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration
 
 @SpringBootAcceptanceTest
 class AccountPaymentAcceptanceTest extends Specification {
@@ -30,6 +53,10 @@ class AccountPaymentAcceptanceTest extends Specification {
 
     BigDecimal price
 
+    public ManualRestDocumentation restDocumentation = new ManualRestDocumentation()
+
+    private RequestSpecification spec
+
     def setup() {
         RestAssured.port = port
         username = "admin"
@@ -43,6 +70,10 @@ class AccountPaymentAcceptanceTest extends Specification {
                 .extract()
         token = loginResponse.header("Authorization")
         price = 100
+        this.spec = new RequestSpecBuilder().addFilter(
+                documentationConfiguration(this.restDocumentation))
+                .build()
+        this.restDocumentation.beforeTest(getClass(), "계좌결제_정상");
     }
 
     /**
@@ -68,9 +99,27 @@ class AccountPaymentAcceptanceTest extends Specification {
         assert account.get().balance() >= price
 
         when:
-        def response = RestAssured.given().log().all()
+        def response = RestAssured.given(this.spec).log().all()
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .filter(document("payment",
+                        preprocessRequest(modifyUris()
+                                .scheme("https")
+                                .host("ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com")
+                                .removePort(),
+                                prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("id").description("계좌ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("price").description("결제요청금액")
+                        ),
+                        responseFields(
+                                fieldWithPath("accountId").description("계좌ID"),
+                                fieldWithPath("balance").description("계좌잔액")
+                        )
+                ))
                 .body(Map.of("price", price))
                 .when()
                 .post("/api/accounts/{id}/payments", accountId)

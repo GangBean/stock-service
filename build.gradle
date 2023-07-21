@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.13'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'groovy'
 }
 
@@ -24,6 +25,23 @@ configurations {
 
 repositories {
     mavenCentral()
+}
+
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+bootJar {
+    copy {
+        from file("build/docs/asciidoc")
+        into file("src/main/resources/static/docs")
+    }
+    dependsOn asciidoctor
 }
 
 dependencies {
@@ -59,8 +77,12 @@ dependencies {
     // Spring batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     testImplementation 'org.springframework.batch:spring-batch-test'
+
+    // Spring REST Docs
+    testImplementation 'org.springframework.restdocs:spring-restdocs-restassured:2.0.3.RELEASE'
 }
 
 test {
     useJUnitPlatform()
+    outputs.dir snippetsDir
 }

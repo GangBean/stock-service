@@ -5,12 +5,32 @@ import com.gangbean.stockservice.repository.AccountRepository
 import com.gangbean.stockservice.repository.AccountStockRepository
 import com.gangbean.stockservice.repository.StockRepository
 import io.restassured.RestAssured
+import io.restassured.builder.RequestSpecBuilder
+import io.restassured.specification.RequestSpecification
 import org.hibernate.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.restdocs.ManualRestDocumentation
 import spock.lang.Specification
+
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration
 
 @SpringBootAcceptanceTest
 class StockSellingAcceptanceTest extends Specification {
@@ -35,6 +55,10 @@ class StockSellingAcceptanceTest extends Specification {
 
     String password
 
+    public ManualRestDocumentation restDocumentation = new ManualRestDocumentation()
+
+    private RequestSpecification spec
+
     def setup() {
         RestAssured.port = port
         username = "admin"
@@ -47,6 +71,11 @@ class StockSellingAcceptanceTest extends Specification {
                 .then().log().all()
                 .extract()
         token = loginResponse.header("Authorization")
+        this.spec = new RequestSpecBuilder().addFilter(
+                documentationConfiguration(this.restDocumentation))
+                .build()
+        this.restDocumentation.beforeTest(getClass(), "계좌판매요청_정상");
+
     }
 
     /**
@@ -91,9 +120,30 @@ class StockSellingAcceptanceTest extends Specification {
         assert price <= stock.get().howMuch()
 
         when:
-        def response = RestAssured.given().log().all()
+        def response = RestAssured.given(this.spec).log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
+                .filter(document("stock-selling",
+                        preprocessRequest(modifyUris()
+                                .scheme("https")
+                                .host("ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com")
+                                .removePort(),
+                                prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("accountId").description("계좌ID"),
+                                parameterWithName("stockId").description("주식ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("amount").description("판매요청수량"),
+                                fieldWithPath("price").description("판매요청금액")
+                        ),
+                        responseFields(
+                                fieldWithPath("stockId").description("주식ID"),
+                                fieldWithPath("amount").description("잔여주식수량"),
+                                fieldWithPath("averagePrice").description("잔여주식평균금액")
+                        )
+                ))
                 .body(Map.of("amount", amount, "price", price))
                 .when()
                 .post("/api/accounts/{accountId}/stocks/{stockId}/selling", accountId, stockId)

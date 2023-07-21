@@ -3,11 +3,30 @@ package com.gangbean.stockservice.acceptance
 import com.gangbean.stockservice.SpringBootAcceptanceTest
 import com.gangbean.stockservice.repository.BankRepository
 import io.restassured.RestAssured
+import io.restassured.builder.RequestSpecBuilder
+import io.restassured.specification.RequestSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.restdocs.ManualRestDocumentation
 import spock.lang.Specification
+
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyUris
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration
 
 @SpringBootAcceptanceTest
 class AccountOpenAcceptanceTest extends Specification {
@@ -24,6 +43,10 @@ class AccountOpenAcceptanceTest extends Specification {
 
     String password
 
+    public ManualRestDocumentation restDocumentation = new ManualRestDocumentation()
+
+    private RequestSpecification spec
+
     def setup() {
         RestAssured.port = port
         username = "admin"
@@ -36,6 +59,10 @@ class AccountOpenAcceptanceTest extends Specification {
                 .then().log().all()
                 .extract()
         token = loginResponse.header("Authorization")
+        this.spec = new RequestSpecBuilder().addFilter(
+                documentationConfiguration(this.restDocumentation))
+                .build()
+        this.restDocumentation.beforeTest(getClass(), "openAccount_Ok");
     }
 
     /***
@@ -136,9 +163,29 @@ class AccountOpenAcceptanceTest extends Specification {
         balance >= 0
 
         when:
-        def response = RestAssured.given().log().all()
+        def response = RestAssured.given(this.spec).log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", token)
+                .filter(document("open-account",
+                        preprocessRequest(modifyUris()
+                                .scheme("https")
+                                .host("ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com")
+                                .removePort(),
+                                prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("balance").description("초기입금액"),
+                                fieldWithPath("bankNumber").description("은행번호"),
+                                fieldWithPath("bankName").description("은행명")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("계좌ID"),
+                                fieldWithPath("accountNumber").description("계좌번호"),
+                                fieldWithPath("balance").description("계좌잔액"),
+                                fieldWithPath("bankNumber").description("은행번호"),
+                                fieldWithPath("bankName").description("은행명")
+                        )
+                ))
                 .body(param)
                 .when()
                 .post("/api/accounts")
