@@ -15,19 +15,19 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 
     @Query(nativeQuery = true, value = "SELECT s.*, sh.*\n" +
             " FROM stock s\n" +
-            " LEFT OUTER JOIN stock_histories h on h.stock_id = s.id\n" +
-            " LEFT OUTER JOIN stock_history sh on h.histories_id = sh.id\n" +
+            " LEFT OUTER JOIN stock_histories h ON h.stock_id = s.id\n" +
+            " LEFT OUTER JOIN stock_history sh ON h.histories_id = sh.id\n" +
             "WHERE s.id = :id\n" +
-            "ORDER BY sh.written_at DESC limit 10")
+            "ORDER BY sh.written_at DESC LIMIT 10")
     Optional<Stock> findTop10ByIdOrderByHistoriesWrittenAtDesc(@Param("id") Long id);
 
     @Query(nativeQuery = true, value = "SELECT s.*, sh.*\n" +
             " FROM stock s\n" +
-            " LEFT OUTER JOIN stock_histories h on h.stock_id = s.id\n" +
-            " LEFT OUTER JOIN stock_history sh on h.histories_id = sh.id\n" +
-            "WHERE s.id = :id\n" +
+            " LEFT OUTER JOIN stock_histories h ON h.stock_id = s.id\n" +
+            " LEFT OUTER JOIN stock_history sh ON h.histories_id = sh.id\n" +
             "  AND sh.written_at < :prevWrittenAt\n" +
-            "ORDER BY sh.written_at DESC limit 10")
+            "WHERE s.id = :id\n" +
+            "ORDER BY sh.written_at DESC LIMIT 10")
     Optional<Stock> findTop10ByIdAndHistoriesWrittenAtGreaterThanOrderByWrittenAtDesc(@Param("id") Long id
         , @Param("prevWrittenAt") LocalDateTime prevLastEntityIndex);
 

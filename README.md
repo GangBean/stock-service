@@ -16,11 +16,12 @@ ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com
 - DB는 MariaDB RDS로 EC2서비스에서 연결되어 있습니다.
 ![img_2.png](img_2.png)
 ## API 목록
-1. 회원가입
+http://ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com/docs/index.html
+1. 회원가입 - docs x
    - POST /api/members
-2. 로그인
+2. 로그인  - docs x
    - POST /api/login
-3. 토큰 재발급
+3. 토큰 재발급  - docs x
    - POST /api/reissue
 4. 계좌등록
    - POST /api/accounts
@@ -44,8 +45,8 @@ ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com
     - POST /api/accounts/{accountId}/stocks/{stockId}/selling
 14. 예약결제
     - POST /api/accounts/{accountId}/reservations
-15. 계좌삭제
-    - DELETE /api/accounts/{accountId}
+15. 회원탈퇴 - docs x
+    - DELETE /api/members
 
 ## ERD
 ![img.png](img.png)
