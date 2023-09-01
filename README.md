@@ -6,11 +6,11 @@
 3. H2 - TEST 용
 
 ## public DNS
-ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com
+ec2-43-201-193-154.ap-northeast-2.compute.amazonaws.com &rarr; 2023.09.01 미운영
 
 
 ## 시스템 아키텍처
-- Github Action을 통해 CI후 빌드파일 S3에 저장 $rarr; Codedeploy에 CD 요청해 S3의 빌드파일을 EC2에 배포합니다.
+- Github Action을 통해 CI후 빌드파일 S3에 저장 &rarr; Codedeploy에 CD 요청해 S3의 빌드파일을 EC2에 배포합니다.
 - EC2는 NginX를 통해 가장 최근의 배포되어 실행중인 Application 서비스로 리버스 프록시됩니다.
 - Application 서비스는 Api 서비스와 Batch 서비스가 같이 실행됩니다.
 - DB는 MariaDB RDS로 EC2서비스에서 연결되어 있습니다.
