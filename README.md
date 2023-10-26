@@ -1,4 +1,8 @@
 # 주식 서비스
+## 개요
+- Spring Framework, Spring Batch, Spock Test Framework 를 사용해 구현한 주식 서비스 애플리케이션 입니다.
+- Numble 이라는 온라인 IT 프로젝트 경연 플랫폼에 참가한 프로젝트입니다.(1등/40명)
+- 간결한 코드, 클래스와 메서드의 관심사/역할 분리, TDD 기반 설계 및 구현, Spring Batch 구현, CI/CD 구현에 집중해 진행했습니다.
 
 ## 프로젝트 설정
 1. spring boot 2.7.13
